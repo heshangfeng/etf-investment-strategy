@@ -9,7 +9,7 @@ from datetime import datetime
 
 from config import (
     LLM_MODEL, LLM_MAX_TOKENS, LLM_TEMPERATURE, LLM_ENABLED,
-    LLM_API_KEY, LLM_BASE_URL, RATING_ORDER
+    LLM_API_KEY, LLM_BASE_URL, RATING_ORDER, ETF_POOL
 )
 from models import AgentReport, FinalResearchReport
 from data import DataCollectAgent
@@ -52,6 +52,98 @@ class ChiefDecisionAgent(BaseLLMAgent):
 - 中性 (score>=45)：多空均衡，等待信号
 - 看空 (score>=30)：整体偏弱，谨慎回避
 - 强烈看空 (score<30)：多项风险暴露，清仓回避"""
+
+    @staticmethod
+    def _calibrate_confidence(reports: list[AgentReport], normalized_scores: list[float]) -> list[float]:
+        """
+        置信度校准：用 Agent 间一致性和分数极端程度替代 LLM 随口说的置信度。
+
+        公式:
+          agreement = 同方向Agent占比（看多/看空方向一致性）
+          extremity = abs(score - 50) / 50  （分数越极端越自信）
+          calibrated = 0.3 + 0.5 * agreement + 0.2 * extremity
+
+        范围 0.3 ~ 1.0，确保即使分歧大也有基础置信度。
+        """
+        calibrated = []
+        for r, ns in zip(reports, normalized_scores):
+            # 方向一致性：多少个Agent在同一方向
+            direction = "多" if ns > 55 else "空" if ns < 45 else "中"
+            same_dir = sum(
+                1 for s in normalized_scores
+                if ("多" if s > 55 else "空" if s < 45 else "中") == direction
+            )
+            agreement = same_dir / max(len(normalized_scores), 1)
+            extremity = abs(ns - 50) / 50.0
+            confidence = 0.3 + 0.5 * agreement + 0.2 * extremity
+            calibrated.append(float(np.clip(confidence, 0.3, 1.0)))
+        return calibrated
+
+    @staticmethod
+    def _load_proxy_weights() -> dict:
+        """
+        在没有 T+1 复盘数据时，用回测胜率和 Agent 自身一致性自举权重。
+
+        回测胜率从 EnhancedBacktestAgent 获取。
+        Agent 自一致性：Agent 是否倾向于频繁更改判断（flip）。
+        """
+        weights = {name: 1.0 for name in ChiefDecisionAgent.SCORING_AGENTS}
+
+        # 1. 尝试从回测结果加载代理准确率
+        try:
+            from data import EnhancedBacktestAgent
+            # 用几只代表性宽基ETF的平均回测胜率作为代理
+            etf_codes = [e["code"] for e in ETF_POOL if e["type"] == "宽基"][:3]
+            win_rates = []
+            for code in etf_codes:
+                bt = EnhancedBacktestAgent.run(code, days=120)
+                if bt.get("胜率", 0) > 0:
+                    win_rates.append(bt["胜率"] / 100)
+            if win_rates:
+                avg_win_rate = np.mean(win_rates)
+                # 以此为中心，各Agent根据各自特点微调
+                from config import WEIGHT
+                for name in weights:
+                    base = avg_win_rate
+                    weights[name] = 0.3 + base * 1.4
+        except Exception:
+            pass
+
+        # 2. 尝试从 memory 加载 flip 检测降权
+        try:
+            from memory import MemoryRetriever
+            flip_counts = {}
+            # 检查全市场所有ETF，统计每Agent的flip频率
+            for etf in ETF_POOL:
+                memory = MemoryRetriever.retrieve(etf["code"], days=10, top_k=10)
+                if memory:
+                    # 解析memory文本，统计评级变化次数
+                    for line in memory.split("\n"):
+                        if "|" in line and "历史分析" not in line:
+                            parts = line.split("|")
+                            if len(parts) >= 3:
+                                agent_name = parts[1].strip()
+                                if agent_name in ("首席决策",):
+                                    continue
+                                if agent_name not in flip_counts:
+                                    flip_counts[agent_name] = {"total": 0, "flips": 0, "last_rating": ""}
+                                rating = parts[2].strip().split("(")[0].strip()
+                                fc = flip_counts[agent_name]
+                                if fc["last_rating"] and fc["last_rating"] != rating:
+                                    fc["flips"] += 1
+                                fc["last_rating"] = rating
+                                fc["total"] += 1
+            for aname, fc in flip_counts.items():
+                if fc["total"] >= 3 and aname in weights:
+                    flip_rate = fc["flips"] / max(fc["total"], 1)
+                    if flip_rate > 0.4:  # 40%+ flip 率 → 降权15%
+                        weights[aname] *= 0.85
+                    elif flip_rate > 0.6:  # 60%+ → 降权30%
+                        weights[aname] *= 0.7
+        except Exception:
+            pass
+
+        return weights
 
     @staticmethod
     def load_agent_weights() -> dict:
@@ -167,13 +259,21 @@ class ChiefDecisionAgent(BaseLLMAgent):
         # 转回0-100分制（z-score → 50 + z*15）
         normalized_scores = [float(np.clip(50 + z * 15, 0, 100)) for z in z_scores]
 
-        # ── 2. 动态加权平均 ──
+        # ── 2. 置信度校准 + 动态加权平均 ──
+        # 校准置信度：基于Agent间一致性和分数极端程度
+        calibrated_confidences = self._calibrate_confidence(reports, normalized_scores)
+
+        # 加载权重：优先用 T+1 复盘权重，无数据时用代理权重
         weights = self.load_agent_weights()
+        has_real_weights = any(w != 1.0 for w in weights.values())
+        if not has_real_weights:
+            weights = self._load_proxy_weights()
+
         weight_values = []
-        for r in reports:
+        for r, cc in zip(reports, calibrated_confidences):
             w = weights.get(r.agent_name, 1.0)
-            # 附加置信度加权
-            w *= (0.5 + r.confidence)
+            # 使用校准后的置信度替代 raw confidence
+            w *= (0.5 + cc)
             weight_values.append(w)
 
         # 因子贡献追踪：(normalized_score - 50) * weight_factor

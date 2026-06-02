@@ -46,7 +46,10 @@ jobs:
           TZ: 'Asia/Shanghai'
 
       - name: Pull latest to avoid push conflicts
-        run: git pull --rebase origin master
+        run: |
+          git stash
+          git pull --rebase origin master
+          git stash pop || true
 
       - name: Commit reports & snapshots
         run: |

@@ -362,6 +362,14 @@ class MainSchedulerAgent:
             for fr in sorted(actionable, key=lambda x: x.suggested_position_pct, reverse=True):
                 print(f"  {fr.etf_info['name']}({fr.etf_info['code']}): {fr.operation} {fr.suggested_position_pct*100:.1f}% | {fr.final_rating}")
 
+        # Phase 5: 工作流总监审查
+        try:
+            from director import WorkflowDirector
+            findings = WorkflowDirector.review(final_reports)
+            WorkflowDirector.print_summary(findings)
+        except Exception as e:
+            print(f"  ⚠️ 工作流审查不可用: {e}")
+
     def _research_single_etf(self, item: dict, global_max_pos: float,
                                macro_report: AgentReport,
                                monetary_report: AgentReport,

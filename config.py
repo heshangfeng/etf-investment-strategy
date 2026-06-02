@@ -1,0 +1,119 @@
+"""
+ETF 智能投资分析系统 - 全局配置与缓存
+"""
+import os
+import time
+import warnings
+from dotenv import load_dotenv
+
+warnings.filterwarnings("ignore")
+load_dotenv()
+
+# ====================== 【全局核心配置区 - 可直接修改】 ======================
+# 1. 综合评分权重
+WEIGHT = {
+    "value": 0.12,
+    "boom": 0.20,
+    "tech": 0.20,
+    "fund": 0.16,
+    "risk": 0.16,
+    "opinion": 0.16
+}
+
+# 2. 风控 & 舆情阈值
+PREMIUM_RISK_THRESHOLD = 0.015
+VOL_RISK_THRESHOLD = 0.03
+LIQ_THRESHOLD = 5000
+OPINION_WARN_THRESHOLD = 30    # 利空告警线
+TREND_DAY_COUNT = 3           # 舆情趋势统计天数
+
+# 3. 并行 & 网络配置
+MAIN_WORKERS = 6
+AGENT_WORKERS = 8
+REQUEST_DELAY = 0.1
+HEADERS = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
+
+# 4. 大模型配置（从 .env 读取）
+LLM_API_KEY = os.getenv("DEEPSEEK_API_KEY", "")
+LLM_BASE_URL = os.getenv("DEEPSEEK_BASE_URL", "https://api.deepseek.com/v1")
+LLM_MODEL = "deepseek-chat"           # DeepSeek高性价比模型
+LLM_MAX_TOKENS = 2048                 # 增加到2048以支持详细分析
+LLM_TEMPERATURE = 0.3
+LLM_ENABLED = True                    # 总开关：True=LLM多智能体模式
+
+# 6. 多智能体辩论配置
+DEBATE_ENABLED = True
+DEBATE_ROUNDS = 2
+DISAGREEMENT_SCORE_THRESHOLD = 18    # 评分差异≥此值触发辩论
+DISAGREEMENT_RATING_GAP = 2          # 评级级差≥此值触发辩论
+
+RATING_ORDER = ["强烈看空", "看空", "中性", "看多", "强烈看多"]
+
+# ====================== 【ETF标的池】 ======================
+ETF_POOL = [
+    # ── 宽基 (8只) ──
+    {"code": "510050", "name": "上证50ETF",     "type": "宽基", "index_code": "000016"},
+    {"code": "510300", "name": "沪深300ETF",    "type": "宽基", "index_code": "000300"},
+    {"code": "159338", "name": "中证A500ETF",   "type": "宽基", "index_code": "000510"},
+    {"code": "510500", "name": "中证500ETF",    "type": "宽基", "index_code": "000905"},
+    {"code": "512100", "name": "中证1000ETF",   "type": "宽基", "index_code": "000852"},
+    {"code": "563300", "name": "中证2000ETF",   "type": "宽基", "index_code": "932000"},
+    {"code": "159915", "name": "创业板ETF",     "type": "宽基", "index_code": "399006"},
+    {"code": "588000", "name": "科创50ETF",     "type": "宽基", "index_code": "000688"},
+    # ── 行业 (18只) ──
+    {"code": "512000", "name": "券商ETF",       "type": "行业", "index_code": "801780"},
+    {"code": "512800", "name": "银行ETF",       "type": "行业", "index_code": "801780"},
+    {"code": "512400", "name": "有色金属ETF",   "type": "行业", "index_code": "801050"},
+    {"code": "515220", "name": "煤炭ETF",       "type": "行业", "index_code": "801950"},
+    {"code": "512200", "name": "房地产ETF",     "type": "行业", "index_code": "801180"},
+    {"code": "159611", "name": "电力ETF",       "type": "行业", "index_code": "000993"},
+    {"code": "515080", "name": "基建ETF",       "type": "行业", "index_code": "801730"},
+    {"code": "512760", "name": "半导体ETF",     "type": "行业", "index_code": "BK1036"},
+    {"code": "512480", "name": "半导体设备ETF", "type": "行业", "index_code": "BK1036"},
+    {"code": "512690", "name": "酒ETF",         "type": "行业", "index_code": "801120"},
+    {"code": "159928", "name": "消费ETF",       "type": "行业", "index_code": "801110"},
+    {"code": "159858", "name": "医药ETF",       "type": "行业", "index_code": "801150"},
+    {"code": "512290", "name": "生物医药ETF",   "type": "行业", "index_code": "399441"},
+    {"code": "515790", "name": "光伏ETF",       "type": "行业", "index_code": "BK0448"},
+    {"code": "159806", "name": "风电ETF",       "type": "行业", "index_code": "BK1032"},
+    {"code": "159875", "name": "新能源车ETF",   "type": "行业", "index_code": "BK0493"},
+    {"code": "516150", "name": "汽车ETF",       "type": "行业", "index_code": "801020"},
+    {"code": "516670", "name": "稀土ETF",       "type": "行业", "index_code": "BK0546"},
+    # ── 主题 (14只) ──
+    {"code": "512660", "name": "军工ETF",       "type": "主题", "index_code": "801740"},
+    {"code": "159819", "name": "人工智能ETF",   "type": "主题", "index_code": "BK1073"},
+    {"code": "515070", "name": "大数据ETF",     "type": "主题", "index_code": "BK1049"},
+    {"code": "516950", "name": "机器人ETF",     "type": "主题", "index_code": "BK0964"},
+    {"code": "512980", "name": "传媒ETF",       "type": "主题", "index_code": "801760"},
+    {"code": "159825", "name": "农业ETF",       "type": "主题", "index_code": "801010"},
+    {"code": "513090", "name": "恒生科技ETF",   "type": "主题", "index_code": "HSTECH"},
+    {"code": "513130", "name": "港股互联网ETF", "type": "主题", "index_code": "H11136"},
+    {"code": "518880", "name": "黄金ETF",       "type": "主题", "index_code": "000016"},
+    {"code": "510880", "name": "红利ETF",       "type": "主题", "index_code": "000015"},
+    {"code": "513100", "name": "纳指ETF",       "type": "主题", "index_code": "NDX"},
+    {"code": "513050", "name": "中概互联ETF",   "type": "主题", "index_code": "H11136"},
+    {"code": "516220", "name": "元宇宙ETF",     "type": "主题", "index_code": "BK0992"},
+    {"code": "515680", "name": "数字货币ETF",   "type": "主题", "index_code": "BK0887"},
+]
+
+# ====================== 【全局缓存 - 带TTL】 ======================
+CACHE_ETF_PRICE = {}
+CACHE_INDEX_VAL = {}
+CACHE_ETF_PREMIUM = {}
+CACHE_NORTH_CAP = {}
+CACHE_MARKET_VOL: float = 0
+CACHE_OPINION = {}          # 当日舆情缓存
+CACHE_OPINION_HIST = {}     # 历史舆情时序缓存（趋势用）
+CACHE_TIMESTAMPS = {}       # key→最后更新时间, 用于TTL检查
+CACHE_IVIX = {}            # 隐含波动率VIX缓存 {etf_code: value}
+
+
+def _cache_check(cache_key: str, max_age_seconds: int = 3600) -> bool:
+    """检查缓存是否过期。过期返回False（需刷新），有效返回True。"""
+    ts = CACHE_TIMESTAMPS.get(cache_key, 0)
+    return time.time() - ts < max_age_seconds
+
+
+def _cache_set(cache_key: str):
+    """设置缓存时间戳。"""
+    CACHE_TIMESTAMPS[cache_key] = time.time()

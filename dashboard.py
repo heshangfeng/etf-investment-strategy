@@ -205,6 +205,39 @@ def main():
             st.caption(f"累计复盘: {cum.get('total_reviews', 0)} 次 | "
                        f"准确率: {cum.get('overall_accuracy', 0):.1f}%")
 
+    # ── 投资组合面板 ──
+    st.divider()
+    st.subheader("我的投资组合")
+    try:
+        from portfolio import load, _price
+        pf = load()
+        col_a, col_b, col_c = st.columns(3)
+        cash = pf.cash
+        market_value = sum(h.shares * _price(h.code, h.avg_cost) for h in pf.holdings)
+        total = cash + market_value
+        col_a.metric("总资产", f"{total:.0f}")
+        col_b.metric("持仓市值", f"{market_value:.0f}")
+        col_c.metric("仓位", f"{(1-cash/max(total,1))*100:.0f}%")
+
+        if pf.holdings:
+            rows = []
+            for h in pf.holdings:
+                cp = _price(h.code, h.avg_cost)
+                pnl = (cp - h.avg_cost) / h.avg_cost * 100
+                rows.append({
+                    "代码": h.code, "名称": h.name, "份额": h.shares,
+                    "成本价": f"{h.avg_cost:.4f}", "现价": f"{cp:.4f}",
+                    "盈亏": f"{pnl:+.1f}%",
+                })
+            df_pf = pd.DataFrame(rows)
+            st.dataframe(df_pf.style.map(
+                lambda v: f"color: {'red' if v.startswith('-') else 'green'}; font-weight: bold;"
+                if isinstance(v, str) and v.endswith('%') else "",
+                subset=["盈亏"]
+            ), use_container_width=True, hide_index=True)
+    except Exception:
+        st.info("暂无持仓数据。使用 `python portfolio.py buy ...` 记录交易。")
+
     # ── 运行提示 ──
     st.sidebar.divider()
     st.sidebar.info(

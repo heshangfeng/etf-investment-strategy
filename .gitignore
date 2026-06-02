@@ -18,6 +18,7 @@ Thumbs.db
 
 # Sensitive credentials
 .env
+data/portfolio.json
 
 # Project
 .omo/

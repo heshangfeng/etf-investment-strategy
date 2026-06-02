@@ -24,6 +24,10 @@ data/portfolio.json
 .omo/
 logs/
 
+# SQLite
+data/cache.db-shm
+data/cache.db-wal
+
 # Temp files
 *.tmp
 *.log

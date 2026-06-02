@@ -10,6 +10,7 @@ from agents.fundamental import (
 from agents.market import (
     RetailSentimentAgent, CrossMarketAgent,
     HotMoneyAnalystAgent, UnlockPressureAgent, PatternRecognitionAgent,
+    TrendPredictorAgent,
 )
 
 __all__ = [
@@ -19,4 +20,5 @@ __all__ = [
     "FundFlowAnalystAgent", "RiskManagerAgent", "IndustryAnalystAgent",
     "RetailSentimentAgent", "CrossMarketAgent",
     "HotMoneyAnalystAgent", "UnlockPressureAgent", "PatternRecognitionAgent",
+    "TrendPredictorAgent",
 ]

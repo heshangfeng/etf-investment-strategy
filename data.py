@@ -12,7 +12,7 @@ import glob
 import jieba
 import requests
 from bs4 import BeautifulSoup
-from snownlp import SnowNLP
+from sentiment_skill import FinBertSentiment
 from datetime import datetime, timedelta
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from openai import OpenAI
@@ -297,8 +297,26 @@ class PublicOpinionAgent:
 
     @staticmethod
     def get_professional_news(keyword: str) -> str:
-        """专业财经API优先，失败降级为网页爬虫"""
-        # 优先调用专业财经API
+        """多源财经新闻获取：NewsNow API → 专业财经API → 新浪爬虫"""
+        # 1. 尝试 NewsNow 多源聚合（来自 alphaear-news skill）
+        try:
+            from requests.adapters import HTTPAdapter
+            from urllib3.util.retry import Retry
+            session = requests.Session()
+            retries = Retry(total=1, backoff_factor=0.5)
+            session.mount("https://", HTTPAdapter(max_retries=retries))
+            resp = session.get(
+                f"https://newsnow.busiyi.world/{keyword}",
+                headers=HEADERS, timeout=5,
+            )
+            if resp.status_code == 200:
+                items = resp.json().get("data", [])[:3]
+                if items:
+                    return "".join(f"{n.get('title', '')}。" for n in items)
+        except Exception:
+            pass
+
+        # 2. 专业财经API
         try:
             params = {"key": FIN_API_KEY, "q": keyword, "limit": 3}
             resp = requests.get(FIN_API_URL, params=params, timeout=8)
@@ -308,7 +326,8 @@ class PublicOpinionAgent:
                 return news
         except Exception:
             pass
-        # 降级：网页爬虫
+
+        # 3. 降级：新浪爬虫
         news_content = ""
         url = f"https://finance.sina.com.cn/search/news?q={keyword}"
         try:
@@ -341,11 +360,11 @@ class PublicOpinionAgent:
 
     @staticmethod
     def sentiment_analysis(text: str) -> float:
-        """情感打分 0~100"""
+        """情感打分 0~100（FinBERT 替代 SnowNLP）"""
         if not text or "暂无公开财经资讯" in text:
             return 50.0
-        s = SnowNLP(text)
-        return round(s.sentiments * 100, 2)
+        score, _ = FinBertSentiment.analyze(text)
+        return score
 
     @staticmethod
     def get_opinion_trend(cache_key: str, now_score: float) -> str:

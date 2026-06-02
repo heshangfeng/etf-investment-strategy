@@ -501,3 +501,99 @@ class PatternRecognitionAgent(BaseLLMAgent):
         llm_out = self._call_llm(self.SYSTEM_PROMPT, self._build_user_prompt("技术形态", etf_code, enriched_text))
         rating = "强烈看多" if score >= 80 else "看多" if score >= 65 else "中性" if score >= 45 else "看空" if score >= 30 else "强烈看空"
         return self._parse_to_report(etf_code, "技术形态", llm_out, score, rating)
+
+
+# ====================== 【LLM多智能体 - 趋势预测】 ======================
+class TrendPredictorAgent(BaseLLMAgent):
+    """基于 LLM 的趋势预测智能体（替代 Kronos，轻量级）。"""
+    ROLE_NAME = "趋势预测智能体"
+    AGENT_TEMPERATURE = 0.3
+    AGENT_USE_QUICK_MODEL = True
+    SYSTEM_PROMPT = """你是拥有15年经验的量化趋势预测分析师。你的专长是从价格序列中识别未来趋势信号。
+
+分析框架：
+1. 短期趋势（5日）：基于最近价格动量、成交量变化、均线位置
+2. 中期趋势（20日）：基于趋势线斜率、均线排列、波动率变化
+3. 支撑/阻力突破：识别关键价位是否被突破或测试
+4. 动量衰减：识别上涨/下跌动能是否减弱（背离信号）
+5. 概率评估：给出未来5日和20日的方向概率
+
+请仔细分析价格数据，给出基于统计规律的预测，而非主观臆断。"""
+
+    def run(self, etf_code: str, etf_name: str) -> AgentReport:
+        df = DataCollectAgent.get_etf_price(etf_code)
+        n = len(df)
+        if n < 30:
+            return AgentReport(self.ROLE_NAME, etf_code, etf_name, "中性", 50,
+                               "数据不足30个交易日", ["数据不足"], [], 0.3, {}, "rule_fallback")
+
+        close = df["close"].values
+        volume = df["volume"].values
+
+        # ── 规则评分 ──
+        score = 50.0
+        signals = []
+
+        # 1. 短期动量（近5日）
+        ret_5d = close[-1] / close[-5] - 1 if n >= 5 else 0
+        if ret_5d > 0.02:
+            score += 8
+            signals.append(f"近5日上涨{ret_5d*100:.1f}%")
+        elif ret_5d < -0.02:
+            score -= 8
+            signals.append(f"近5日下跌{ret_5d*100:.1f}%")
+
+        # 2. 中期动量（近20日）
+        ret_20d = close[-1] / close[-20] - 1 if n >= 20 else 0
+        if ret_20d > 0.05:
+            score += 5
+        elif ret_20d < -0.05:
+            score -= 5
+
+        # 3. 均线位置
+        ma5 = np.mean(close[-5:]) if n >= 5 else close[-1]
+        ma20 = np.mean(close[-20:]) if n >= 20 else close[-1]
+        if close[-1] > ma5 and ma5 > ma20:
+            score += 10
+            signals.append("多头排列")
+        elif close[-1] < ma5 and ma5 < ma20:
+            score -= 10
+            signals.append("空头排列")
+        else:
+            signals.append("均线交织")
+
+        # 4. 成交量验证（近5日量 vs 近20日量）
+        vol_5 = np.mean(volume[-5:]) if n >= 5 else 0
+        vol_20 = np.mean(volume[-20:]) if n >= 20 else vol_5
+        vol_ratio = vol_5 / max(vol_20, 1)
+        if vol_ratio > 1.5 and ret_5d > 0:
+            score += 5
+            signals.append("放量上涨")
+        elif vol_ratio > 1.5 and ret_5d < 0:
+            score -= 5
+            signals.append("放量下跌")
+
+        # 5. 波动率
+        vola = np.std(close[-20:] / close[-21:-1]) * 100 if n >= 21 else 0
+        if vola > 3:
+            score -= 5
+            signals.append(f"高波动({vola:.1f}%)")
+        elif vola < 1:
+            score += 3
+            signals.append(f"低波动({vola:.1f}%)")
+
+        score = float(np.clip(score, 0, 100))
+
+        # 构建未来5日、20日的简单预测
+        pred_5d = f"预测未来5日: {'上涨' if ret_5d > 0 else '下跌'}趋势延续概率"
+        pred_20d = f"预测未来20日: {'偏多' if ret_20d > 0 else '偏空'}格局"
+        data_text = (f"近5日涨跌: {ret_5d*100:.2f}%\n"
+                     f"近20日涨跌: {ret_20d*100:.2f}%\n"
+                     f"均线状态: {'; '.join(signals)}\n"
+                     f"波动率: {vola:.2f}%\n"
+                     f"{pred_5d}\n{pred_20d}")
+
+        enriched_text = self._enrich_with_memory(etf_code, data_text)
+        llm_out = self._call_llm(self.SYSTEM_PROMPT, self._build_user_prompt(etf_name, etf_code, enriched_text))
+        rating = "强烈看多" if score >= 80 else "看多" if score >= 65 else "中性" if score >= 45 else "看空" if score >= 30 else "强烈看空"
+        return self._parse_to_report(etf_code, etf_name, llm_out, score, rating)

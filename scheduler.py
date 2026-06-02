@@ -23,7 +23,8 @@ from agents import (
     ValueAnalystAgent, TechAnalystAgent, SentimentAnalystAgent,
     FundFlowAnalystAgent, RiskManagerAgent, IndustryAnalystAgent,
     RetailSentimentAgent, CrossMarketAgent, BaseLLMAgent,
-    HotMoneyAnalystAgent, UnlockPressureAgent, PatternRecognitionAgent
+    HotMoneyAnalystAgent, UnlockPressureAgent, PatternRecognitionAgent,
+    TrendPredictorAgent,
 )
 from debate import DebateEngine
 from decision import ChiefDecisionAgent
@@ -91,6 +92,7 @@ class MainSchedulerAgent:
         self.hot_money_agent = HotMoneyAnalystAgent()
         self.unlock_agent = UnlockPressureAgent()
         self.pattern_agent = PatternRecognitionAgent()
+        self.trend_predictor_agent = TrendPredictorAgent()
         self.chief_agent = ChiefDecisionAgent()
         self.market_state = "震荡偏强"
 
@@ -284,7 +286,7 @@ class MainSchedulerAgent:
 
         # Phase 0.6: ETF分层
         tiers = self._rank_etf_tiers()
-        print(f"\n【全量分析】{len(tiers[1])} 只 ETF，全部 11-Agent + 辩论")
+        print(f"\n【全量分析】{len(tiers[1])} 只 ETF，全部 12-Agent + 辩论")
         print()
 
         # Phase 1: 按Tier顺序处理
@@ -376,10 +378,11 @@ class MainSchedulerAgent:
             fns = [self.value_agent.run, self.tech_agent.run, self.sentiment_agent.run,
                    self.fundflow_agent.run, self.risk_agent.run, self.industry_agent.run,
                    self.retail_sentiment_agent.run, self.cross_market_agent.run,
-                   self.hot_money_agent.run, self.unlock_agent.run, self.pattern_agent.run]
+                   self.hot_money_agent.run, self.unlock_agent.run, self.pattern_agent.run,
+                   self.trend_predictor_agent.run]
             fargs = [(code, name, idx), (code, name), (code, name), (code, name, idx),
                      (code, name), (code, name), (code,), (name, code),
-                     (code,), (code, name), (code,)]
+                     (code,), (code, name), (code,), (code, name)]
         else:
             fns = [self.value_agent.run, self.tech_agent.run, self.sentiment_agent.run, self.fundflow_agent.run]
             fargs = [(code, name, idx), (code, name), (code, name), (code, name, idx)]

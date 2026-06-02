@@ -22,7 +22,6 @@ Thumbs.db
 # Project
 .omo/
 logs/
-output/
 
 # Temp files
 *.tmp

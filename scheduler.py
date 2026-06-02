@@ -22,12 +22,14 @@ from agents import (
     MacroAnalystAgent, MonetaryPolicyAgent, PolicyEventAgent,
     ValueAnalystAgent, TechAnalystAgent, SentimentAnalystAgent,
     FundFlowAnalystAgent, RiskManagerAgent, IndustryAnalystAgent,
-    RetailSentimentAgent, CrossMarketAgent, BaseLLMAgent
+    RetailSentimentAgent, CrossMarketAgent, BaseLLMAgent,
+    HotMoneyAnalystAgent, UnlockPressureAgent, PatternRecognitionAgent
 )
 from debate import DebateEngine
 from decision import ChiefDecisionAgent
 from report import ResearchReportGenerator
 from review import ReviewManager
+from portfolio import PortfolioOptimizer, portfolio_optimize
 
 
 # ====================== 【顶层主控调度 - 三段式多智能体】 ======================
@@ -86,6 +88,9 @@ class MainSchedulerAgent:
         self.industry_agent = IndustryAnalystAgent()
         self.retail_sentiment_agent = RetailSentimentAgent()
         self.cross_market_agent = CrossMarketAgent()
+        self.hot_money_agent = HotMoneyAnalystAgent()
+        self.unlock_agent = UnlockPressureAgent()
+        self.pattern_agent = PatternRecognitionAgent()
         self.chief_agent = ChiefDecisionAgent()
         self.market_state = "震荡偏强"
 
@@ -280,7 +285,7 @@ class MainSchedulerAgent:
         # Phase 0.6: ETF分层
         tiers = self._rank_etf_tiers()
         print(f"\n【分析深度分层】")
-        print(f"  Tier 1 (完整 8-Agent+辩论): {len(tiers[1])} 只 — {' '.join(t['name'] for t in tiers[1])}")
+        print(f"  Tier 1 (完整 11-Agent+辩论): {len(tiers[1])} 只 — {' '.join(t['name'] for t in tiers[1])}")
         print(f"  Tier 2 (简化 4-Agent 无辩论): {len(tiers[2])} 只")
         print(f"  Tier 3 (纯规则评分): {len(tiers[3])} 只")
         print()
@@ -323,6 +328,9 @@ class MainSchedulerAgent:
         # Phase 2.7: 增强回测与组合汇总
         _enhance_with_backtest(final_reports)
 
+        # Phase 2.8: 组合优化（均值-方差/风险平价）
+        _portfolio_optimization_phase(final_reports)
+
         # Phase 3: 报告输出
         ResearchReportGenerator.generate_full_report(final_reports)
 
@@ -346,9 +354,11 @@ class MainSchedulerAgent:
         if tier == 1:
             fns = [self.value_agent.run, self.tech_agent.run, self.sentiment_agent.run,
                    self.fundflow_agent.run, self.risk_agent.run, self.industry_agent.run,
-                   self.retail_sentiment_agent.run, self.cross_market_agent.run]
+                   self.retail_sentiment_agent.run, self.cross_market_agent.run,
+                   self.hot_money_agent.run, self.unlock_agent.run, self.pattern_agent.run]
             fargs = [(code, name, idx), (code, name), (code, name), (code, name, idx),
-                     (code, name), (code, name), (code,), (name, code)]
+                     (code, name), (code, name), (code,), (name, code),
+                     (code,), (code, name), (code,)]
         else:
             fns = [self.value_agent.run, self.tech_agent.run, self.sentiment_agent.run, self.fundflow_agent.run]
             fargs = [(code, name, idx), (code, name), (code, name), (code, name, idx)]
@@ -556,6 +566,54 @@ def _enhance_with_backtest(final_reports: list) -> None:
         print(f"{'='*80}\n")
     else:
         print("  ⚠️  所有ETF回测均失败，跳过组合汇总\n")
+
+
+def _portfolio_optimization_phase(final_reports: list) -> None:
+    """Run portfolio optimization and print comparison with current Kelly weights."""
+    active = [fr for fr in final_reports if fr.suggested_position_pct > 0]
+    if len(active) < 5:
+        return
+
+    opt_result = portfolio_optimize(active)
+    if opt_result is None:
+        return
+
+    codes = opt_result["codes"]
+    opt_weights = opt_result["weights"]
+
+    # Build name lookup
+    name_map = {fr.etf_info["code"]: fr.etf_info["name"] for fr in final_reports}
+
+    # Current total position
+    current_total = sum(fr.suggested_position_pct for fr in active)
+    opt_total = min(opt_weights.sum(), current_total * 1.2)  # cap at +20% of current
+    scale = opt_total / max(opt_weights.sum(), 1e-10)
+    scaled_weights = opt_weights * scale
+
+    print(f"\n{'='*80}")
+    print("  【组合优化】风险平价 / 均值-方差")
+    print(f"{'='*80}")
+    print(f"  方法: {opt_result['method']}")
+    print(f"  参与优化ETF数: {len(codes)}")
+    print(f"  当前总仓位: {current_total*100:.1f}% → 优化目标: {opt_total*100:.1f}%")
+    print(f"  预期年化收益: {opt_result['expected_return']*100:.1f}%")
+    print(f"  预期年化波动: {opt_result['expected_vol']*100:.1f}%")
+    print(f"  夏普比率: {opt_result['sharpe_ratio']:.2f}")
+    print(f"  分散度: {opt_result['diversification_ratio']:.2f}")
+
+    print(f"\n  调仓建议:")
+    for code, w in zip(codes, scaled_weights):
+        name = name_map.get(code, code)
+        current_w = 0.0
+        for fr in active:
+            if fr.etf_info["code"] == code:
+                current_w = fr.suggested_position_pct
+                break
+        diff = w - current_w
+        sign = "+" if diff >= 0 else ""
+        print(f"    {name:12s}: {current_w*100:.1f}% → {w*100:.1f}% ({sign}{diff*100:.1f}%)")
+
+    print(f"{'='*80}\n")
 
 
 # ====================== 程序入口 ======================

@@ -60,10 +60,12 @@ jobs:
           branch: master
 
       - name: Send PushDeer notification
-        if: ${{ secrets.PUSHDEER_KEY != '' }}
+        env:
+          PUSHDEER_KEY: ${{ secrets.PUSHDEER_KEY }}
+        if: env.PUSHDEER_KEY != ''
         run: |
-          REPORT=$(ls -t ETF_多智能体投研报告_*.txt 2>/dev/null | head -1)
+          REPORT=$(ls -t ETF_*_*.txt 2>/dev/null | head -1)
           if [ -n "$REPORT" ]; then
             BODY=$(head -10 "$REPORT" | tr '\n' '|' | sed 's/|/\\n/g')
-            curl -s "https://api2.pushdeer.com/message/push?pushkey=${{ secrets.PUSHDEER_KEY }}&text=$(python3 -c "import urllib.parse; print(urllib.parse.quote('''ETF分析完成: $BODY'''))")"
+            curl -s "https://api2.pushdeer.com/message/push?pushkey=${PUSHDEER_KEY}&text=$(python3 -c "import urllib.parse; print(urllib.parse.quote('''ETF分析完成: $BODY'''))")"
           fi

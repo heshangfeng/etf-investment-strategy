@@ -9,7 +9,10 @@ import os
 from pathlib import Path
 
 import pandas as pd
+import numpy as np
 import streamlit as st
+import plotly.express as px
+import plotly.graph_objects as go
 
 # ── 页面配置 ──
 st.set_page_config(page_title="ETF 智能投研看板", layout="wide")
@@ -157,6 +160,42 @@ def main():
     )
     st.dataframe(styled, width="stretch", height=min(60 + len(df) * 35, 600))
 
+    # ── 评级分布图 ──
+    rating_counts = df["评级"].value_counts()
+    fig_ratings = px.bar(
+        x=rating_counts.index, y=rating_counts.values,
+        title="评级分布",
+        labels={"x": "评级", "y": "只数"},
+        color=rating_counts.index,
+        color_discrete_map={
+            "强烈看多": "#e74c3c", "看多": "#e67e22", "中性": "#f1c40f",
+            "看空": "#27ae60", "强烈看空": "#2ecc71",
+        },
+        text=rating_counts.values,
+    )
+    fig_ratings.update_layout(showlegend=False, height=250)
+    st.plotly_chart(fig_ratings, use_container_width=True)
+
+    # ── 板块分布饼图 ──
+    type_counts = df["类型"].value_counts()
+    fig_types = px.pie(
+        values=type_counts.values, names=type_counts.index,
+        title="板块分布",
+        hole=0.4,
+    )
+    fig_types.update_layout(height=280)
+    st.plotly_chart(fig_types, use_container_width=True)
+
+    # ── 评分分布直方图 ──
+    fig_scores = px.histogram(
+        df, x="得分", nbins=20,
+        title="评分分布",
+        labels={"得分": "评分区间", "count": "ETF数量"},
+        color_discrete_sequence=["#1f77b4"],
+    )
+    fig_scores.update_layout(height=250)
+    st.plotly_chart(fig_scores, use_container_width=True)
+
     # ── 单个 ETF 详情 ──
     st.subheader("ETF 详情")
     selected = st.selectbox("选择标的查看Agent分析", [""] + [f"{e['code']} {e['name']}" for e in etfs])
@@ -193,6 +232,22 @@ def main():
                     lambda v: f"color: {rating_color(v)}; font-weight: bold;" if v in ("强烈看多", "看多", "中性", "看空", "强烈看空") else "",
                     subset=["评级"]
                 ), width="stretch", hide_index=True)
+
+                # Agent 评分雷达图
+                fig_radar = go.Figure(data=go.Scatterpolar(
+                    r=df_a["得分"].values,
+                    theta=df_a["智能体"].values,
+                    fill="toself",
+                    line_color="#1f77b4",
+                    marker_color="#1f77b4",
+                ))
+                fig_radar.update_layout(
+                    polar=dict(radialaxis=dict(range=[0, 100])),
+                    height=350,
+                    title="Agent 评分雷达",
+                    margin=dict(l=80, r=80, t=40, b=40),
+                )
+                st.plotly_chart(fig_radar, use_container_width=True)
 
     # ── 底部统计 ──
     st.divider()
@@ -261,10 +316,24 @@ def main():
                     snaps = json.load(f)
                 if len(snaps) > 1:
                     df_perf = pd.DataFrame([
-                        {"日期": s["date"], "总资产": s["total"]}
+                        {"date": s["date"], "total": s["total"]}
                         for s in snaps
                     ])
-                    st.line_chart(df_perf.set_index("日期"))
+                    fig_equity = go.Figure(data=go.Scatter(
+                        x=df_perf["date"], y=df_perf["total"],
+                        mode="lines+markers",
+                        line=dict(color="#1f77b4", width=2),
+                        fill="tozeroy",
+                        fillcolor="rgba(31, 119, 180, 0.1)",
+                    ))
+                    fig_equity.update_layout(
+                        title="资产曲线",
+                        xaxis_title="日期",
+                        yaxis_title="总资产",
+                        height=350,
+                        margin=dict(l=40, r=40, t=40, b=40),
+                    )
+                    st.plotly_chart(fig_equity, use_container_width=True)
     except Exception:
         pass
 

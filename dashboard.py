@@ -38,7 +38,7 @@ def find_latest_report_date() -> str | None:
     if not files:
         return None
     name = os.path.basename(files[-1])
-    return name.replace(REPORT_PREFIX, "").replace(".xlsx", "")
+    return name.replace(REPORT_PREFIX, "").replace(".xlsx", "")[:8]  # 只取日期
 
 
 def rating_color(rating: str) -> str:

@@ -196,12 +196,12 @@ class ResearchReportGenerator:
         from config import OUTPUT_DIR
         os.makedirs(OUTPUT_DIR, exist_ok=True)
 
-        save_path = f"{OUTPUT_DIR}/ETF_多智能体投研报告_{datetime.now().strftime('%Y%m%d_%H%M')}.xlsx"
+        save_path = f"{OUTPUT_DIR}/ETF_多智能体投研报告_{datetime.now().strftime('%Y%m%d')}.xlsx"
         df_summary.to_excel(save_path, index=False)
         print(f"\n✅ 投研摘要已保存：{save_path}")
 
         # 11. 保存完整详细报告到文本文件
-        txt_path = f"{OUTPUT_DIR}/ETF_多智能体投研报告_{datetime.now().strftime('%Y%m%d_%H%M')}.txt"
+        txt_path = f"{OUTPUT_DIR}/ETF_多智能体投研报告_{datetime.now().strftime('%Y%m%d')}.txt"
         full_text = ResearchReportGenerator._build_full_report_text(all_reports)
         with open(txt_path, "w", encoding="utf-8") as f:
             f.write(full_text)
@@ -211,21 +211,20 @@ class ResearchReportGenerator:
         ResearchReportGenerator._cleanup_old_reports()
 
     @staticmethod
-    def _cleanup_old_reports(days: int = 30):
-        """删除指定天数前的旧报告文件。"""
+    def _cleanup_old_reports():
+        """保留当天最新报告，删除同一日期的旧版本（带时间戳的旧格式）。"""
         from config import OUTPUT_DIR
-        cutoff = datetime.now() - timedelta(days=days)
+        today = datetime.now().strftime("%Y%m%d")
         removed = 0
-        for fname in os.listdir(OUTPUT_DIR):
+        for fname in list(os.listdir(OUTPUT_DIR)):
             if "ETF_多智能体投研报告_" not in fname:
                 continue
-            fpath = os.path.join(OUTPUT_DIR, fname)
-            mtime = datetime.fromtimestamp(os.path.getmtime(fpath))
-            if mtime < cutoff:
-                os.remove(fpath)
+            # 旧格式文件名包含时间戳（如 _20260602_1750.txt），删除
+            if today in fname and fname.count("_") >= 3:
+                os.remove(os.path.join(OUTPUT_DIR, fname))
                 removed += 1
         if removed:
-            print(f"  🧹 已清理 {removed} 份 {days} 天前的旧报告")
+            print(f"  🧹 已清理 {removed} 份旧格式报告（已覆盖）")
 
     @staticmethod
     def _build_full_report_text(all_reports: list[FinalResearchReport]) -> str:

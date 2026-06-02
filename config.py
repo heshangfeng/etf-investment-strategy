@@ -34,12 +34,23 @@ REQUEST_DELAY = 0.1
 HEADERS = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
 
 # 4. 大模型配置（从 .env 读取）
+# ── 深度模型（复杂推理：首席决策、辩论、宏观、政策） ──
 LLM_API_KEY = os.getenv("DEEPSEEK_API_KEY", "")
 LLM_BASE_URL = os.getenv("DEEPSEEK_BASE_URL", "https://api.deepseek.com/v1")
-LLM_MODEL = "deepseek-chat"           # DeepSeek高性价比模型
-LLM_MAX_TOKENS = 2048                 # 增加到2048以支持详细分析
+LLM_MODEL = os.getenv("DEEPSEEK_MODEL", "deepseek-chat")
+LLM_MAX_TOKENS = 2048                 # 深度模型 token 上限
 LLM_TEMPERATURE = 0.3
 LLM_ENABLED = True                    # 总开关：True=LLM多智能体模式
+
+# ── 快速模型（轻量分析：价值/技术/情绪/资金/风控/行业/零售/跨市场） ──
+QUICK_LLM_API_KEY = os.getenv("QUICK_LLM_API_KEY", LLM_API_KEY)
+QUICK_LLM_BASE_URL = os.getenv("QUICK_LLM_BASE_URL", LLM_BASE_URL)
+QUICK_LLM_MODEL = os.getenv("QUICK_LLM_MODEL", "deepseek-chat")
+QUICK_LLM_MAX_TOKENS = int(os.getenv("QUICK_LLM_MAX_TOKENS", "1024"))
+QUICK_LLM_TEMPERATURE = 0.4
+
+# LLM 调用统计
+LLM_CALL_COUNT = {"deep": 0, "quick": 0, "total": 0}
 
 # 6. 多智能体辩论配置
 DEBATE_ENABLED = True

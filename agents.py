@@ -14,7 +14,10 @@ import akshare as ak
 from config import (
     LLM_API_KEY, LLM_BASE_URL, LLM_MODEL, LLM_MAX_TOKENS,
     LLM_TEMPERATURE, LLM_ENABLED, RATING_ORDER, REQUEST_DELAY,
-    CACHE_OPINION
+    CACHE_OPINION,
+    QUICK_LLM_API_KEY, QUICK_LLM_BASE_URL, QUICK_LLM_MODEL,
+    QUICK_LLM_MAX_TOKENS, QUICK_LLM_TEMPERATURE,
+    LLM_CALL_COUNT
 )
 from models import AgentReport
 from keywords import INDUSTRY_POS
@@ -30,12 +33,19 @@ class BaseLLMAgent:
     # 各Agent可覆盖以下配置实现temperature/model多样性
     AGENT_TEMPERATURE = None  # None=使用LLM_TEMPERATURE全局值
     AGENT_MODEL = None        # None=使用LLM_MODEL全局值
+    AGENT_USE_QUICK_MODEL = False  # True=使用快速模型（轻量分析）
 
     def __init__(self):
-        self.client = OpenAI(
-            api_key=LLM_API_KEY,
-            base_url=LLM_BASE_URL
-        ) if LLM_API_KEY != "your-api-key" else None
+        api_key = LLM_API_KEY if not self.AGENT_USE_QUICK_MODEL else QUICK_LLM_API_KEY
+        base_url = LLM_BASE_URL if not self.AGENT_USE_QUICK_MODEL else QUICK_LLM_BASE_URL
+        self.client = OpenAI(api_key=api_key, base_url=base_url) if api_key else None
+
+        if self.AGENT_USE_QUICK_MODEL:
+            self.quick_client = self.client
+        else:
+            self.quick_client = OpenAI(
+                api_key=QUICK_LLM_API_KEY, base_url=QUICK_LLM_BASE_URL
+            ) if QUICK_LLM_API_KEY else None
 
     def _build_user_prompt(self, etf_name: str, etf_code: str, data_text: str) -> str:
         return f"""标的：{etf_name}（{etf_code}）
@@ -55,27 +65,46 @@ class BaseLLMAgent:
 }}"""
 
     def _call_llm(self, system_prompt: str, user_prompt: str) -> dict | None:
-        if self.client is None or not LLM_ENABLED:
+        if not LLM_ENABLED:
             return None
+
+        use_quick = self.AGENT_USE_QUICK_MODEL
+        client = self.quick_client if use_quick else self.client
+        if client is None:
+            print(f"  ⚠️ {self.ROLE_NAME} LLM客户端未配置（缺少API Key）")
+            return None
+
         try:
-            temp = self.AGENT_TEMPERATURE if self.AGENT_TEMPERATURE is not None else LLM_TEMPERATURE
-            model = self.AGENT_MODEL if self.AGENT_MODEL is not None else LLM_MODEL
-            resp = self.client.chat.completions.create(
+            route = "quick" if use_quick else "deep"
+            temp = self.AGENT_TEMPERATURE if self.AGENT_TEMPERATURE is not None else (
+                QUICK_LLM_TEMPERATURE if use_quick else LLM_TEMPERATURE
+            )
+            max_tok = QUICK_LLM_MAX_TOKENS if use_quick else LLM_MAX_TOKENS
+            model = self.AGENT_MODEL if self.AGENT_MODEL is not None else (
+                QUICK_LLM_MODEL if use_quick else LLM_MODEL
+            )
+
+            resp = client.chat.completions.create(
                 model=model,
                 messages=[
                     {"role": "system", "content": system_prompt},
                     {"role": "user", "content": user_prompt}
                 ],
                 temperature=temp,
-                max_tokens=LLM_MAX_TOKENS
+                max_tokens=max_tok
             )
             text = resp.choices[0].message.content.strip()
             # 清理可能的markdown代码块
             text = re.sub(r'^```(?:json)?\s*', '', text)
             text = re.sub(r'\s*```$', '', text)
+
+            # 统计调用次数
+            LLM_CALL_COUNT["total"] += 1
+            LLM_CALL_COUNT[route] += 1
+
             return json.loads(text)
         except Exception as e:
-            print(f"  ⚠️ {self.ROLE_NAME} LLM调用失败: {e}")
+            print(f"  ⚠️ {self.ROLE_NAME} LLM调用失败 ({route if 'route' in dir() else 'unknown'}): {e}")
             return None
 
     def _parse_to_report(self, etf_code: str, etf_name: str,
@@ -165,6 +194,7 @@ class MacroAnalystAgent(BaseLLMAgent):
 class ValueAnalystAgent(BaseLLMAgent):
     ROLE_NAME = "价值估值智能体"
     AGENT_TEMPERATURE = 0.3
+    AGENT_USE_QUICK_MODEL = True
     SYSTEM_PROMPT = """你是信奉格雷厄姆-巴菲特价值投资理念的分析师。
 分析框架：
 1. PE/PB百分位是核心——百分位<30%为低估，>70%为高估
@@ -186,6 +216,7 @@ class ValueAnalystAgent(BaseLLMAgent):
 class TechAnalystAgent(BaseLLMAgent):
     ROLE_NAME = "技术趋势智能体"
     AGENT_TEMPERATURE = 0.3
+    AGENT_USE_QUICK_MODEL = True
     SYSTEM_PROMPT = """你是拥有15年经验的技术分析师，擅长趋势识别。
 分析框架：
 1. 价格与均线关系：价格在MA5和MA20之上=多头排列，之下=空头排列
@@ -219,6 +250,7 @@ class TechAnalystAgent(BaseLLMAgent):
 class SentimentAnalystAgent(BaseLLMAgent):
     ROLE_NAME = "舆情情绪智能体"
     AGENT_TEMPERATURE = 0.5
+    AGENT_USE_QUICK_MODEL = True
     SYSTEM_PROMPT = """你是行为金融学专家，擅长识别市场情绪。
 分析框架：
 1. 情绪分数>70为乐观（可能过度乐观），<30为恐慌（可能过度悲观）
@@ -255,6 +287,7 @@ class SentimentAnalystAgent(BaseLLMAgent):
 class FundFlowAnalystAgent(BaseLLMAgent):
     ROLE_NAME = "资金流向智能体"
     AGENT_TEMPERATURE = 0.5
+    AGENT_USE_QUICK_MODEL = True
     SYSTEM_PROMPT = """你是专注于资金流分析的市场老手。
 分析框架：
 1. 北向资金持续流入=外资看好，是重要正向信号
@@ -295,6 +328,7 @@ class FundFlowAnalystAgent(BaseLLMAgent):
 class RiskManagerAgent(BaseLLMAgent):
     ROLE_NAME = "风险管理智能体"
     AGENT_TEMPERATURE = 0.15
+    AGENT_USE_QUICK_MODEL = True
     SYSTEM_PROMPT = """你是偏保守的首席风控官，对下行风险极度敏感。
 分析框架：
 1. 折溢价>1.5%=溢价过高，存在回落风险（扣分）
@@ -350,6 +384,7 @@ class RiskManagerAgent(BaseLLMAgent):
 class IndustryAnalystAgent(BaseLLMAgent):
     ROLE_NAME = "行业纵析智能体"
     AGENT_TEMPERATURE = 0.4
+    AGENT_USE_QUICK_MODEL = True
     SYSTEM_PROMPT = """你是深耕行业的资深研究员，精通行业轮动分析。
 分析框架：
 1. 识别ETF所属行业赛道（从名称判断）
@@ -587,6 +622,7 @@ A股特征：两会前后春季躁动，政治局会议定调影响季度级别�
 class RetailSentimentAgent(BaseLLMAgent):
     ROLE_NAME = "零售情绪智能体"
     AGENT_TEMPERATURE = 0.5
+    AGENT_USE_QUICK_MODEL = True
     SYSTEM_PROMPT = """你是行为金融学量化分析师，专注A股散户情绪测量。
 分析框架：
 1. 量比（成交量/20日均量）——放量过大=情绪过热，缩量=冷清
@@ -662,6 +698,7 @@ class RetailSentimentAgent(BaseLLMAgent):
 class CrossMarketAgent(BaseLLMAgent):
     ROLE_NAME = "跨市场联动智能体"
     AGENT_TEMPERATURE = 0.6
+    AGENT_USE_QUICK_MODEL = True
     SYSTEM_PROMPT = """你是全球宏观策略分析师，专注跨市场信号传导。
 分析框架：
 1. 人民币汇率(USDCNY)——升值利好A股，贬值承压

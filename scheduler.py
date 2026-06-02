@@ -9,6 +9,7 @@ from datetime import datetime
 
 from config import (
     LLM_ENABLED, DEBATE_ENABLED, LLM_MODEL, LLM_BASE_URL,
+    QUICK_LLM_MODEL, LLM_CALL_COUNT,
     MAIN_WORKERS, AGENT_WORKERS, ETF_POOL
 )
 from data import (
@@ -444,7 +445,8 @@ def main():
     print(f"LLM多智能体模式: {'开启' if LLM_ENABLED else '关闭（规则评分模式）'}")
     print(f"辩论功能: {'开启' if DEBATE_ENABLED else '关闭'}")
     if LLM_ENABLED:
-        print(f"LLM模型: {LLM_MODEL} | API: {LLM_BASE_URL}")
+        print(f"深度模型: {LLM_MODEL}")
+        print(f"快速模型: {QUICK_LLM_MODEL}")
         print(f"多智能体辩论: {'开启(LLM驱动)' if DEBATE_ENABLED else '关闭'}")
         print(f"评分模式: z-score加权 + 凯利公式仓位 + 动态准确率权重")
     else:
@@ -453,6 +455,10 @@ def main():
 
     scheduler = MainSchedulerAgent()
     scheduler.run()
+
+    if LLM_ENABLED:
+        c = LLM_CALL_COUNT
+        print(f"\nLLM调用统计: 深度={c['deep']}次 | 快速={c['quick']}次 | 总计={c['total']}次")
 
 
 if __name__ == "__main__":

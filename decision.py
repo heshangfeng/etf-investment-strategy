@@ -335,49 +335,8 @@ class ChiefDecisionAgent(BaseLLMAgent):
         except:
             pass
 
-        # ── 5. 操作建议映射（决策树——无重叠路径）──
-        etf_type = etf_info.get("type", "")
-        if final_score >= 80:
-            if consensus in ("高度一致", "基本一致"):
-                operation, holding = "强烈买入", "短期(1-4周)"
-            else:
-                operation, holding = "买入", "中期(1-3月)"
-        elif final_score >= 65:
-            operation, holding = "买入", "中期(1-3月)"
-        elif final_score >= 50:
-            if etf_type == "宽基":
-                operation, holding = "长期持有", "长期(6月+)"
-            else:
-                operation, holding = "持有", "中期(1-3月)"
-        elif final_score >= 35:
-            operation, holding = "减持", "短期(1-4周)"
-        elif final_score >= 20:
-            operation, holding = "卖出", "短期(1-4周)"
-        else:
-            operation, holding = "强烈卖出", "短期(1-4周)"
-
-        # 严重分歧修正
-        if consensus == "严重分歧":
-            if operation in ("强烈买入", "买入"):
-                operation, holding = "持有", "中期(1-3月)"
-            elif operation in ("长期持有",):
-                operation, holding = "减持", "短期(1-4周)"
-
-        # ── 6. 凯利公式仓位（受市场状态调节） ──
-        market_pos_mult = {"强趋势牛": 1.2, "震荡偏强": 1.0, "震荡偏弱": 0.8, "强趋势熊": 0.5}
-        pos_mult = market_pos_mult.get(market_state, 1.0)
-        adjusted_max_pos = global_max_pos * pos_mult
-        kelly_pos = self._kelly_position(win_rate, avg_win_ratio, 1.0, adjusted_max_pos)
-        # 只有明确看多的操作才给仓位：减持/持有/卖出 → 不新增
-        pos_map = {"强烈买入": 0.35, "买入": 0.25, "长期持有": 0.20,
-                    "持有": 0.0, "减持": 0.0, "卖出": 0.0, "强烈卖出": 0.0}
-        baseline_pos = adjusted_max_pos * pos_map.get(operation, 0.1)
-        pos_pct = min(kelly_pos, baseline_pos)
-        pos_text_map = {"强烈买入": "重仓", "买入": "中仓", "长期持有": "长持",
-                        "持有": "轻仓", "减持": "减仓", "卖出": "卖出", "强烈卖出": "清仓"}
-
-        # ── 7. LLM决策（并行，结果优于规则时覆盖）──
-        ratings = [r.rating for r in reports]
+        # ── 5. LLM决策（优先于规则，结果决定最终评分）──
+        ratings_list = [r.rating for r in reports]
         reports_text = "\n\n".join([
             f"【{r.agent_name}】评级:{r.rating} 评分:{r.score} 置信度:{r.confidence}\n分析:{r.analysis[:300]}\n关键因子:{'; '.join(r.key_factors)}\n风险:{'; '.join(r.risk_warnings)}"
             for r in reports
@@ -410,6 +369,46 @@ class ChiefDecisionAgent(BaseLLMAgent):
         else:
             final_rating = self._score_to_rating(final_score)
             core_logic = f"【规则综合】z-score加权:{final_score:.1f}分 | Agent数:{len(reports)} | 共识:{consensus}"
+
+        # ── 6. 操作建议映射（使用最终 final_score，确保与评级一致）──
+        etf_type = etf_info.get("type", "")
+        if final_score >= 80:
+            if consensus in ("高度一致", "基本一致"):
+                operation, holding = "强烈买入", "短期(1-4周)"
+            else:
+                operation, holding = "买入", "中期(1-3月)"
+        elif final_score >= 65:
+            operation, holding = "买入", "中期(1-3月)"
+        elif final_score >= 50:
+            if etf_type == "宽基":
+                operation, holding = "长期持有", "长期(6月+)"
+            else:
+                operation, holding = "持有", "中期(1-3月)"
+        elif final_score >= 35:
+            operation, holding = "减持", "短期(1-4周)"
+        elif final_score >= 20:
+            operation, holding = "卖出", "短期(1-4周)"
+        else:
+            operation, holding = "强烈卖出", "短期(1-4周)"
+
+        # 严重分歧修正
+        if consensus == "严重分歧":
+            if operation in ("强烈买入", "买入"):
+                operation, holding = "持有", "中期(1-3月)"
+            elif operation in ("长期持有",):
+                operation, holding = "减持", "短期(1-4周)"
+
+        # ── 7. 凯利公式仓位（根据操作建议计算）──
+        market_pos_mult = {"强趋势牛": 1.2, "震荡偏强": 1.0, "震荡偏弱": 0.8, "强趋势熊": 0.5}
+        pos_mult = market_pos_mult.get(market_state, 1.0)
+        adjusted_max_pos = global_max_pos * pos_mult
+        kelly_pos = self._kelly_position(win_rate, avg_win_ratio, 1.0, adjusted_max_pos)
+        pos_map = {"强烈买入": 0.35, "买入": 0.25, "长期持有": 0.20,
+                    "持有": 0.0, "减持": 0.0, "卖出": 0.0, "强烈卖出": 0.0}
+        baseline_pos = adjusted_max_pos * pos_map.get(operation, 0.1)
+        pos_pct = min(kelly_pos, baseline_pos)
+        pos_text_map = {"强烈买入": "重仓", "买入": "中仓", "长期持有": "长持",
+                        "持有": "轻仓", "减持": "减仓", "卖出": "卖出", "强烈卖出": "清仓"}
 
         all_risks = list(set([w for r in reports for w in r.risk_warnings]))[:5]
 

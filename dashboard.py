@@ -208,7 +208,7 @@ def main():
     # ── 投资组合面板（实际持仓） ──
     st.divider()
     st.subheader("我的投资组合（实际持仓）")
-    st.caption("顶部"建议总仓位"=系统推荐 ｜ 此处"实际仓位"=你的真实持仓比例，自动交易后两者应基本一致")
+    st.caption("顶部[建议总仓位]=系统推荐 ｜ 此处[实际仓位]=你的真实持仓比例, 自动交易后两者应基本一致")
     try:
         from portfolio import load, _price
         pf = load()

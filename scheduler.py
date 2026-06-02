@@ -334,7 +334,13 @@ class MainSchedulerAgent:
         # 复盘：保存快照+T+1验证
         ReviewManager.process(final_reports)
 
+        actionable = [fr for fr in final_reports if fr.suggested_position_pct > 0]
         print(f"\n【主控Agent】全部标的处理完毕！共 {len(final_reports)} 只ETF")
+        print(f"【操作建议】买入/持有: {len(actionable)} 只 | 建议不操作: {len(final_reports)-len(actionable)} 只")
+        if actionable:
+            print(f"【建议持仓】")
+            for fr in sorted(actionable, key=lambda x: x.suggested_position_pct, reverse=True):
+                print(f"  {fr.etf_info['name']}({fr.etf_info['code']}): {fr.operation} {fr.suggested_position_pct*100:.1f}% | {fr.final_rating}")
 
     def _research_single_etf(self, item: dict, global_max_pos: float,
                                macro_report: AgentReport,

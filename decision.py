@@ -368,8 +368,9 @@ class ChiefDecisionAgent(BaseLLMAgent):
         pos_mult = market_pos_mult.get(market_state, 1.0)
         adjusted_max_pos = global_max_pos * pos_mult
         kelly_pos = self._kelly_position(win_rate, avg_win_ratio, 1.0, adjusted_max_pos)
+        # 只有明确看多的操作才给仓位：减持/持有/卖出 → 不新增
         pos_map = {"强烈买入": 0.35, "买入": 0.25, "长期持有": 0.20,
-                    "持有": 0.15, "减持": 0.05, "卖出": 0.0, "强烈卖出": 0.0}
+                    "持有": 0.0, "减持": 0.0, "卖出": 0.0, "强烈卖出": 0.0}
         baseline_pos = adjusted_max_pos * pos_map.get(operation, 0.1)
         pos_pct = min(kelly_pos, baseline_pos)
         pos_text_map = {"强烈买入": "重仓", "买入": "中仓", "长期持有": "长持",

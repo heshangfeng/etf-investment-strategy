@@ -119,8 +119,8 @@ def main():
     col1, col2, col3, col4, col5 = st.columns(5)
     col1.metric("ETF 总数", len(etfs))
     col2.metric("平均得分", f"{avg_score:.1f}")
-    col3.metric("持仓只数", long_count)
-    col4.metric("总仓位", f"{total_pos*100:.1f}%")
+    col3.metric("建议持仓", long_count)
+    col4.metric("建议总仓位", f"{total_pos*100:.1f}%")
     col5.metric("全市场成交额", f"{data['market_volume']:.0f}亿")
 
     # ── 筛选 ──
@@ -207,7 +207,7 @@ def main():
 
     # ── 投资组合面板 ──
     st.divider()
-    st.subheader("我的投资组合")
+    st.subheader("我的投资组合（实际持仓）")
     try:
         from portfolio import load, _price
         pf = load()
@@ -217,7 +217,7 @@ def main():
         total = cash + market_value
         col_a.metric("总资产", f"{total:.0f}")
         col_b.metric("持仓市值", f"{market_value:.0f}")
-        col_c.metric("仓位", f"{(1-cash/max(total,1))*100:.0f}%")
+        col_c.metric("实际仓位", f"{(1-cash/max(total,1))*100:.0f}%")
 
         if pf.holdings:
             rows = []
@@ -236,7 +236,8 @@ def main():
                 subset=["盈亏"]
             ), use_container_width=True, hide_index=True)
     except Exception:
-        st.info("暂无持仓数据。使用 `python portfolio.py buy ...` 记录交易。")
+        st.caption("顶部"建议总仓位"=系统推荐仓位 ｜ 此处"实际仓位"=你的真实持仓比例，自动交易后两者应基本一致")
+        st.info("暂无持仓数据。使用 `python portfolio.py buy ...` 记录交易，或运行 `python etf-agent.py` 后自动交易。")
 
     # ── 策略表现面板 ──
     try:
@@ -244,7 +245,7 @@ def main():
         if PERF_LOG.exists():
             with open(PERF_LOG, "r", encoding="utf-8") as f:
                 perf = json.load(f)
-            st.subheader("策略表现")
+            st.subheader("模拟交易策略表现")
             c1, c2, c3, c4 = st.columns(4)
             c1.metric("总收益率", f"{perf.get('total_return_pct', 0):+.2f}%")
             c2.metric("最大回撤", f"{perf.get('max_drawdown_pct', 0):.2f}%")

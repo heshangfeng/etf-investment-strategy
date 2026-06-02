@@ -60,6 +60,12 @@ DISAGREEMENT_RATING_GAP = 2          # 评级级差≥此值触发辩论
 
 RATING_ORDER = ["强烈看空", "看空", "中性", "看多", "强烈看多"]
 
+# ====================== 【项目路径配置】 ======================
+OUTPUT_DIR = "output"               # 报告文件输出目录
+SNAPSHOT_DIR = "data/snapshots"     # 每日快照目录
+REVIEW_DIR = "data/review"          # 复盘数据目录
+CACHE_DB_PATH = "data/cache.db"     # SQLite 缓存数据库
+
 # ====================== 【ETF标的池】 ======================
 ETF_POOL = [
     # ── 宽基 (8只) ──

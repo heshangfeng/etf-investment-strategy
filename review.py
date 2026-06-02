@@ -9,7 +9,7 @@ from datetime import datetime
 import pandas as pd
 from math import comb, log, exp
 
-from config import ETF_POOL, RATING_ORDER
+from config import ETF_POOL, RATING_ORDER, SNAPSHOT_DIR as CFG_SNAPSHOT, REVIEW_DIR as CFG_REVIEW
 from data import DataCollectAgent
 from models import FinalResearchReport, AgentReport
 
@@ -18,14 +18,15 @@ from models import FinalResearchReport, AgentReport
 class ReviewManager:
     """复盘引擎：保存每日快照、T+1验证操作建议、跟踪累计准确率"""
 
-    SNAPSHOT_DIR = "data/snapshots"
-    REVIEW_FILE = "data/review/cumulative_stats.json"
+    SNAPSHOT_DIR = CFG_SNAPSHOT
+    REVIEW_DIR_PATH = CFG_REVIEW
+    REVIEW_FILE = f"{CFG_REVIEW}/cumulative_stats.json"
 
     @classmethod
     def process(cls, all_reports: list[FinalResearchReport]):
         """执行完整复盘流程：保存今日快照 → T+1验证 → 更新累计统计 → 打印"""
         os.makedirs(f"{cls.SNAPSHOT_DIR}", exist_ok=True)
-        os.makedirs("data/review", exist_ok=True)
+        os.makedirs(cls.REVIEW_DIR_PATH, exist_ok=True)
 
         # 1. 保存今日快照
         cls._save_snapshot(all_reports)

@@ -1,9 +1,10 @@
 """
 ETF 智能投资分析系统 - 投研报告生成器
 """
+import os
 import pandas as pd
 import numpy as np
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from config import RATING_ORDER
 from models import FinalResearchReport
@@ -192,16 +193,39 @@ class ResearchReportGenerator:
                 print(f"  {fr.etf_info['code']} {fr.etf_info['name']} | 止损: 未设置 | 止盈: 未设置")
 
         # 10. 保存台账
-        save_path = f"ETF_多智能体投研报告_{datetime.now().strftime('%Y%m%d_%H%M')}.xlsx"
+        from config import OUTPUT_DIR
+        os.makedirs(OUTPUT_DIR, exist_ok=True)
+
+        save_path = f"{OUTPUT_DIR}/ETF_多智能体投研报告_{datetime.now().strftime('%Y%m%d_%H%M')}.xlsx"
         df_summary.to_excel(save_path, index=False)
         print(f"\n✅ 投研摘要已保存：{save_path}")
 
         # 11. 保存完整详细报告到文本文件
-        txt_path = f"ETF_多智能体投研报告_{datetime.now().strftime('%Y%m%d_%H%M')}.txt"
+        txt_path = f"{OUTPUT_DIR}/ETF_多智能体投研报告_{datetime.now().strftime('%Y%m%d_%H%M')}.txt"
         full_text = ResearchReportGenerator._build_full_report_text(all_reports)
         with open(txt_path, "w", encoding="utf-8") as f:
             f.write(full_text)
         print(f"✅ 完整投研报告已保存：{txt_path}")
+
+        # 12. 自动清理30天前的旧报告
+        ResearchReportGenerator._cleanup_old_reports()
+
+    @staticmethod
+    def _cleanup_old_reports(days: int = 30):
+        """删除指定天数前的旧报告文件。"""
+        from config import OUTPUT_DIR
+        cutoff = datetime.now() - timedelta(days=days)
+        removed = 0
+        for fname in os.listdir(OUTPUT_DIR):
+            if "ETF_多智能体投研报告_" not in fname:
+                continue
+            fpath = os.path.join(OUTPUT_DIR, fname)
+            mtime = datetime.fromtimestamp(os.path.getmtime(fpath))
+            if mtime < cutoff:
+                os.remove(fpath)
+                removed += 1
+        if removed:
+            print(f"  🧹 已清理 {removed} 份 {days} 天前的旧报告")
 
     @staticmethod
     def _build_full_report_text(all_reports: list[FinalResearchReport]) -> str:

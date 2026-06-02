@@ -14,8 +14,10 @@ import streamlit as st
 # ── 页面配置 ──
 st.set_page_config(page_title="ETF 智能投研看板", layout="wide")
 
-SNAPSHOT_DIR = Path(__file__).parent / "data" / "snapshots"
-REVIEW_DIR = Path(__file__).parent / "data" / "review"
+from config import OUTPUT_DIR, SNAPSHOT_DIR, REVIEW_DIR
+SNAPSHOT_DIR = Path(__file__).parent / SNAPSHOT_DIR
+REVIEW_DIR = Path(__file__).parent / REVIEW_DIR
+OUTPUT_DIR = Path(__file__).parent / OUTPUT_DIR
 REPORT_PREFIX = "ETF_多智能体投研报告_"
 
 
@@ -32,7 +34,7 @@ def load_snapshots() -> list[dict]:
 
 def find_latest_report_date() -> str | None:
     """找到最新报告文件的日期。"""
-    files = sorted(glob.glob(str(Path(__file__).parent / f"{REPORT_PREFIX}*.xlsx")))
+    files = sorted(glob.glob(str(OUTPUT_DIR / f"{REPORT_PREFIX}*.xlsx")))
     if not files:
         return None
     name = os.path.basename(files[-1])

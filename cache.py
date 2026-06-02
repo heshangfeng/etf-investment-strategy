@@ -21,10 +21,12 @@ class PersistentCache:
         self._lock = threading.Lock()
 
         if not db_path:
-            db_path = str(Path(__file__).parent / "data" / "cache.db")
+            from config import CACHE_DB_PATH
+            db_path = CACHE_DB_PATH
         Path(db_path).parent.mkdir(parents=True, exist_ok=True)
 
         self._conn = sqlite3.connect(db_path, check_same_thread=False)
+        self._conn.execute("PRAGMA journal_mode=WAL")
         self._conn.execute(
             "CREATE TABLE IF NOT EXISTS persistent_cache ("
             "  section TEXT, key TEXT, value BLOB, timestamp REAL,"

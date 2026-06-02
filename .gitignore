@@ -19,6 +19,11 @@ Thumbs.db
 # Sensitive credentials
 .env
 
+# Project
+.omo/
+logs/
+output/
+
 # Temp files
 *.tmp
 *.log

@@ -1,0 +1,69 @@
+name: ETF Daily Analysis
+
+on:
+  schedule:
+    - cron: '30 7 * * 1-5'   # 每天 15:30 CST (07:30 UTC)，周一至周五
+  workflow_dispatch:           # 支持手动触发
+
+permissions:
+  contents: write
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          pip install -q akshare pandas numpy requests beautifulsoup4 jieba snownlp \
+            openai python-dotenv openpyxl pydantic \
+            -i https://pypi.tuna.tsinghua.edu.cn/simple
+
+      - name: Create .env from secrets
+        run: |
+          cat > .env << EOF
+          DEEPSEEK_API_KEY=${{ secrets.DEEPSEEK_API_KEY }}
+          DEEPSEEK_BASE_URL=${{ secrets.DEEPSEEK_BASE_URL || 'https://api.deepseek.com/v1' }}
+          QUICK_LLM_API_KEY=${{ secrets.QUICK_LLM_API_KEY || secrets.DEEPSEEK_API_KEY }}
+          QUICK_LLM_MODEL=${{ secrets.QUICK_LLM_MODEL || 'deepseek-chat' }}
+          PUSHDEER_KEY=${{ secrets.PUSHDEER_KEY }}
+          EOF
+
+      - name: Run ETF analysis
+        run: python etf-agent.py
+        env:
+          TZ: 'Asia/Shanghai'
+
+      - name: Commit reports & snapshots
+        run: |
+          git config user.name "ETF Bot"
+          git config user.email "bot@etf-investment"
+          git add -A
+          git diff --cached --quiet || git commit -m "daily: $(date '+%Y%m%d') ETF 投研报告"
+
+      - name: Push to repo
+        uses: ad-m/github-push-action@v0.8.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: master
+
+      - name: Send PushDeer notification
+        if: ${{ secrets.PUSHDEER_KEY != '' }}
+        run: |
+          REPORT=$(ls -t ETF_多智能体投研报告_*.txt 2>/dev/null | head -1)
+          if [ -n "$REPORT" ]; then
+            BODY=$(head -10 "$REPORT" | tr '\n' '|' | sed 's/|/\\n/g')
+            curl -s "https://api2.pushdeer.com/message/push?pushkey=${{ secrets.PUSHDEER_KEY }}&text=$(python3 -c "import urllib.parse; print(urllib.parse.quote('''ETF分析完成: $BODY'''))")"
+          fi

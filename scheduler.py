@@ -338,7 +338,7 @@ class MainSchedulerAgent:
         print(f"\n【主控Agent】全部标的处理完毕！共 {len(final_reports)} 只ETF")
         print(f"【操作建议】买入/持有: {len(actionable)} 只 | 建议不操作: {len(final_reports)-len(actionable)} 只")
 
-        # Phase 4: 个性化投资组合建议
+        # Phase 4: 个性化投资组合建议 + 自动化模拟交易
         try:
             from portfolio import advise
             advice = advise(final_reports)
@@ -346,6 +346,15 @@ class MainSchedulerAgent:
                 print(advice)
         except Exception as e:
             print(f"  ⚠️ 投资组合建议不可用: {e}")
+
+        try:
+            from autotrade import auto_trade
+            trades = auto_trade(final_reports)
+            b, s = len(trades["buys"]), len(trades["sells"])
+            if b or s:
+                print(f"\n  🔄 自动调仓: 买入{b}只, 卖出{s}只")
+        except Exception as e:
+            print(f"  ⚠️ 自动交易不可用: {e}")
         if actionable:
             print(f"【建议持仓】")
             for fr in sorted(actionable, key=lambda x: x.suggested_position_pct, reverse=True):

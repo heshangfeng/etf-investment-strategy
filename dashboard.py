@@ -238,6 +238,31 @@ def main():
     except Exception:
         st.info("暂无持仓数据。使用 `python portfolio.py buy ...` 记录交易。")
 
+    # ── 策略表现面板 ──
+    try:
+        from autotrade import PERF_LOG, TRADE_LOG
+        if PERF_LOG.exists():
+            with open(PERF_LOG, "r", encoding="utf-8") as f:
+                perf = json.load(f)
+            st.subheader("策略表现")
+            c1, c2, c3, c4 = st.columns(4)
+            c1.metric("总收益率", f"{perf.get('total_return_pct', 0):+.2f}%")
+            c2.metric("最大回撤", f"{perf.get('max_drawdown_pct', 0):.2f}%")
+            c3.metric("夏普比率", perf.get("sharpe_ratio", "N/A"))
+            c4.metric("当前总值", f"{perf.get('current_value', 0):.0f}")
+
+            if TRADE_LOG.exists():
+                with open(TRADE_LOG, "r", encoding="utf-8") as f:
+                    snaps = json.load(f)
+                if len(snaps) > 1:
+                    df_perf = pd.DataFrame([
+                        {"日期": s["date"], "总资产": s["total"]}
+                        for s in snaps
+                    ])
+                    st.line_chart(df_perf.set_index("日期"))
+    except Exception:
+        pass
+
     # ── 运行提示 ──
     st.sidebar.divider()
     st.sidebar.info(

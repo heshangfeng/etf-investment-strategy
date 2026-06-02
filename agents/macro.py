@@ -202,6 +202,21 @@ A股特征：两会前后春季躁动，政治局会议定调影响季度级别�
         now = datetime.now()
         month, day = now.month, now.day
 
+        # 获取最新政策新闻（多源）
+        policy_news = ""
+        try:
+            from data import PublicOpinionAgent
+            kw_list = ["宏观经济 政策", "政治局会议", "国务院 政策", "金融监管"]
+            news_parts = []
+            for kw in kw_list[:2]:  # 只取前2个关键词，避免耗时太长
+                n = PublicOpinionAgent.get_professional_news(kw)
+                if n and "暂无" not in n:
+                    news_parts.append(n[:200])
+            if news_parts:
+                policy_news = "【近期政策资讯】\n" + "\n".join(news_parts) + "\n\n"
+        except Exception:
+            pass
+
         current_event = None
         for name, sm, sd, em, ed in self.KEY_EVENTS:
             try:
@@ -225,7 +240,8 @@ A股特征：两会前后春季躁动，政治局会议定调影响季度级别�
         elif month in (10, 11): season_effect = "三季报+年末政策定调"
         elif month == 12: season_effect = "中央经济工作会议+机构调仓"
 
-        data_text = (f"当前日期: {now.strftime('%Y-%m-%d')}\n"
+        data_text = (f"{policy_news}"
+                     f"当前日期: {now.strftime('%Y-%m-%d')}\n"
                      f"季节效应: {season_effect}\n"
                      f"会议窗口: {current_event or '无重要会议窗口'}\n"
                      f"月份特征: {month}月")

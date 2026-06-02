@@ -1,6 +1,6 @@
 {
   "date": "20260602",
-  "timestamp": "2026-06-02 11:42:33",
+  "timestamp": "2026-06-02 11:54:23",
   "market_volume_bn": 7000.0,
   "etfs": [
     {
@@ -11,7 +11,7 @@
       "holding_period": "短期(1-4周)",
       "final_score": 44.3,
       "final_rating": "看空",
-      "position_pct": 0.02,
+      "position_pct": 0.03,
       "consensus": "存在分歧",
       "close_price": 0.933,
       "agents": [
@@ -42,16 +42,16 @@
       ]
     },
     {
-      "code": "159928",
-      "name": "消费ETF",
+      "code": "512290",
+      "name": "生物医药ETF",
       "type": "行业",
       "operation": "减持",
       "holding_period": "短期(1-4周)",
-      "final_score": 41.8,
+      "final_score": 44.5,
       "final_rating": "看空",
-      "position_pct": 0.02,
+      "position_pct": 0.03,
       "consensus": "存在分歧",
-      "close_price": 0.691,
+      "close_price": 0.909,
       "agents": [
         {
           "n": "首席决策智能体",
@@ -61,14 +61,14 @@
         },
         {
           "n": "首席决策智能体",
-          "rt": "中性",
-          "sc": 52.0,
+          "rt": "强烈看空",
+          "sc": 27.0,
           "src": "rule"
         },
         {
           "n": "首席决策智能体",
           "rt": "中性",
-          "sc": 45.5,
+          "sc": 50.3,
           "src": "rule"
         },
         {
@@ -118,44 +118,6 @@
       ]
     },
     {
-      "code": "159806",
-      "name": "风电ETF",
-      "type": "行业",
-      "operation": "减持",
-      "holding_period": "短期(1-4周)",
-      "final_score": 44.7,
-      "final_rating": "看空",
-      "position_pct": 0.02,
-      "consensus": "存在分歧",
-      "close_price": 0.849,
-      "agents": [
-        {
-          "n": "首席决策智能体",
-          "rt": "中性",
-          "sc": 50,
-          "src": "rule"
-        },
-        {
-          "n": "首席决策智能体",
-          "rt": "强烈看空",
-          "sc": 27.0,
-          "src": "rule"
-        },
-        {
-          "n": "首席决策智能体",
-          "rt": "中性",
-          "sc": 47.3,
-          "src": "rule"
-        },
-        {
-          "n": "首席决策智能体",
-          "rt": "强烈看多",
-          "sc": 100.0,
-          "src": "rule"
-        }
-      ]
-    },
-    {
       "code": "516670",
       "name": "稀土ETF",
       "type": "行业",
@@ -163,7 +125,7 @@
       "holding_period": "短期(1-4周)",
       "final_score": 41.6,
       "final_rating": "看空",
-      "position_pct": 0.02,
+      "position_pct": 0.03,
       "consensus": "存在分歧",
       "close_price": 0.618,
       "agents": [
@@ -194,16 +156,54 @@
       ]
     },
     {
-      "code": "512290",
-      "name": "生物医药ETF",
+      "code": "159928",
+      "name": "消费ETF",
       "type": "行业",
       "operation": "减持",
       "holding_period": "短期(1-4周)",
-      "final_score": 44.5,
+      "final_score": 41.8,
       "final_rating": "看空",
-      "position_pct": 0.02,
+      "position_pct": 0.03,
       "consensus": "存在分歧",
-      "close_price": 0.909,
+      "close_price": 0.691,
+      "agents": [
+        {
+          "n": "首席决策智能体",
+          "rt": "中性",
+          "sc": 50,
+          "src": "rule"
+        },
+        {
+          "n": "首席决策智能体",
+          "rt": "中性",
+          "sc": 52.0,
+          "src": "rule"
+        },
+        {
+          "n": "首席决策智能体",
+          "rt": "中性",
+          "sc": 45.5,
+          "src": "rule"
+        },
+        {
+          "n": "首席决策智能体",
+          "rt": "强烈看多",
+          "sc": 100.0,
+          "src": "rule"
+        }
+      ]
+    },
+    {
+      "code": "159806",
+      "name": "风电ETF",
+      "type": "行业",
+      "operation": "减持",
+      "holding_period": "短期(1-4周)",
+      "final_score": 44.7,
+      "final_rating": "看空",
+      "position_pct": 0.03,
+      "consensus": "存在分歧",
+      "close_price": 0.849,
       "agents": [
         {
           "n": "首席决策智能体",
@@ -220,7 +220,7 @@
         {
           "n": "首席决策智能体",
           "rt": "中性",
-          "sc": 50.3,
+          "sc": 47.3,
           "src": "rule"
         },
         {
@@ -239,7 +239,7 @@
       "holding_period": "短期(1-4周)",
       "final_score": 45.0,
       "final_rating": "中性",
-      "position_pct": 0.02,
+      "position_pct": 0.03,
       "consensus": "存在分歧",
       "close_price": 0.729,
       "agents": [
@@ -277,7 +277,7 @@
       "holding_period": "短期(1-4周)",
       "final_score": 45.4,
       "final_rating": "中性",
-      "position_pct": 0.02,
+      "position_pct": 0.03,
       "consensus": "存在分歧",
       "close_price": 1.357,
       "agents": [
@@ -315,7 +315,7 @@
       "holding_period": "短期(1-4周)",
       "final_score": 41.8,
       "final_rating": "看空",
-      "position_pct": 0.02,
+      "position_pct": 0.03,
       "consensus": "存在分歧",
       "close_price": 0.606,
       "agents": [
@@ -353,7 +353,7 @@
       "holding_period": "短期(1-4周)",
       "final_score": 44.1,
       "final_rating": "看空",
-      "position_pct": 0.02,
+      "position_pct": 0.03,
       "consensus": "存在分歧",
       "close_price": 0.785,
       "agents": [
@@ -384,44 +384,6 @@
       ]
     },
     {
-      "code": "515080",
-      "name": "基建ETF",
-      "type": "行业",
-      "operation": "减持",
-      "holding_period": "短期(1-4周)",
-      "final_score": 45.8,
-      "final_rating": "中性",
-      "position_pct": 0.02,
-      "consensus": "存在分歧",
-      "close_price": 1.608,
-      "agents": [
-        {
-          "n": "首席决策智能体",
-          "rt": "中性",
-          "sc": 50,
-          "src": "rule"
-        },
-        {
-          "n": "首席决策智能体",
-          "rt": "看多",
-          "sc": 76.0,
-          "src": "rule"
-        },
-        {
-          "n": "首席决策智能体",
-          "rt": "中性",
-          "sc": 59.0,
-          "src": "rule"
-        },
-        {
-          "n": "首席决策智能体",
-          "rt": "强烈看多",
-          "sc": 100.0,
-          "src": "rule"
-        }
-      ]
-    },
-    {
       "code": "518880",
       "name": "黄金ETF",
       "type": "主题",
@@ -429,7 +391,7 @@
       "holding_period": "短期(1-4周)",
       "final_score": 42.2,
       "final_rating": "看空",
-      "position_pct": 0.02,
+      "position_pct": 0.03,
       "consensus": "存在分歧",
       "close_price": 9.344,
       "agents": [
@@ -460,6 +422,44 @@
       ]
     },
     {
+      "code": "515080",
+      "name": "基建ETF",
+      "type": "行业",
+      "operation": "减持",
+      "holding_period": "短期(1-4周)",
+      "final_score": 45.8,
+      "final_rating": "中性",
+      "position_pct": 0.03,
+      "consensus": "存在分歧",
+      "close_price": 1.608,
+      "agents": [
+        {
+          "n": "首席决策智能体",
+          "rt": "中性",
+          "sc": 50,
+          "src": "rule"
+        },
+        {
+          "n": "首席决策智能体",
+          "rt": "看多",
+          "sc": 76.0,
+          "src": "rule"
+        },
+        {
+          "n": "首席决策智能体",
+          "rt": "中性",
+          "sc": 59.0,
+          "src": "rule"
+        },
+        {
+          "n": "首席决策智能体",
+          "rt": "强烈看多",
+          "sc": 100.0,
+          "src": "rule"
+        }
+      ]
+    },
+    {
       "code": "510880",
       "name": "红利ETF",
       "type": "主题",
@@ -467,7 +467,7 @@
       "holding_period": "短期(1-4周)",
       "final_score": 46.0,
       "final_rating": "中性",
-      "position_pct": 0.02,
+      "position_pct": 0.03,
       "consensus": "存在分歧",
       "close_price": 3.307,
       "agents": [
@@ -498,44 +498,6 @@
       ]
     },
     {
-      "code": "516950",
-      "name": "机器人ETF",
-      "type": "主题",
-      "operation": "减持",
-      "holding_period": "短期(1-4周)",
-      "final_score": 43.6,
-      "final_rating": "看空",
-      "position_pct": 0.02,
-      "consensus": "存在分歧",
-      "close_price": 1.093,
-      "agents": [
-        {
-          "n": "首席决策智能体",
-          "rt": "中性",
-          "sc": 50,
-          "src": "rule"
-        },
-        {
-          "n": "首席决策智能体",
-          "rt": "中性",
-          "sc": 52.0,
-          "src": "rule"
-        },
-        {
-          "n": "首席决策智能体",
-          "rt": "中性",
-          "sc": 50.7,
-          "src": "rule"
-        },
-        {
-          "n": "首席决策智能体",
-          "rt": "强烈看多",
-          "sc": 100.0,
-          "src": "rule"
-        }
-      ]
-    },
-    {
       "code": "515680",
       "name": "数字货币ETF",
       "type": "主题",
@@ -543,7 +505,7 @@
       "holding_period": "短期(1-4周)",
       "final_score": 47.7,
       "final_rating": "中性",
-      "position_pct": 0.02,
+      "position_pct": 0.03,
       "consensus": "存在分歧",
       "close_price": 1.737,
       "agents": [
@@ -563,6 +525,44 @@
           "n": "首席决策智能体",
           "rt": "看空",
           "sc": 38.5,
+          "src": "rule"
+        },
+        {
+          "n": "首席决策智能体",
+          "rt": "强烈看多",
+          "sc": 100.0,
+          "src": "rule"
+        }
+      ]
+    },
+    {
+      "code": "516950",
+      "name": "机器人ETF",
+      "type": "主题",
+      "operation": "减持",
+      "holding_period": "短期(1-4周)",
+      "final_score": 43.6,
+      "final_rating": "看空",
+      "position_pct": 0.03,
+      "consensus": "存在分歧",
+      "close_price": 1.093,
+      "agents": [
+        {
+          "n": "首席决策智能体",
+          "rt": "中性",
+          "sc": 50,
+          "src": "rule"
+        },
+        {
+          "n": "首席决策智能体",
+          "rt": "中性",
+          "sc": 52.0,
+          "src": "rule"
+        },
+        {
+          "n": "首席决策智能体",
+          "rt": "中性",
+          "sc": 50.7,
           "src": "rule"
         },
         {

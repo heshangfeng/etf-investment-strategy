@@ -10,7 +10,7 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Optional
 
-from config import ETF_POOL
+from config import ETF_POOL, FEE_RATE
 from portfolio import Portfolio, Holding, Transaction, load, save, _price, PORTFOLIO_FILE
 
 TRADE_LOG = Path(__file__).parent / "data" / "trade_log.json"
@@ -56,17 +56,19 @@ def auto_trade(all_reports: list, date_str: str = "") -> dict:
     # ── 1. 先卖（释放现金） ──
     for h in list(pf.holdings):
         r = recs.get(h.code)
-        if r and r["operation"] in ("减持", "卖出", "强烈卖出") and r["position"] == 0:
+        if not r:
+            continue
+        if r["operation"] in ("卖出", "强烈卖出"):
             # 全仓卖出
             price = _price(h.code, h.avg_cost)
             proceeds = h.shares * price
-            pf.cash += proceeds
+            fee_val = proceeds * FEE_RATE
+            pf.cash += (proceeds - fee_val)
             total_sell_proceeds += proceeds
 
-            # 记录交易
             pf.transactions.append(Transaction(
                 date=today, code=h.code, name=h.name,
-                type="sell", shares=h.shares, price=price, fee=0.0,
+                type="sell", shares=h.shares, price=price, fee=round(fee_val, 2),
             ))
             trades["sells"].append({
                 "code": h.code, "name": h.name, "shares": h.shares,
@@ -74,37 +76,139 @@ def auto_trade(all_reports: list, date_str: str = "") -> dict:
                 "reason": r["operation"],
             })
             pf.holdings.remove(h)
+        elif r["operation"] == "减持":
+            if r["position"] == 0:
+                # 全仓卖出
+                price = _price(h.code, h.avg_cost)
+                proceeds = h.shares * price
+                fee_val = proceeds * FEE_RATE
+                pf.cash += (proceeds - fee_val)
+                total_sell_proceeds += proceeds
+
+                pf.transactions.append(Transaction(
+                    date=today, code=h.code, name=h.name,
+                    type="sell", shares=h.shares, price=price, fee=round(fee_val, 2),
+                ))
+                trades["sells"].append({
+                    "code": h.code, "name": h.name, "shares": h.shares,
+                    "price": round(price, 4), "proceeds": round(proceeds, 2),
+                    "reason": r["operation"],
+                })
+                pf.holdings.remove(h)
+            else:
+                # 减持到目标仓位
+                price = _price(h.code, h.avg_cost)
+                current_value = h.shares * price
+                mkt_val = sum(hh.shares * _price(hh.code, hh.avg_cost) for hh in pf.holdings)
+                target_total = pf.cash + mkt_val
+                target_value = target_total * r["position"]
+                target_shares = int(target_value / price / 100) * 100
+                sell_shares = h.shares - target_shares
+
+                if sell_shares >= 100:
+                    proceeds = sell_shares * price
+                    fee_val = proceeds * FEE_RATE
+                    pf.cash += (proceeds - fee_val)
+                    total_sell_proceeds += proceeds
+                    h.shares = target_shares
+
+                    pf.transactions.append(Transaction(
+                        date=today, code=h.code, name=h.name,
+                        type="sell", shares=sell_shares, price=price, fee=round(fee_val, 2),
+                    ))
+                    trades["sells"].append({
+                        "code": h.code, "name": h.name, "shares": sell_shares,
+                        "price": round(price, 4), "proceeds": round(proceeds, 2),
+                        "reason": "减持",
+                    })
+
+    # ── 1.5 再平衡（偏差 > 20% 的持仓调整） ──
+    mkt_val = sum(hh.shares * _price(hh.code, hh.avg_cost) for hh in pf.holdings)
+    for h in list(pf.holdings):
+        r = recs.get(h.code)
+        if not r or r["position"] <= 0:
+            continue
+        price = _price(h.code, h.avg_cost)
+        current_value = h.shares * price
+        current_pct = current_value / max(pf.cash + mkt_val, 1)
+
+        target_pct = r["position"]
+        if target_pct > 0 and abs(current_pct - target_pct) / target_pct > 0.2:
+            target_value = (pf.cash + mkt_val) * target_pct
+            delta_value = target_value - current_value
+
+            if abs(delta_value) > 1000:
+                shares_delta = int(abs(delta_value) / price / 100) * 100
+                if shares_delta >= 100:
+                    if delta_value > 0:
+                        # 买入补仓
+                        cost = shares_delta * price
+                        fee_val = cost * FEE_RATE
+                        total_cost = cost + fee_val
+                        if total_cost <= pf.cash:
+                            pf.cash -= total_cost
+                            total_buy_cost += cost
+                            h.shares += shares_delta
+                            h.avg_cost = round((h.cost_total + cost) / h.shares, 4)
+                            pf.transactions.append(Transaction(
+                                date=today, code=h.code, name=h.name,
+                                type="buy", shares=shares_delta, price=price, fee=round(fee_val, 2),
+                            ))
+                            trades["buys"].append({
+                                "code": h.code, "name": h.name, "shares": shares_delta,
+                                "price": round(price, 4), "cost": round(cost, 2),
+                                "position_target": target_pct,
+                                "reason": "再平衡",
+                            })
+                    else:
+                        # 卖出减仓
+                        proceeds = shares_delta * price
+                        fee_val = proceeds * FEE_RATE
+                        pf.cash += (proceeds - fee_val)
+                        total_sell_proceeds += proceeds
+                        h.shares -= shares_delta
+                        pf.transactions.append(Transaction(
+                            date=today, code=h.code, name=h.name,
+                            type="sell", shares=shares_delta, price=price, fee=round(fee_val, 2),
+                        ))
+                        trades["sells"].append({
+                            "code": h.code, "name": h.name, "shares": shares_delta,
+                            "price": round(price, 4), "proceeds": round(proceeds, 2),
+                            "reason": "再平衡",
+                        })
 
     # ── 2. 再买（分配现金） ──
     buys = {c: r for c, r in recs.items()
             if r["position"] > 0 and c not in {h.code for h in pf.holdings}}
 
     if buys and pf.cash > 0:
+        remaining_cash = pf.cash
         total_rec_pos = sum(r["position"] for r in buys.values())
         for code, r in sorted(buys.items(), key=lambda x: x[1]["position"], reverse=True):
-            if total_rec_pos <= 0:
-                break
-            # 按建议仓位比例分配现金
-            alloc_ratio = r["position"] / total_rec_pos
-            alloc_cash = pf.cash * alloc_ratio * 0.95  # 留 5% 余量
+            alloc_ratio = r["position"] / max(total_rec_pos, 0.01)
+            alloc_cash = remaining_cash * alloc_ratio
 
             price = _price(code, 0)
             if price <= 0:
                 continue
-            shares = int(alloc_cash / price)
-            if shares < 100:  # 至少 1 手
-                # 买不了，现金留给下一只
+            shares = int(alloc_cash / price / 100) * 100
+            if shares < 100:
                 continue
 
             cost = shares * price
-            if cost > pf.cash:
-                shares = int(pf.cash / price / 100) * 100
-                cost = shares * price
+            fee_val = cost * FEE_RATE
+            total_cost = cost + fee_val
+            if total_cost > remaining_cash:
+                shares = int(remaining_cash / price / 100) * 100
                 if shares < 100:
                     continue
+                cost = shares * price
+                fee_val = cost * FEE_RATE
+                total_cost = cost + fee_val
 
             # 买入
-            pf.cash -= cost
+            remaining_cash -= total_cost
+            pf.cash -= total_cost
             total_buy_cost += cost
             nm = r["name"]
             pf.holdings.append(Holding(
@@ -113,7 +217,7 @@ def auto_trade(all_reports: list, date_str: str = "") -> dict:
             ))
             pf.transactions.append(Transaction(
                 date=today, code=code, name=nm,
-                type="buy", shares=shares, price=price, fee=0.0,
+                type="buy", shares=shares, price=price, fee=round(fee_val, 2),
             ))
             trades["buys"].append({
                 "code": code, "name": nm, "shares": shares,
@@ -121,8 +225,6 @@ def auto_trade(all_reports: list, date_str: str = "") -> dict:
                 "position_target": r["position"],
                 "reason": r["operation"],
             })
-
-            total_rec_pos -= r["position"]
 
     # ── 3. 继续持有的 ──
     for h in pf.holdings:

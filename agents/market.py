@@ -81,7 +81,7 @@ class RetailSentimentAgent(BaseLLMAgent):
 
         enriched_text = self._enrich_with_memory(etf_code, data_text)
         llm_out = self._call_llm(self.SYSTEM_PROMPT, self._build_user_prompt("市场情绪", etf_code, enriched_text))
-        rating = "强烈看多" if score >= 80 else "看多" if score >= 60 else "中性" if score >= 40 else "看空" if score >= 25 else "强烈看空"
+        rating = "强烈看多" if score >= 80 else "看多" if score >= 65 else "中性" if score >= 45 else "看空" if score >= 30 else "强烈看空"
         report = self._parse_to_report(etf_code, "市场情绪", llm_out, score, rating)
         report.data_summary = {"turnover_ratio": turnover_ratio, "pos_from_low": pos_from_low}
         return report
@@ -156,7 +156,7 @@ class CrossMarketAgent(BaseLLMAgent):
 
         enriched_text = self._enrich_with_memory(etf_code, data_text)
         llm_out = self._call_llm(self.SYSTEM_PROMPT, self._build_user_prompt(etf_name, etf_code, enriched_text))
-        rating = "强烈看多" if score >= 80 else "看多" if score >= 60 else "中性" if score >= 40 else "看空" if score >= 25 else "强烈看空"
+        rating = "强烈看多" if score >= 80 else "看多" if score >= 65 else "中性" if score >= 45 else "看空" if score >= 30 else "强烈看空"
         return self._parse_to_report(etf_code, etf_name, llm_out, score, rating)
 
 

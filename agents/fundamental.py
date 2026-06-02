@@ -30,7 +30,7 @@ class ValueAnalystAgent(BaseLLMAgent):
         data_text = f"PE(TTM): {d['pe']} | PB: {d['pb']} | PE近5年百分位: {d['pe_percent']}%"
         enriched_text = self._enrich_with_memory(etf_code, data_text)
         llm_out = self._call_llm(self.SYSTEM_PROMPT, self._build_user_prompt(etf_name, etf_code, enriched_text))
-        rating = "强烈看多" if score >= 80 else "看多" if score >= 65 else "中性" if score >= 35 else "看空" if score >= 20 else "强烈看空"
+        rating = "强烈看多" if score >= 80 else "看多" if score >= 65 else "中性" if score >= 45 else "看空" if score >= 30 else "强烈看空"
         return self._parse_to_report(etf_code, etf_name, llm_out, score, rating)
 
 
@@ -65,7 +65,7 @@ class TechAnalystAgent(BaseLLMAgent):
                      f"近5日平均波动率: {df['volatility'].tail(5).mean():.4f}")
         enriched_text = self._enrich_with_memory(etf_code, data_text)
         llm_out = self._call_llm(self.SYSTEM_PROMPT, self._build_user_prompt(etf_name, etf_code, enriched_text))
-        rating = "强烈看多" if score >= 80 else "看多" if score >= 65 else "中性" if score >= 35 else "看空" if score >= 20 else "强烈看空"
+        rating = "强烈看多" if score >= 80 else "看多" if score >= 65 else "中性" if score >= 45 else "看空" if score >= 30 else "强烈看空"
         return self._parse_to_report(etf_code, etf_name, llm_out, score, rating)
 
 
@@ -96,9 +96,9 @@ class SentimentAnalystAgent(BaseLLMAgent):
         enriched_text = self._enrich_with_memory(etf_code, data_text)
         llm_out = self._call_llm(self.SYSTEM_PROMPT, self._build_user_prompt(etf_name, etf_code, enriched_text))
         score = op['opinion_score']
-        if score >= 70: fr = "强烈看多"
-        elif score >= 60: fr = "看多"
-        elif score >= 40: fr = "中性"
+        if score >= 80: fr = "强烈看多"
+        elif score >= 65: fr = "看多"
+        elif score >= 45: fr = "中性"
         elif score >= 30: fr = "看空"
         else: fr = "强烈看空"
         report = self._parse_to_report(etf_code, etf_name, llm_out, score, fr)
@@ -202,7 +202,7 @@ class RiskManagerAgent(BaseLLMAgent):
                      f"风险扣分原因: {'; '.join(risk_detail) if risk_detail else '无明显风险'}")
         enriched_text = self._enrich_with_memory(etf_code, data_text)
         llm_out = self._call_llm(self.SYSTEM_PROMPT, self._build_user_prompt(etf_name, etf_code, enriched_text))
-        rating = "强烈看多" if score >= 80 else "看多" if score >= 60 else "中性" if score >= 40 else "看空" if score >= 20 else "强烈看空"
+        rating = "强烈看多" if score >= 80 else "看多" if score >= 65 else "中性" if score >= 45 else "看空" if score >= 30 else "强烈看空"
         return self._parse_to_report(etf_code, etf_name, llm_out, score, rating)
 
 

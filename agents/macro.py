@@ -144,7 +144,7 @@ class MonetaryPolicyAgent(BaseLLMAgent):
         data_text = "\n".join(signals) if signals else "暂无实时货币政策数据"
 
         llm_out = self._call_llm(self.SYSTEM_PROMPT, self._build_user_prompt("中国市场", "MONETARY", data_text))
-        rating = "强烈看多" if score >= 80 else "看多" if score >= 60 else "中性" if score >= 40 else "看空" if score >= 25 else "强烈看空"
+        rating = "强烈看多" if score >= 80 else "看多" if score >= 65 else "中性" if score >= 45 else "看空" if score >= 30 else "强烈看空"
         report = self._parse_to_report("MONETARY", "货币政策", llm_out, score, rating)
         report.data_summary = {"lpr_1y": lpr_1y, "lpr_5y": lpr_5y, "usdcny": usdcny}
         return report
@@ -210,7 +210,7 @@ A股特征：两会前后春季躁动，政治局会议定调影响季度级别�
         score = float(np.clip(score, 0, 100))
 
         llm_out = self._call_llm(self.SYSTEM_PROMPT, self._build_user_prompt("中国政策周期", "POLICY", data_text))
-        rating = "强烈看多" if score >= 80 else "看多" if score >= 60 else "中性" if score >= 40 else "看空" if score >= 25 else "强烈看空"
+        rating = "强烈看多" if score >= 80 else "看多" if score >= 65 else "中性" if score >= 45 else "看空" if score >= 30 else "强烈看空"
         report = self._parse_to_report("POLICY", "政策周期", llm_out, score, rating)
         report.data_summary = {"current_event": current_event, "season_effect": season_effect, "month": month}
         return report

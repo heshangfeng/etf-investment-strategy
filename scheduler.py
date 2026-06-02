@@ -43,7 +43,7 @@ class MainSchedulerAgent:
             try:
                 df = DataCollectAgent.get_etf_price(code)
                 if len(df) >= 60:
-                    price_data[code] = df["close"].tail(60).values
+                    price_data[code] = df["close"].pct_change().dropna().tail(60).values
             except Exception:
                 pass
         if len(price_data) < 2:
@@ -633,6 +633,14 @@ def _portfolio_optimization_phase(final_reports: list) -> None:
         diff = w - current_w
         sign = "+" if diff >= 0 else ""
         print(f"    {name:12s}: {current_w*100:.1f}% → {w*100:.1f}% ({sign}{diff*100:.1f}%)")
+
+    # ── 写回优化权重到每个ETF的建议仓位 ──
+    for code, w in zip(codes, scaled_weights):
+        for fr in final_reports:
+            if fr.etf_info["code"] == code and fr.suggested_position_pct > 0:
+                fr.suggested_position_pct = round(w, 4)
+                break
+    print(f"  ✅ 组合优化已应用 ({opt_result['method']})")
 
     print(f"{'='*80}\n")
 

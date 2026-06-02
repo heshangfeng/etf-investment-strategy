@@ -31,6 +31,7 @@ TREND_DAY_COUNT = 3           # 舆情趋势统计天数
 MAIN_WORKERS = 6
 AGENT_WORKERS = 8
 REQUEST_DELAY = 0.1
+FEE_RATE = 0.0003             # ETF 交易费率（万三）
 HEADERS = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
 
 # 4. 大模型配置（从 .env 读取）

@@ -27,8 +27,10 @@ class ChiefDecisionAgent(BaseLLMAgent):
         "风险管理智能体", "行业纵析智能体", "零售情绪智能体", "跨市场联动智能体",
         "游资情绪智能体", "解禁压力智能体", "技术形态智能体",
     ]
-    # 风险管理Agent是"反向"的——高分=安全，需要反转
+    # 风险管理Agent是"反向"的——高分=安全，需要反转评分和评级
     REVERSE_AGENTS = {"风险管理智能体"}
+    RATING_REVERSE_MAP = {"强烈看多": "强烈看空", "看多": "看空", "中性": "中性",
+                          "看空": "看多", "强烈看空": "强烈看多"}
 
     SYSTEM_PROMPT = """你是投资委员会主席，需要综合各方观点做出最终判断。
 你的职责：
@@ -252,7 +254,23 @@ class ChiefDecisionAgent(BaseLLMAgent):
             score = r.score
             if r.agent_name in self.REVERSE_AGENTS:
                 score = 100 - score  # 风控反转：100=安全→0=安全，0=高风险→100=高风险
+                # 反转评级显示，避免"强烈看多"对应贡献分数10的矛盾
+                if r.rating in self.RATING_REVERSE_MAP:
+                    r.rating = self.RATING_REVERSE_MAP[r.rating]
             adjusted_scores.append(score)
+
+        # ── 共识度计算（在 z-score 之前，用原始分数） ──
+        raw_std = float(np.std(adjusted_scores))
+        raw_mean = float(np.mean(adjusted_scores)) if adjusted_scores else 1
+        raw_cv = raw_std / max(raw_mean, 1)
+        if raw_cv < 0.15:
+            consensus = "高度一致"
+        elif raw_cv < 0.25:
+            consensus = "基本一致"
+        elif raw_cv < 0.40:
+            consensus = "存在分歧"
+        else:
+            consensus = "严重分歧"
 
         # z-score标准化
         z_scores = self._compute_zscore(adjusted_scores)
@@ -292,21 +310,7 @@ class ChiefDecisionAgent(BaseLLMAgent):
         ts_momentum = self._time_series_momentum_score(etf_info['code'])
         weighted_score += ts_momentum
 
-        # ── 3. 共识度计算（连续版） ──
-        score_std = float(np.std(normalized_scores))
-        score_mean = float(np.mean(normalized_scores))
-        cv = score_std / max(score_mean, 1)  # 变异系数
-
-        if cv < 0.1:
-            consensus = "高度一致"
-        elif cv < 0.2:
-            consensus = "基本一致"
-        elif cv < 0.35:
-            consensus = "存在分歧"
-        else:
-            consensus = "严重分歧"
-
-        # 分歧折扣：受市场状态影响
+        # ── 3. 分歧折扣（用共识度调整评分） ──
         if market_state == "强趋势牛":
             discount = 1.0
         elif market_state == "震荡偏强":
@@ -322,6 +326,7 @@ class ChiefDecisionAgent(BaseLLMAgent):
         # ── 4. 从ReviewManager加载历史胜率（凯利公式用）──
         win_rate = 0.55  # 默认
         avg_win_ratio = 1.5  # 默认盈亏比
+        total_verified = 0
         try:
             # Lazy import to avoid circular dependency
             from review import ReviewManager
@@ -334,6 +339,26 @@ class ChiefDecisionAgent(BaseLLMAgent):
                     win_rate = overall_acc
         except:
             pass
+
+        # Fallback: use backtest data as proxy win rate
+        if win_rate == 0.55 and total_verified <= 10:
+            try:
+                from data import EnhancedBacktestAgent
+                bt_codes = ["159915", "510300", "588000"]  # representative ETFs
+                bt_wins = []
+                bt_pl = []
+                for c in bt_codes:
+                    bt = EnhancedBacktestAgent.run(c, days=120)
+                    if bt.get("胜率", 0) > 0:
+                        bt_wins.append(bt["胜率"] / 100)
+                    if bt.get("盈亏比", 0) > 0:
+                        bt_pl.append(bt["盈亏比"])
+                if bt_wins:
+                    win_rate = float(np.mean(bt_wins))
+                if bt_pl:
+                    avg_win_ratio = float(np.mean(bt_pl))
+            except Exception:
+                pass
 
         # ── 5. LLM决策（优先于规则，结果决定最终评分）──
         ratings_list = [r.rating for r in reports]

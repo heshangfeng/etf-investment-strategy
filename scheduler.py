@@ -15,7 +15,7 @@ from config import (
 from data import (
     DataCollectAgent, ValueScoreAgent, BoomScoreAgent,
     TechScoreAgent, FundScoreAgent, RiskScoreAgent,
-    BacktestAgent, PublicOpinionAgent
+    BacktestAgent, EnhancedBacktestAgent, PublicOpinionAgent
 )
 from models import AgentReport, FinalResearchReport
 from agents import (
@@ -320,6 +320,9 @@ class MainSchedulerAgent:
         # Phase 2.6: ETF相关性约束
         self._apply_correlation_constraint(final_reports)
 
+        # Phase 2.7: 增强回测与组合汇总
+        _enhance_with_backtest(final_reports)
+
         # Phase 3: 报告输出
         ResearchReportGenerator.generate_full_report(final_reports)
 
@@ -387,7 +390,7 @@ def single_etf_all_agents(etf_item: dict, global_max_pos: float) -> dict:
         f_fund = agent_exec.submit(FundScoreAgent.run, code, idx)
         f_risk = agent_exec.submit(RiskScoreAgent.run, code)
         f_opinion = agent_exec.submit(PublicOpinionAgent.run, name, code)
-        f_bt = agent_exec.submit(BacktestAgent.run, code)
+        f_bt = agent_exec.submit(EnhancedBacktestAgent.run, code)
         f_premium = agent_exec.submit(DataCollectAgent.get_etf_premium, code)
 
         s_val = f_val.result()
@@ -435,9 +438,124 @@ def single_etf_all_agents(etf_item: dict, global_max_pos: float) -> dict:
         "盈亏比": bt_data["盈亏比"],
         "最大回撤(%)": bt_data["最大回撤"],
         "120日收益(%)": bt_data["回测收益"],
+        "年化收益(%)": bt_data.get("年化收益", 0),
+        "夏普比率": bt_data.get("夏普比率", 0),
+        "卡玛比率": bt_data.get("卡玛比率", 0),
+        "索提诺比率": bt_data.get("索提诺比率", 0),
+        "交易次数": bt_data.get("交易次数", 0),
         "建议仓位": f"{pos_rate*100:.0f}%",
         "操作建议": action
     }
+
+
+# ====================== 【9. 组合回测与增强回测工具】 ======================
+class PortfolioBacktest:
+    """Aggregate per-ETF backtests into portfolio-level metrics."""
+
+    @staticmethod
+    def run(etf_results: list[dict]) -> dict:
+        """Aggregate individual ETF backtests.
+
+        Args:
+            etf_results: each has etf_info (code, name, type) and backtest (dict with
+                         胜率/盈亏比/最大回撤/回测收益/年化收益/夏普比率 etc.)
+
+        Returns:
+            Portfolio-level summary dict.
+        """
+        if not etf_results:
+            return {
+                "组合胜率(平均)": 0,
+                "组合盈亏比(平均)": 0,
+                "组合最大回撤": 0,
+                "组合收益": 0,
+                "等权年化收益": 0,
+                "持仓ETF数": 0,
+            }
+
+        count = len(etf_results)
+        win_rates = []
+        pl_ratios = []
+        max_drawdowns = []
+        cumulative_rets = []
+        annual_rets = []
+
+        for r in etf_results:
+            bt = r.get("backtest", {})
+            win_rates.append(bt.get("胜率", 0))
+            pl_ratios.append(bt.get("盈亏比", 0))
+            max_drawdowns.append(bt.get("最大回撤", 0))
+            cumulative_rets.append(1 + bt.get("回测收益", 0) / 100)
+            annual_rets.append(bt.get("年化收益", 0))
+
+        # 组合胜率 and 盈亏比: equal-weight average
+        avg_win_rate = float(np.mean(win_rates))
+        avg_pl_ratio = float(np.mean(pl_ratios))
+
+        # 组合最大回撤: worst drawdown across all
+        worst_dd = float(np.min(max_drawdowns))
+
+        # 组合收益: equal-weighted cumulative （相乘求等权复利收益）
+        avg_cum = float(np.mean(cumulative_rets))
+        portfolio_return = (avg_cum - 1) * 100
+
+        # 等权年化收益: average of individual annualized returns
+        avg_annual_return = float(np.mean(annual_rets))
+
+        return {
+            "组合胜率(平均)": round(avg_win_rate, 2),
+            "组合盈亏比(平均)": round(avg_pl_ratio, 2),
+            "组合最大回撤": round(worst_dd, 2),
+            "组合收益": round(portfolio_return, 2),
+            "等权年化收益": round(avg_annual_return, 2),
+            "持仓ETF数": count,
+        }
+
+
+def _enhance_with_backtest(final_reports: list) -> None:
+    """Run EnhancedBacktestAgent for each ETF and attach results to reports.
+
+    Mutates each FinalResearchReport by adding a 'backtest' attribute.
+    Also prints per-ETF backtest metrics inline.
+    """
+    print(f"\n{'='*80}")
+    print("  【增强回测】运行逐ETF回测...")
+    print(f"{'='*80}")
+
+    etf_results = []
+    for fr in final_reports:
+        code = fr.etf_info["code"]
+        try:
+            bt = EnhancedBacktestAgent.run(code)
+            fr.backtest = bt  # attach to report
+            win = bt.get("胜率", "N/A")
+            pl = bt.get("盈亏比", "N/A")
+            ret = bt.get("回测收益", "N/A")
+            ann = bt.get("年化收益", "N/A")
+            sharpe = bt.get("夏普比率", "N/A")
+            trades = bt.get("交易次数", "N/A")
+            print(f"  ✅ {code} {fr.etf_info['name']:10s} | "
+                  f"胜率:{win:>5}% 盈亏比:{pl:>4} 收益:{ret:>6}% "
+                  f"年化:{ann:>6}% 夏普:{sharpe:>4} 交易:{trades}")
+            etf_results.append({"etf_info": fr.etf_info, "backtest": bt})
+        except Exception as e:
+            print(f"  ❌ {code} {fr.etf_info['name']}: 回测失败 — {str(e)[:60]}")
+
+    # Portfolio summary
+    if etf_results:
+        pf = PortfolioBacktest.run(etf_results)
+        print(f"\n{'='*80}")
+        print("  【组合回测汇总】")
+        print(f"{'='*80}")
+        print(f"  持仓ETF数:      {pf['持仓ETF数']}")
+        print(f"  组合胜率(平均):  {pf['组合胜率(平均)']}%")
+        print(f"  组合盈亏比(平均): {pf['组合盈亏比(平均)']}")
+        print(f"  组合最大回撤:    {pf['组合最大回撤']}%")
+        print(f"  组合收益:        {pf['组合收益']}%")
+        print(f"  等权年化收益:    {pf['等权年化收益']}%")
+        print(f"{'='*80}\n")
+    else:
+        print("  ⚠️  所有ETF回测均失败，跳过组合汇总\n")
 
 
 # ====================== 程序入口 ======================

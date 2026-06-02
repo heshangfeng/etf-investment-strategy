@@ -637,3 +637,144 @@ class BacktestAgent:
             "最大回撤": round(max_dd * 100, 2),
             "回测收益": round((cum.iloc[-1] - 1) * 100, 2)
         }
+
+
+class EnhancedBacktestAgent:
+    """Enhanced backtest with transaction costs and more rigorous metrics.
+
+    Backward compatible: returns all original keys plus new ones.
+    Transaction cost: 0.03% ETF commission per trade (entry or exit).
+    """
+
+    TRADE_COST = 0.0003  # 0.03% ETF commission
+
+    @staticmethod
+    def run(etf_code: str, days=120) -> dict:
+        snapshot_dir = "data/snapshots"
+        files = sorted(glob.glob(f"{snapshot_dir}/*.json"))
+        if len(files) < 2:
+            return EnhancedBacktestAgent._fallback(etf_code, days)
+
+        df = DataCollectAgent.get_etf_price(etf_code)
+        ds = pd.to_datetime(df["date"]).dt.strftime("%Y%m%d")
+        df_dates = set(ds)
+
+        dates, signals = [], []
+        for fpath in files:
+            with open(fpath, "r", encoding="utf-8") as f:
+                snap = json.load(f)
+            for etf in snap["etfs"]:
+                if etf["code"] == etf_code:
+                    dates.append(snap["date"])
+                    signals.append(etf)
+                    break
+
+        if len(dates) < 2:
+            return EnhancedBacktestAgent._fallback(etf_code, days)
+
+        date_idx = dict(zip(ds, range(len(df))))
+
+        for sig_date in dates:
+            if sig_date not in df_dates:
+                return EnhancedBacktestAgent._fallback(etf_code, days)
+
+        strategy_rets = []
+        for i, sig_date in enumerate(dates):
+            idx = date_idx[sig_date]
+            if idx + 1 >= len(df):
+                continue
+            pos = 1.0 if signals[i].get("position_pct", 0) > 0 else 0.0
+            underlying_ret = df.iloc[idx + 1]["close"] / df.iloc[idx]["close"] - 1
+            ret = pos * (underlying_ret - EnhancedBacktestAgent.TRADE_COST)
+            strategy_rets.append(ret)
+
+        if len(strategy_rets) < 2:
+            return EnhancedBacktestAgent._fallback(etf_code, days)
+
+        arr = np.array(strategy_rets)
+        n_days = len(arr)
+
+        # Basic metrics
+        win = np.sum(arr > 0)
+        lose = np.sum(arr < 0)
+        win_rate = win / (win + lose) if (win + lose) > 0 else 0
+        profit_avg = float(np.mean(arr[arr > 0])) if np.any(arr > 0) else 0
+        loss_avg = abs(float(np.mean(arr[arr < 0]))) if np.any(arr < 0) else 0
+        pl_ratio = profit_avg / loss_avg if loss_avg > 0 else 1
+        cum = np.cumprod(1 + arr)
+        max_dd = float(np.min(cum / np.maximum.accumulate(cum) - 1))
+
+        # Enhanced metrics
+        total_return = cum[-1] - 1
+        annual_return = (1 + total_return) ** (252 / n_days) - 1 if n_days > 0 else 0
+        sharpe = float(np.mean(arr) / max(np.std(arr), 1e-10) * np.sqrt(252))
+        calmar = annual_return / abs(max_dd) if max_dd != 0 else float("inf")
+
+        # Sortino: downside deviation (only negative returns)
+        downside = arr[arr < 0]
+        downside_std = np.std(downside) if len(downside) > 1 else 1e-10
+        sortino = float(np.mean(arr) / max(downside_std, 1e-10) * np.sqrt(252))
+
+        # Trade count: number of positive position signals
+        trade_count = sum(1 for sig in signals if sig.get("position_pct", 0) > 0)
+
+        return {
+            "胜率": round(win_rate * 100, 2),
+            "盈亏比": round(pl_ratio, 2),
+            "最大回撤": round(max_dd * 100, 2),
+            "回测收益": round(total_return * 100, 2),
+            "年化收益": round(annual_return * 100, 2),
+            "夏普比率": round(sharpe, 2),
+            "卡玛比率": round(calmar, 2),
+            "索提诺比率": round(sortino, 2),
+            "交易次数": trade_count,
+        }
+
+    @staticmethod
+    def _fallback(etf_code: str, days=120) -> dict:
+        df = DataCollectAgent.get_etf_price(etf_code).tail(days).copy()
+        df["ma20"] = df["close"].rolling(20).mean()
+        df["signal"] = (df["close"] > df["ma20"]).astype(int)
+
+        # Apply transaction cost on signal changes (entry/exit)
+        prev_signal = df["signal"].shift(1).fillna(0)
+        entry_cost = ((prev_signal == 0) & (df["signal"] == 1)).astype(int) * EnhancedBacktestAgent.TRADE_COST
+        exit_cost = ((prev_signal == 1) & (df["signal"] == 0)).astype(int) * EnhancedBacktestAgent.TRADE_COST
+        df["ret"] = df["close"].pct_change()
+        df["strategy_ret"] = prev_signal * df["ret"] - entry_cost - exit_cost
+
+        arr = df["strategy_ret"].values[1:]  # skip first NaN from pct_change
+        n_days = len(arr)
+
+        win = np.sum(arr > 0)
+        lose = np.sum(arr < 0)
+        win_rate = win / (win + lose) if (win + lose) > 0 else 0
+        profit_avg = float(np.mean(arr[arr > 0])) if np.any(arr > 0) else 0
+        loss_avg = abs(float(np.mean(arr[arr < 0]))) if np.any(arr < 0) else 0
+        pl_ratio = profit_avg / loss_avg if loss_avg > 0 else 1
+        cum = (1 + df["strategy_ret"]).cumprod()
+        max_dd = float((cum / cum.cummax() - 1).min())
+
+        total_return = cum.iloc[-1] - 1
+        annual_return = (1 + total_return) ** (252 / n_days) - 1 if n_days > 0 else 0
+        sharpe = float(np.nanmean(arr) / max(np.nanstd(arr), 1e-10) * np.sqrt(252))
+        calmar = annual_return / abs(max_dd) if max_dd != 0 else float("inf")
+
+        downside = arr[arr < 0]
+        downside_std = np.std(downside) if len(downside) > 1 else 1e-10
+        sortino = float(np.nanmean(arr) / max(downside_std, 1e-10) * np.sqrt(252))
+
+        # Trade count: number of entries (signal 0→1)
+        trade_count = int(np.sum((prev_signal == 0) & (df["signal"] == 1)))
+
+        return {
+            "胜率": round(win_rate * 100, 2),
+            "盈亏比": round(pl_ratio, 2),
+            "最大回撤": round(max_dd * 100, 2),
+            "回测收益": round(total_return * 100, 2),
+            "年化收益": round(annual_return * 100, 2),
+            "夏普比率": round(sharpe, 2),
+            "卡玛比率": round(calmar, 2),
+            "索提诺比率": round(sortino, 2),
+            "交易次数": trade_count,
+        }

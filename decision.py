@@ -295,9 +295,9 @@ class ChiefDecisionAgent(BaseLLMAgent):
                                   self._build_user_prompt(etf_info['name'], etf_info['code'], data_text))
 
         if llm_out:
-            llm_final_rating = llm_out.get("rating", "中性")
-            llm_final_score = float(np.clip(llm_out.get("score", final_score), 0, 100))
-            llm_core_logic = llm_out.get("analysis", "")
+            llm_final_rating = llm_out.rating
+            llm_final_score = float(np.clip(llm_out.score, 0, 100))
+            llm_core_logic = llm_out.analysis
             # LLM结果优于规则时采用
             if abs(llm_final_score - 50) > abs(final_score - 50):
                 final_score = llm_final_score

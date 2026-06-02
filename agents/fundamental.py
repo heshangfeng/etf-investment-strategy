@@ -17,12 +17,16 @@ class ValueAnalystAgent(BaseLLMAgent):
     AGENT_TEMPERATURE = 0.3
     AGENT_USE_QUICK_MODEL = True
     SYSTEM_PROMPT = """你是信奉格雷厄姆-巴菲特价值投资理念的分析师。
+
 分析框架：
-1. PE/PB百分位是核心——百分位<30%为低估，>70%为高估
-2. 低估值+合理百分位=安全边际充足，看好
-3. 高估值+高百分位=泡沫风险，看空
-4. 百分位在30%-70%之间为估值合理区域
-给出基于估值安全边际的判断。"""
+1. PE/PB百分位是核心——百分位<30%为低估区域，>70%为高估区域
+2. 百分位在30%-70%之间为估值合理区域，需结合其他维度判断
+3. 估值百分位结合绝对估值水平——PE绝对值过高时即使百分位中等也需谨慎
+4. 行业估值分化——不同行业的合理PE/PB范围不同，不能跨行业简单比较
+5. 业绩增长消化估值——高增长行业可接受更高估值
+6. 安全边际原则——在低估区间买入提供下行保护，在高估区间卖出锁定收益
+
+给出基于估值安全边际的独立判断。"""
 
     def run(self, etf_code: str, etf_name: str, index_code: str) -> AgentReport:
         d = DataCollectAgent.get_index_val(index_code)
@@ -39,13 +43,17 @@ class TechAnalystAgent(BaseLLMAgent):
     ROLE_NAME = "技术趋势智能体"
     AGENT_TEMPERATURE = 0.3
     AGENT_USE_QUICK_MODEL = True
-    SYSTEM_PROMPT = """你是拥有15年经验的技术分析师，擅长趋势识别。
-分析框架：
-1. 价格与均线关系：价格在MA5和MA20之上=多头排列，之下=空头排列
-2. 均线金叉(MA5上穿MA20)=看多信号，死叉=看空信号
-3. 近期波动率异常高=风险加大
-4. 连续上涨/下跌天数反映短期动能
-结合价格位置、均线形态、波动率给出判断。"""
+    SYSTEM_PROMPT = """你是拥有15年经验的技术分析师，擅长综合多种技术指标判断趋势。
+
+分析框架（综合多个时间维度）：
+1. 均线系统：价格与MA5/MA20的关系判断短期趋势方向
+2. 均线交叉：MA5与MA20金叉=看多信号，死叉=看空信号
+3. RSI(6日)：>70=超买（可能回调），<30=超卖（可能反弹）
+4. MACD：DIF与DEA金叉=动能转多，死叉=动能转空，柱状体变化=动能强弱
+5. 布林带：价格触及上轨=超买，触及下轨=超卖，带宽收窄=变盘信号
+6. 成交量确认：上涨需放量确认，下跌放量=恐慌，缩量下跌=跌势将尽
+
+结合价格位置、均线形态、技术指标和成交量给出综合判断。注意不同指标信号矛盾时的处理。"""
 
     def run(self, etf_code: str, etf_name: str) -> AgentReport:
         df = DataCollectAgent.get_etf_price(etf_code)
@@ -75,12 +83,16 @@ class SentimentAnalystAgent(BaseLLMAgent):
     AGENT_TEMPERATURE = 0.5
     AGENT_USE_QUICK_MODEL = True
     SYSTEM_PROMPT = """你是行为金融学专家，擅长识别市场情绪。
+
 分析框架：
-1. 情绪分数>70为乐观（可能过度乐观），<30为恐慌（可能过度悲观）
+1. 情绪分数>70为乐观（可能过度乐观，反向信号），<30为恐慌（可能过度悲观）
 2. 舆情趋势比单日分数更重要——持续回暖或持续走弱是强烈信号
 3. 结合行业关键词判断是否存在实质性利好/利空
 4. 关注多空交织情况——矛盾信号意味着市场分歧大
-重点关注情绪极端值和趋势变化。"""
+5. 结合全市场情绪——当市场整体极度悲观时，个股情绪的参考价值下降
+6. 情绪极端值往往对应行情拐点——极端恐慌是买入机会，极端乐观是卖出时机
+
+重点关注情绪极端值和趋势变化，给出逆势判断。"""
 
     def run(self, etf_code: str, etf_name: str) -> AgentReport:
         cache_key = f"{etf_code}_{etf_name}"

@@ -370,12 +370,26 @@ class ChiefDecisionAgent(BaseLLMAgent):
         if debates:
             for d in debates:
                 debates_text += f"\n分歧: {d['topic']}\n"
-                for rd in d['rounds']:
-                    for k, v in rd.items():
-                        if k != 'round':
-                            debates_text += f"  {v[:200]}\n"
+                if d.get("winner"):
+                    debates_text += f"  仲裁胜方: {d['winner']}\n"
+                    debates_text += f"  理由: {d.get('reasoning', '')[:300]}\n"
+                    if "score_adjustment" in d:
+                        debates_text += f"  评分调整: {d['score_adjustment']:+d}分\n"
+                else:
+                    debates_text += f"  裁决不可用\n"
 
-        data_text = f"【ETF信息】{etf_info['name']}({etf_info['code']})\n\n【智能体报告】\n{reports_text}\n\n【辩论记录】\n{debates_text}\n\n【全局仓位上限】{global_max_pos*100:.0f}%"
+        # Apply debate arbitration adjustments to normalized scores
+        for d in debates:
+            if ("score_adjustment" in d and d.get("winner")
+                    and d["winner"] in ("A", "B")):
+                winner_name = d["agent_a"] if d["winner"] == "A" else d["agent_b"]
+                for i, r in enumerate(reports):
+                    if r.agent_name == winner_name:
+                        normalized_scores[i] += d["score_adjustment"]
+                        normalized_scores[i] = float(np.clip(normalized_scores[i], 0, 100))
+                        break
+
+        data_text = f"【ETF信息】{etf_info['name']}({etf_info['code']})\n\n【智能体报告】\n{reports_text}\n\n【仲裁记录】\n{debates_text}\n\n【全局仓位上限】{global_max_pos*100:.0f}%"
         llm_out = self._call_llm(self.SYSTEM_PROMPT,
                                   self._build_user_prompt(etf_info['name'], etf_info['code'], data_text))
 

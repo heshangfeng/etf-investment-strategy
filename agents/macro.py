@@ -15,16 +15,43 @@ from agents.base import BaseLLMAgent
 class MacroAnalystAgent(BaseLLMAgent):
     ROLE_NAME = "宏观分析智能体"
     AGENT_TEMPERATURE = 0.15
-    SYSTEM_PROMPT = """你是拥有20年经验的央行宏观分析师。
-你的分析框架：
-1. 市场成交量代表流动性和参与度——量能决定行情级别
-2. 成交额>10000亿=强趋势市场，7000-10000亿=震荡，<7000亿=弱势
-3. 给出基于流动性的宏观环境和仓位建议
-务必简洁专业，数据驱动。"""
+    SYSTEM_PROMPT = """你是拥有20年经验的央行宏观分析师，你的分析覆盖经济全貌而不只看成交量。
+
+分析框架（综合以下维度）：
+1. 市场成交量代表流动性和参与度——成交额>10000亿=强趋势市场，7000-10000亿=震荡，<7000亿=弱势
+2. 全市场估值温度——沪深300 PE百分位所处区间决定系统性机会/风险
+3. 宏观经济景气度——PMI趋势反映经济基本面强弱
+4. 信用周期——社融/M2增速变化预示流动性方向
+5. 通胀环境——CPI/PPI走势影响货币政策空间
+6. 全球风险偏好——VIX指数、北向资金流向反映外资态度
+
+务必综合多维度判断，不要只看成交额。简洁专业，数据驱动。"""
 
     def run(self) -> AgentReport:
         vol = DataCollectAgent.get_market_total_volume()
-        data_text = f"今日全市场成交额：{vol:.0f}亿元"
+
+        # 收集更多宏观数据
+        extra = []
+        try:
+            val = DataCollectAgent.get_index_val("000300")
+            extra.append(f"沪深300 PE百分位: {val['pe_percent']}%")
+        except:
+            pass
+        try:
+            pmi_df = ak.macro_china_pmi()
+            if pmi_df is not None and len(pmi_df) > 0:
+                pmi_val = float(pmi_df.tail(1).values[0][1])
+                extra.append(f"制造业PMI: {pmi_val}")
+        except:
+            pass
+        try:
+            vix_val = DataCollectAgent.get_ivix("510300")
+            extra.append(f"VIX: {vix_val}")
+        except:
+            pass
+
+        extra_text = " | ".join(extra) if extra else ""
+        data_text = f"今日全市场成交额：{vol:.0f}亿元 | {extra_text}"
 
         # LLM分析
         llm_out = self._call_llm(self.SYSTEM_PROMPT, self._build_user_prompt("全市场", "MACRO", data_text))

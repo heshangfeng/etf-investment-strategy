@@ -19,7 +19,7 @@ from config import (
     QUICK_LLM_MAX_TOKENS, QUICK_LLM_TEMPERATURE,
     LLM_CALL_COUNT
 )
-from models import AgentReport
+from models import AgentReport, LLMOutput
 from keywords import INDUSTRY_POS
 from data import DataCollectAgent, PublicOpinionAgent
 
@@ -64,7 +64,8 @@ class BaseLLMAgent:
     "confidence": 0-1之间的置信度
 }}"""
 
-    def _call_llm(self, system_prompt: str, user_prompt: str) -> dict | None:
+    def _call_llm(self, system_prompt: str, user_prompt: str) -> LLMOutput | None:
+        """调用 LLM 并返回 Pydantic 验证后的结构化输出。失败返回 None。"""
         if not LLM_ENABLED:
             return None
 
@@ -102,13 +103,21 @@ class BaseLLMAgent:
             LLM_CALL_COUNT["total"] += 1
             LLM_CALL_COUNT[route] += 1
 
-            return json.loads(text)
+            # 通过 Pydantic 模型验证
+            raw = json.loads(text)
+            validated = LLMOutput.from_llm_json(raw)
+            if validated is None:
+                print(f"  ⚠️ {self.ROLE_NAME} LLM输出格式无效，使用规则评分")
+            return validated
+        except json.JSONDecodeError as e:
+            print(f"  ⚠️ {self.ROLE_NAME} LLM返回非JSON: {e}")
+            return None
         except Exception as e:
-            print(f"  ⚠️ {self.ROLE_NAME} LLM调用失败 ({route if 'route' in dir() else 'unknown'}): {e}")
+            print(f"  ⚠️ {self.ROLE_NAME} LLM调用失败 ({route}): {e}")
             return None
 
     def _parse_to_report(self, etf_code: str, etf_name: str,
-                         llm_output: dict | None, fallback_score: float,
+                         llm_output: LLMOutput | None, fallback_score: float,
                          fallback_rating: str | None = None) -> AgentReport:
         if llm_output is None:
             return AgentReport(
@@ -124,20 +133,16 @@ class BaseLLMAgent:
                 source="rule_fallback"
             )
 
-        rating = llm_output.get("rating", "中性")
-        if rating not in RATING_ORDER:
-            rating = "中性"
-
         return AgentReport(
             agent_name=self.ROLE_NAME,
             etf_code=etf_code,
             etf_name=etf_name,
-            rating=rating,
-            score=float(np.clip(llm_output.get("score", 50), 0, 100)),
-            analysis=llm_output.get("analysis", ""),
-            key_factors=llm_output.get("key_factors", []),
-            risk_warnings=llm_output.get("risk_warnings", []),
-            confidence=float(np.clip(llm_output.get("confidence", 0.5), 0, 1)),
+            rating=llm_output.rating if llm_output.rating in RATING_ORDER else "中性",
+            score=float(np.clip(llm_output.score, 0, 100)),
+            analysis=llm_output.analysis,
+            key_factors=llm_output.key_factors,
+            risk_warnings=llm_output.risk_warnings,
+            confidence=float(np.clip(llm_output.confidence, 0, 1)),
             source="llm"
         )
 

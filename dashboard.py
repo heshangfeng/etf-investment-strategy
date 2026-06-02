@@ -155,7 +155,7 @@ def main():
         lambda v: f"color: {score_color(float(v.rstrip('%')))};" if isinstance(v, str) and v.endswith('%') else "",
         subset=["仓位"]
     )
-    st.dataframe(styled, use_container_width=True, height=min(60 + len(df) * 35, 600))
+    st.dataframe(styled, width="stretch", height=min(60 + len(df) * 35, 600))
 
     # ── 单个 ETF 详情 ──
     st.subheader("ETF 详情")
@@ -192,7 +192,7 @@ def main():
                 st.dataframe(df_a.style.map(
                     lambda v: f"color: {rating_color(v)}; font-weight: bold;" if v in ("强烈看多", "看多", "中性", "看空", "强烈看空") else "",
                     subset=["评级"]
-                ), use_container_width=True, hide_index=True)
+                ), width="stretch", hide_index=True)
 
     # ── 底部统计 ──
     st.divider()
@@ -205,9 +205,10 @@ def main():
             st.caption(f"累计复盘: {cum.get('total_reviews', 0)} 次 | "
                        f"准确率: {cum.get('overall_accuracy', 0):.1f}%")
 
-    # ── 投资组合面板 ──
+    # ── 投资组合面板（实际持仓） ──
     st.divider()
     st.subheader("我的投资组合（实际持仓）")
+    st.caption("顶部"建议总仓位"=系统推荐 ｜ 此处"实际仓位"=你的真实持仓比例，自动交易后两者应基本一致")
     try:
         from portfolio import load, _price
         pf = load()
@@ -220,28 +221,30 @@ def main():
         col_c.metric("实际仓位", f"{(1-cash/max(total,1))*100:.0f}%")
 
         if pf.holdings:
-            rows = []
+            rows_pf = []
             for h in pf.holdings:
                 cp = _price(h.code, h.avg_cost)
                 pnl = (cp - h.avg_cost) / h.avg_cost * 100
-                rows.append({
+                rows_pf.append({
                     "代码": h.code, "名称": h.name, "份额": h.shares,
                     "成本价": f"{h.avg_cost:.4f}", "现价": f"{cp:.4f}",
                     "盈亏": f"{pnl:+.1f}%",
                 })
-            df_pf = pd.DataFrame(rows)
+            df_pf = pd.DataFrame(rows_pf)
             st.dataframe(df_pf.style.map(
                 lambda v: f"color: {'red' if v.startswith('-') else 'green'}; font-weight: bold;"
                 if isinstance(v, str) and v.endswith('%') else "",
                 subset=["盈亏"]
             ), use_container_width=True, hide_index=True)
-    except Exception:
-        st.caption("顶部"建议总仓位"=系统推荐仓位 ｜ 此处"实际仓位"=你的真实持仓比例，自动交易后两者应基本一致")
-        st.info("暂无持仓数据。使用 `python portfolio.py buy ...` 记录交易，或运行 `python etf-agent.py` 后自动交易。")
+        else:
+            st.info("暂无持仓。运行 `python etf-agent.py` 后自动交易。")
+    except Exception as e:
+        st.info(f"持仓数据暂不可用: {e}")
 
-    # ── 策略表现面板 ──
+    # ── 模拟交易策略表现 ──
     try:
-        from autotrade import PERF_LOG, TRADE_LOG
+        from autotrade import PERF_LOG
+        import json
         if PERF_LOG.exists():
             with open(PERF_LOG, "r", encoding="utf-8") as f:
                 perf = json.load(f)
@@ -252,6 +255,7 @@ def main():
             c3.metric("夏普比率", perf.get("sharpe_ratio", "N/A"))
             c4.metric("当前总值", f"{perf.get('current_value', 0):.0f}")
 
+            from autotrade import TRADE_LOG
             if TRADE_LOG.exists():
                 with open(TRADE_LOG, "r", encoding="utf-8") as f:
                     snaps = json.load(f)

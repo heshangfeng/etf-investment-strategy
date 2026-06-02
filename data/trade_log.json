@@ -1,0 +1,46 @@
+[
+  {
+    "date": "2026-06-02",
+    "cash": 2626.45,
+    "market_value": 97373.55,
+    "total": 100000.0,
+    "trades": {
+      "buys": [
+        {
+          "code": "159915",
+          "name": "创业板ETF",
+          "shares": 11982,
+          "price": 3.964,
+          "cost": 47496.65,
+          "position_target": 0.17,
+          "reason": "长期持有"
+        },
+        {
+          "code": "588000",
+          "name": "科创50ETF",
+          "shares": 28005,
+          "price": 1.781,
+          "cost": 49876.9,
+          "position_target": 0.17,
+          "reason": "长期持有"
+        }
+      ],
+      "sells": [],
+      "holds": [
+        {
+          "code": "159915",
+          "name": "创业板ETF",
+          "shares": 11982,
+          "reason": "长期持有"
+        },
+        {
+          "code": "588000",
+          "name": "科创50ETF",
+          "shares": 28005,
+          "reason": "长期持有"
+        }
+      ],
+      "date": "2026-06-02"
+    }
+  }
+]

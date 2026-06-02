@@ -175,7 +175,7 @@ class MainSchedulerAgent:
             s["_comp"] = r_vol[i] * 0.4 + r_vola[i] * 0.3 + r_mom[i] * 0.3
         valid.sort(key=lambda x: x["_comp"], reverse=True)
         clean = [{"code": s["code"], "name": s["name"], "type": s["type"], "index_code": s["index_code"]} for s in valid]
-        return {1: list(wide) + clean[:7], 2: clean[7:17], 3: clean[17:]}
+        return {1: ETF_POOL, 2: [], 3: []}
 
     def _rule_based_research(self, code: str, name: str, typ: str, idx: str,
                               global_max_pos: float, macro_report: AgentReport,
@@ -284,10 +284,7 @@ class MainSchedulerAgent:
 
         # Phase 0.6: ETF分层
         tiers = self._rank_etf_tiers()
-        print(f"\n【分析深度分层】")
-        print(f"  Tier 1 (完整 11-Agent+辩论): {len(tiers[1])} 只 — {' '.join(t['name'] for t in tiers[1])}")
-        print(f"  Tier 2 (简化 4-Agent 无辩论): {len(tiers[2])} 只")
-        print(f"  Tier 3 (纯规则评分): {len(tiers[3])} 只")
+        print(f"\n【全量分析】{len(tiers[1])} 只 ETF，全部 11-Agent + 辩论")
         print()
 
         # Phase 1: 按Tier顺序处理

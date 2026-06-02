@@ -5,5 +5,7432 @@
     "issues": [],
     "suggestions": [],
     "data_quality": {}
+  },
+  {
+    "date": "2026-06-03 03:31",
+    "total_etfs": 5,
+    "issues": [
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_0与agent_1平均分差仅1.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_0与agent_2平均分差仅2.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_0与agent_3平均分差仅3.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_0与agent_4平均分差仅4.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_0与agent_5平均分差仅5.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_0与agent_6平均分差仅6.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_0与agent_7平均分差仅7.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_1与agent_2平均分差仅1.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_1与agent_3平均分差仅2.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_1与agent_4平均分差仅3.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_1与agent_5平均分差仅4.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_1与agent_6平均分差仅5.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_1与agent_7平均分差仅6.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_1与agent_8平均分差仅7.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_2与agent_3平均分差仅1.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_2与agent_4平均分差仅2.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_2与agent_5平均分差仅3.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_2与agent_6平均分差仅4.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_2与agent_7平均分差仅5.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_2与agent_8平均分差仅6.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_2与agent_9平均分差仅7.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_3与agent_4平均分差仅1.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_3与agent_5平均分差仅2.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_3与agent_6平均分差仅3.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_3与agent_7平均分差仅4.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_3与agent_8平均分差仅5.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_3与agent_9平均分差仅6.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_3与agent_10平均分差仅7.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_4与agent_5平均分差仅1.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_4与agent_6平均分差仅2.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_4与agent_7平均分差仅3.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_4与agent_8平均分差仅4.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_4与agent_9平均分差仅5.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_4与agent_10平均分差仅6.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_4与agent_11平均分差仅7.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_5与agent_6平均分差仅1.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_5与agent_7平均分差仅2.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_5与agent_8平均分差仅3.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_5与agent_9平均分差仅4.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_5与agent_10平均分差仅5.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_5与agent_11平均分差仅6.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_6与agent_7平均分差仅1.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_6与agent_8平均分差仅2.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_6与agent_9平均分差仅3.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_6与agent_10平均分差仅4.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_6与agent_11平均分差仅5.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_7与agent_8平均分差仅1.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_7与agent_9平均分差仅2.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_7与agent_10平均分差仅3.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_7与agent_11平均分差仅4.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_8与agent_9平均分差仅1.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_8与agent_10平均分差仅2.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_8与agent_11平均分差仅3.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_9与agent_10平均分差仅1.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_9与agent_11平均分差仅2.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_10与agent_11平均分差仅1.0，高度冗余"
+      },
+      {
+        "type": "debate_low_impact",
+        "severity": "low",
+        "detail": "仅0%的辩论涉及实质性评分调整（0/4），辩论可能流于形式"
+      }
+    ],
+    "suggestions": [
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_0与agent_1中的一个（平均分差仅1.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_0与agent_2中的一个（平均分差仅2.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_0与agent_3中的一个（平均分差仅3.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_0与agent_4中的一个（平均分差仅4.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_0与agent_5中的一个（平均分差仅5.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_0与agent_6中的一个（平均分差仅6.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_0与agent_7中的一个（平均分差仅7.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_1与agent_2中的一个（平均分差仅1.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_1与agent_3中的一个（平均分差仅2.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_1与agent_4中的一个（平均分差仅3.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_1与agent_5中的一个（平均分差仅4.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_1与agent_6中的一个（平均分差仅5.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_1与agent_7中的一个（平均分差仅6.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_1与agent_8中的一个（平均分差仅7.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_2与agent_3中的一个（平均分差仅1.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_2与agent_4中的一个（平均分差仅2.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_2与agent_5中的一个（平均分差仅3.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_2与agent_6中的一个（平均分差仅4.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_2与agent_7中的一个（平均分差仅5.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_2与agent_8中的一个（平均分差仅6.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_2与agent_9中的一个（平均分差仅7.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_3与agent_4中的一个（平均分差仅1.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_3与agent_5中的一个（平均分差仅2.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_3与agent_6中的一个（平均分差仅3.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_3与agent_7中的一个（平均分差仅4.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_3与agent_8中的一个（平均分差仅5.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_3与agent_9中的一个（平均分差仅6.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_3与agent_10中的一个（平均分差仅7.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_4与agent_5中的一个（平均分差仅1.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_4与agent_6中的一个（平均分差仅2.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_4与agent_7中的一个（平均分差仅3.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_4与agent_8中的一个（平均分差仅4.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_4与agent_9中的一个（平均分差仅5.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_4与agent_10中的一个（平均分差仅6.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_4与agent_11中的一个（平均分差仅7.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_5与agent_6中的一个（平均分差仅1.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_5与agent_7中的一个（平均分差仅2.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_5与agent_8中的一个（平均分差仅3.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_5与agent_9中的一个（平均分差仅4.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_5与agent_10中的一个（平均分差仅5.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_5与agent_11中的一个（平均分差仅6.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_6与agent_7中的一个（平均分差仅1.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_6与agent_8中的一个（平均分差仅2.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_6与agent_9中的一个（平均分差仅3.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_6与agent_10中的一个（平均分差仅4.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_6与agent_11中的一个（平均分差仅5.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_7与agent_8中的一个（平均分差仅1.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_7与agent_9中的一个（平均分差仅2.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_7与agent_10中的一个（平均分差仅3.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_7与agent_11中的一个（平均分差仅4.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_8与agent_9中的一个（平均分差仅1.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_8与agent_10中的一个（平均分差仅2.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_8与agent_11中的一个（平均分差仅3.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_9与agent_10中的一个（平均分差仅1.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_9与agent_11中的一个（平均分差仅2.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_10与agent_11中的一个（平均分差仅1.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "debate.py",
+        "action": "审查辩论流程是否流于形式，考虑引入对抗式辩论或预设分歧议题",
+        "priority": "low",
+        "reason": "仅0%的辩论涉及实质性评分调整（0/4），辩论可能流于形式"
+      }
+    ],
+    "data_quality": {},
+    "deep_analysis": {
+      "calibration": {
+        "buckets": {
+          "40": {
+            "count": 1,
+            "buys": 0,
+            "sells": 0,
+            "holds": 1
+          },
+          "50": {
+            "count": 1,
+            "buys": 0,
+            "sells": 0,
+            "holds": 1
+          },
+          "60": {
+            "count": 1,
+            "buys": 1,
+            "sells": 0,
+            "holds": 0
+          },
+          "70": {
+            "count": 1,
+            "buys": 1,
+            "sells": 0,
+            "holds": 0
+          },
+          "80": {
+            "count": 1,
+            "buys": 1,
+            "sells": 0,
+            "holds": 0
+          }
+        },
+        "issues": []
+      },
+      "redundancy": [
+        {
+          "agent_a": "agent_0",
+          "agent_b": "agent_1",
+          "avg_diff": 1.0
+        },
+        {
+          "agent_a": "agent_0",
+          "agent_b": "agent_2",
+          "avg_diff": 2.0
+        },
+        {
+          "agent_a": "agent_0",
+          "agent_b": "agent_3",
+          "avg_diff": 3.0
+        },
+        {
+          "agent_a": "agent_0",
+          "agent_b": "agent_4",
+          "avg_diff": 4.0
+        },
+        {
+          "agent_a": "agent_0",
+          "agent_b": "agent_5",
+          "avg_diff": 5.0
+        },
+        {
+          "agent_a": "agent_0",
+          "agent_b": "agent_6",
+          "avg_diff": 6.0
+        },
+        {
+          "agent_a": "agent_0",
+          "agent_b": "agent_7",
+          "avg_diff": 7.0
+        },
+        {
+          "agent_a": "agent_1",
+          "agent_b": "agent_2",
+          "avg_diff": 1.0
+        },
+        {
+          "agent_a": "agent_1",
+          "agent_b": "agent_3",
+          "avg_diff": 2.0
+        },
+        {
+          "agent_a": "agent_1",
+          "agent_b": "agent_4",
+          "avg_diff": 3.0
+        },
+        {
+          "agent_a": "agent_1",
+          "agent_b": "agent_5",
+          "avg_diff": 4.0
+        },
+        {
+          "agent_a": "agent_1",
+          "agent_b": "agent_6",
+          "avg_diff": 5.0
+        },
+        {
+          "agent_a": "agent_1",
+          "agent_b": "agent_7",
+          "avg_diff": 6.0
+        },
+        {
+          "agent_a": "agent_1",
+          "agent_b": "agent_8",
+          "avg_diff": 7.0
+        },
+        {
+          "agent_a": "agent_2",
+          "agent_b": "agent_3",
+          "avg_diff": 1.0
+        },
+        {
+          "agent_a": "agent_2",
+          "agent_b": "agent_4",
+          "avg_diff": 2.0
+        },
+        {
+          "agent_a": "agent_2",
+          "agent_b": "agent_5",
+          "avg_diff": 3.0
+        },
+        {
+          "agent_a": "agent_2",
+          "agent_b": "agent_6",
+          "avg_diff": 4.0
+        },
+        {
+          "agent_a": "agent_2",
+          "agent_b": "agent_7",
+          "avg_diff": 5.0
+        },
+        {
+          "agent_a": "agent_2",
+          "agent_b": "agent_8",
+          "avg_diff": 6.0
+        },
+        {
+          "agent_a": "agent_2",
+          "agent_b": "agent_9",
+          "avg_diff": 7.0
+        },
+        {
+          "agent_a": "agent_3",
+          "agent_b": "agent_4",
+          "avg_diff": 1.0
+        },
+        {
+          "agent_a": "agent_3",
+          "agent_b": "agent_5",
+          "avg_diff": 2.0
+        },
+        {
+          "agent_a": "agent_3",
+          "agent_b": "agent_6",
+          "avg_diff": 3.0
+        },
+        {
+          "agent_a": "agent_3",
+          "agent_b": "agent_7",
+          "avg_diff": 4.0
+        },
+        {
+          "agent_a": "agent_3",
+          "agent_b": "agent_8",
+          "avg_diff": 5.0
+        },
+        {
+          "agent_a": "agent_3",
+          "agent_b": "agent_9",
+          "avg_diff": 6.0
+        },
+        {
+          "agent_a": "agent_3",
+          "agent_b": "agent_10",
+          "avg_diff": 7.0
+        },
+        {
+          "agent_a": "agent_4",
+          "agent_b": "agent_5",
+          "avg_diff": 1.0
+        },
+        {
+          "agent_a": "agent_4",
+          "agent_b": "agent_6",
+          "avg_diff": 2.0
+        },
+        {
+          "agent_a": "agent_4",
+          "agent_b": "agent_7",
+          "avg_diff": 3.0
+        },
+        {
+          "agent_a": "agent_4",
+          "agent_b": "agent_8",
+          "avg_diff": 4.0
+        },
+        {
+          "agent_a": "agent_4",
+          "agent_b": "agent_9",
+          "avg_diff": 5.0
+        },
+        {
+          "agent_a": "agent_4",
+          "agent_b": "agent_10",
+          "avg_diff": 6.0
+        },
+        {
+          "agent_a": "agent_4",
+          "agent_b": "agent_11",
+          "avg_diff": 7.0
+        },
+        {
+          "agent_a": "agent_5",
+          "agent_b": "agent_6",
+          "avg_diff": 1.0
+        },
+        {
+          "agent_a": "agent_5",
+          "agent_b": "agent_7",
+          "avg_diff": 2.0
+        },
+        {
+          "agent_a": "agent_5",
+          "agent_b": "agent_8",
+          "avg_diff": 3.0
+        },
+        {
+          "agent_a": "agent_5",
+          "agent_b": "agent_9",
+          "avg_diff": 4.0
+        },
+        {
+          "agent_a": "agent_5",
+          "agent_b": "agent_10",
+          "avg_diff": 5.0
+        },
+        {
+          "agent_a": "agent_5",
+          "agent_b": "agent_11",
+          "avg_diff": 6.0
+        },
+        {
+          "agent_a": "agent_6",
+          "agent_b": "agent_7",
+          "avg_diff": 1.0
+        },
+        {
+          "agent_a": "agent_6",
+          "agent_b": "agent_8",
+          "avg_diff": 2.0
+        },
+        {
+          "agent_a": "agent_6",
+          "agent_b": "agent_9",
+          "avg_diff": 3.0
+        },
+        {
+          "agent_a": "agent_6",
+          "agent_b": "agent_10",
+          "avg_diff": 4.0
+        },
+        {
+          "agent_a": "agent_6",
+          "agent_b": "agent_11",
+          "avg_diff": 5.0
+        },
+        {
+          "agent_a": "agent_7",
+          "agent_b": "agent_8",
+          "avg_diff": 1.0
+        },
+        {
+          "agent_a": "agent_7",
+          "agent_b": "agent_9",
+          "avg_diff": 2.0
+        },
+        {
+          "agent_a": "agent_7",
+          "agent_b": "agent_10",
+          "avg_diff": 3.0
+        },
+        {
+          "agent_a": "agent_7",
+          "agent_b": "agent_11",
+          "avg_diff": 4.0
+        },
+        {
+          "agent_a": "agent_8",
+          "agent_b": "agent_9",
+          "avg_diff": 1.0
+        },
+        {
+          "agent_a": "agent_8",
+          "agent_b": "agent_10",
+          "avg_diff": 2.0
+        },
+        {
+          "agent_a": "agent_8",
+          "agent_b": "agent_11",
+          "avg_diff": 3.0
+        },
+        {
+          "agent_a": "agent_9",
+          "agent_b": "agent_10",
+          "avg_diff": 1.0
+        },
+        {
+          "agent_a": "agent_9",
+          "agent_b": "agent_11",
+          "avg_diff": 2.0
+        },
+        {
+          "agent_a": "agent_10",
+          "agent_b": "agent_11",
+          "avg_diff": 1.0
+        }
+      ],
+      "debate_impact": {
+        "total_with_debates": 4,
+        "meaningful_debates": 0,
+        "impact_pct": 0.0
+      },
+      "llm_override": {
+        "llm_count": 2,
+        "rule_count": 3,
+        "override_pct": 40.0
+      }
+    }
+  },
+  {
+    "date": "2026-06-03 03:31",
+    "total_etfs": 5,
+    "issues": [
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_0与agent_1平均分差仅1.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_0与agent_2平均分差仅2.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_0与agent_3平均分差仅3.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_0与agent_4平均分差仅4.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_0与agent_5平均分差仅5.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_0与agent_6平均分差仅6.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_0与agent_7平均分差仅7.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_1与agent_2平均分差仅1.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_1与agent_3平均分差仅2.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_1与agent_4平均分差仅3.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_1与agent_5平均分差仅4.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_1与agent_6平均分差仅5.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_1与agent_7平均分差仅6.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_1与agent_8平均分差仅7.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_2与agent_3平均分差仅1.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_2与agent_4平均分差仅2.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_2与agent_5平均分差仅3.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_2与agent_6平均分差仅4.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_2与agent_7平均分差仅5.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_2与agent_8平均分差仅6.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_2与agent_9平均分差仅7.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_3与agent_4平均分差仅1.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_3与agent_5平均分差仅2.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_3与agent_6平均分差仅3.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_3与agent_7平均分差仅4.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_3与agent_8平均分差仅5.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_3与agent_9平均分差仅6.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_3与agent_10平均分差仅7.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_4与agent_5平均分差仅1.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_4与agent_6平均分差仅2.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_4与agent_7平均分差仅3.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_4与agent_8平均分差仅4.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_4与agent_9平均分差仅5.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_4与agent_10平均分差仅6.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_4与agent_11平均分差仅7.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_5与agent_6平均分差仅1.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_5与agent_7平均分差仅2.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_5与agent_8平均分差仅3.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_5与agent_9平均分差仅4.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_5与agent_10平均分差仅5.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_5与agent_11平均分差仅6.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_6与agent_7平均分差仅1.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_6与agent_8平均分差仅2.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_6与agent_9平均分差仅3.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_6与agent_10平均分差仅4.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_6与agent_11平均分差仅5.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_7与agent_8平均分差仅1.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_7与agent_9平均分差仅2.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_7与agent_10平均分差仅3.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_7与agent_11平均分差仅4.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_8与agent_9平均分差仅1.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_8与agent_10平均分差仅2.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_8与agent_11平均分差仅3.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_9与agent_10平均分差仅1.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_9与agent_11平均分差仅2.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_10与agent_11平均分差仅1.0，高度冗余"
+      },
+      {
+        "type": "debate_low_impact",
+        "severity": "low",
+        "detail": "仅0%的辩论涉及实质性评分调整（0/4），辩论可能流于形式"
+      }
+    ],
+    "suggestions": [
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_0与agent_1中的一个（平均分差仅1.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_0与agent_2中的一个（平均分差仅2.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_0与agent_3中的一个（平均分差仅3.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_0与agent_4中的一个（平均分差仅4.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_0与agent_5中的一个（平均分差仅5.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_0与agent_6中的一个（平均分差仅6.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_0与agent_7中的一个（平均分差仅7.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_1与agent_2中的一个（平均分差仅1.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_1与agent_3中的一个（平均分差仅2.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_1与agent_4中的一个（平均分差仅3.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_1与agent_5中的一个（平均分差仅4.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_1与agent_6中的一个（平均分差仅5.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_1与agent_7中的一个（平均分差仅6.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_1与agent_8中的一个（平均分差仅7.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_2与agent_3中的一个（平均分差仅1.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_2与agent_4中的一个（平均分差仅2.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_2与agent_5中的一个（平均分差仅3.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_2与agent_6中的一个（平均分差仅4.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_2与agent_7中的一个（平均分差仅5.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_2与agent_8中的一个（平均分差仅6.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_2与agent_9中的一个（平均分差仅7.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_3与agent_4中的一个（平均分差仅1.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_3与agent_5中的一个（平均分差仅2.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_3与agent_6中的一个（平均分差仅3.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_3与agent_7中的一个（平均分差仅4.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_3与agent_8中的一个（平均分差仅5.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_3与agent_9中的一个（平均分差仅6.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_3与agent_10中的一个（平均分差仅7.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_4与agent_5中的一个（平均分差仅1.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_4与agent_6中的一个（平均分差仅2.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_4与agent_7中的一个（平均分差仅3.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_4与agent_8中的一个（平均分差仅4.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_4与agent_9中的一个（平均分差仅5.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_4与agent_10中的一个（平均分差仅6.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_4与agent_11中的一个（平均分差仅7.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_5与agent_6中的一个（平均分差仅1.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_5与agent_7中的一个（平均分差仅2.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_5与agent_8中的一个（平均分差仅3.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_5与agent_9中的一个（平均分差仅4.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_5与agent_10中的一个（平均分差仅5.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_5与agent_11中的一个（平均分差仅6.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_6与agent_7中的一个（平均分差仅1.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_6与agent_8中的一个（平均分差仅2.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_6与agent_9中的一个（平均分差仅3.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_6与agent_10中的一个（平均分差仅4.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_6与agent_11中的一个（平均分差仅5.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_7与agent_8中的一个（平均分差仅1.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_7与agent_9中的一个（平均分差仅2.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_7与agent_10中的一个（平均分差仅3.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_7与agent_11中的一个（平均分差仅4.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_8与agent_9中的一个（平均分差仅1.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_8与agent_10中的一个（平均分差仅2.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_8与agent_11中的一个（平均分差仅3.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_9与agent_10中的一个（平均分差仅1.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_9与agent_11中的一个（平均分差仅2.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_10与agent_11中的一个（平均分差仅1.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "debate.py",
+        "action": "审查辩论流程是否流于形式，考虑引入对抗式辩论或预设分歧议题",
+        "priority": "low",
+        "reason": "仅0%的辩论涉及实质性评分调整（0/4），辩论可能流于形式"
+      }
+    ],
+    "data_quality": {},
+    "deep_analysis": {
+      "calibration": {
+        "buckets": {
+          "40": {
+            "count": 1,
+            "buys": 0,
+            "sells": 0,
+            "holds": 1
+          },
+          "50": {
+            "count": 1,
+            "buys": 0,
+            "sells": 0,
+            "holds": 1
+          },
+          "60": {
+            "count": 1,
+            "buys": 1,
+            "sells": 0,
+            "holds": 0
+          },
+          "70": {
+            "count": 1,
+            "buys": 1,
+            "sells": 0,
+            "holds": 0
+          },
+          "80": {
+            "count": 1,
+            "buys": 1,
+            "sells": 0,
+            "holds": 0
+          }
+        },
+        "issues": []
+      },
+      "redundancy": [
+        {
+          "agent_a": "agent_0",
+          "agent_b": "agent_1",
+          "avg_diff": 1.0
+        },
+        {
+          "agent_a": "agent_0",
+          "agent_b": "agent_2",
+          "avg_diff": 2.0
+        },
+        {
+          "agent_a": "agent_0",
+          "agent_b": "agent_3",
+          "avg_diff": 3.0
+        },
+        {
+          "agent_a": "agent_0",
+          "agent_b": "agent_4",
+          "avg_diff": 4.0
+        },
+        {
+          "agent_a": "agent_0",
+          "agent_b": "agent_5",
+          "avg_diff": 5.0
+        },
+        {
+          "agent_a": "agent_0",
+          "agent_b": "agent_6",
+          "avg_diff": 6.0
+        },
+        {
+          "agent_a": "agent_0",
+          "agent_b": "agent_7",
+          "avg_diff": 7.0
+        },
+        {
+          "agent_a": "agent_1",
+          "agent_b": "agent_2",
+          "avg_diff": 1.0
+        },
+        {
+          "agent_a": "agent_1",
+          "agent_b": "agent_3",
+          "avg_diff": 2.0
+        },
+        {
+          "agent_a": "agent_1",
+          "agent_b": "agent_4",
+          "avg_diff": 3.0
+        },
+        {
+          "agent_a": "agent_1",
+          "agent_b": "agent_5",
+          "avg_diff": 4.0
+        },
+        {
+          "agent_a": "agent_1",
+          "agent_b": "agent_6",
+          "avg_diff": 5.0
+        },
+        {
+          "agent_a": "agent_1",
+          "agent_b": "agent_7",
+          "avg_diff": 6.0
+        },
+        {
+          "agent_a": "agent_1",
+          "agent_b": "agent_8",
+          "avg_diff": 7.0
+        },
+        {
+          "agent_a": "agent_2",
+          "agent_b": "agent_3",
+          "avg_diff": 1.0
+        },
+        {
+          "agent_a": "agent_2",
+          "agent_b": "agent_4",
+          "avg_diff": 2.0
+        },
+        {
+          "agent_a": "agent_2",
+          "agent_b": "agent_5",
+          "avg_diff": 3.0
+        },
+        {
+          "agent_a": "agent_2",
+          "agent_b": "agent_6",
+          "avg_diff": 4.0
+        },
+        {
+          "agent_a": "agent_2",
+          "agent_b": "agent_7",
+          "avg_diff": 5.0
+        },
+        {
+          "agent_a": "agent_2",
+          "agent_b": "agent_8",
+          "avg_diff": 6.0
+        },
+        {
+          "agent_a": "agent_2",
+          "agent_b": "agent_9",
+          "avg_diff": 7.0
+        },
+        {
+          "agent_a": "agent_3",
+          "agent_b": "agent_4",
+          "avg_diff": 1.0
+        },
+        {
+          "agent_a": "agent_3",
+          "agent_b": "agent_5",
+          "avg_diff": 2.0
+        },
+        {
+          "agent_a": "agent_3",
+          "agent_b": "agent_6",
+          "avg_diff": 3.0
+        },
+        {
+          "agent_a": "agent_3",
+          "agent_b": "agent_7",
+          "avg_diff": 4.0
+        },
+        {
+          "agent_a": "agent_3",
+          "agent_b": "agent_8",
+          "avg_diff": 5.0
+        },
+        {
+          "agent_a": "agent_3",
+          "agent_b": "agent_9",
+          "avg_diff": 6.0
+        },
+        {
+          "agent_a": "agent_3",
+          "agent_b": "agent_10",
+          "avg_diff": 7.0
+        },
+        {
+          "agent_a": "agent_4",
+          "agent_b": "agent_5",
+          "avg_diff": 1.0
+        },
+        {
+          "agent_a": "agent_4",
+          "agent_b": "agent_6",
+          "avg_diff": 2.0
+        },
+        {
+          "agent_a": "agent_4",
+          "agent_b": "agent_7",
+          "avg_diff": 3.0
+        },
+        {
+          "agent_a": "agent_4",
+          "agent_b": "agent_8",
+          "avg_diff": 4.0
+        },
+        {
+          "agent_a": "agent_4",
+          "agent_b": "agent_9",
+          "avg_diff": 5.0
+        },
+        {
+          "agent_a": "agent_4",
+          "agent_b": "agent_10",
+          "avg_diff": 6.0
+        },
+        {
+          "agent_a": "agent_4",
+          "agent_b": "agent_11",
+          "avg_diff": 7.0
+        },
+        {
+          "agent_a": "agent_5",
+          "agent_b": "agent_6",
+          "avg_diff": 1.0
+        },
+        {
+          "agent_a": "agent_5",
+          "agent_b": "agent_7",
+          "avg_diff": 2.0
+        },
+        {
+          "agent_a": "agent_5",
+          "agent_b": "agent_8",
+          "avg_diff": 3.0
+        },
+        {
+          "agent_a": "agent_5",
+          "agent_b": "agent_9",
+          "avg_diff": 4.0
+        },
+        {
+          "agent_a": "agent_5",
+          "agent_b": "agent_10",
+          "avg_diff": 5.0
+        },
+        {
+          "agent_a": "agent_5",
+          "agent_b": "agent_11",
+          "avg_diff": 6.0
+        },
+        {
+          "agent_a": "agent_6",
+          "agent_b": "agent_7",
+          "avg_diff": 1.0
+        },
+        {
+          "agent_a": "agent_6",
+          "agent_b": "agent_8",
+          "avg_diff": 2.0
+        },
+        {
+          "agent_a": "agent_6",
+          "agent_b": "agent_9",
+          "avg_diff": 3.0
+        },
+        {
+          "agent_a": "agent_6",
+          "agent_b": "agent_10",
+          "avg_diff": 4.0
+        },
+        {
+          "agent_a": "agent_6",
+          "agent_b": "agent_11",
+          "avg_diff": 5.0
+        },
+        {
+          "agent_a": "agent_7",
+          "agent_b": "agent_8",
+          "avg_diff": 1.0
+        },
+        {
+          "agent_a": "agent_7",
+          "agent_b": "agent_9",
+          "avg_diff": 2.0
+        },
+        {
+          "agent_a": "agent_7",
+          "agent_b": "agent_10",
+          "avg_diff": 3.0
+        },
+        {
+          "agent_a": "agent_7",
+          "agent_b": "agent_11",
+          "avg_diff": 4.0
+        },
+        {
+          "agent_a": "agent_8",
+          "agent_b": "agent_9",
+          "avg_diff": 1.0
+        },
+        {
+          "agent_a": "agent_8",
+          "agent_b": "agent_10",
+          "avg_diff": 2.0
+        },
+        {
+          "agent_a": "agent_8",
+          "agent_b": "agent_11",
+          "avg_diff": 3.0
+        },
+        {
+          "agent_a": "agent_9",
+          "agent_b": "agent_10",
+          "avg_diff": 1.0
+        },
+        {
+          "agent_a": "agent_9",
+          "agent_b": "agent_11",
+          "avg_diff": 2.0
+        },
+        {
+          "agent_a": "agent_10",
+          "agent_b": "agent_11",
+          "avg_diff": 1.0
+        }
+      ],
+      "debate_impact": {
+        "total_with_debates": 4,
+        "meaningful_debates": 0,
+        "impact_pct": 0.0
+      },
+      "llm_override": {
+        "llm_count": 2,
+        "rule_count": 3,
+        "override_pct": 40.0
+      }
+    }
+  },
+  {
+    "date": "2026-06-03 03:31",
+    "total_etfs": 5,
+    "issues": [
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_0与agent_1平均分差仅1.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_0与agent_2平均分差仅2.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_0与agent_3平均分差仅3.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_0与agent_4平均分差仅4.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_0与agent_5平均分差仅5.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_0与agent_6平均分差仅6.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_0与agent_7平均分差仅7.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_1与agent_2平均分差仅1.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_1与agent_3平均分差仅2.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_1与agent_4平均分差仅3.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_1与agent_5平均分差仅4.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_1与agent_6平均分差仅5.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_1与agent_7平均分差仅6.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_1与agent_8平均分差仅7.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_2与agent_3平均分差仅1.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_2与agent_4平均分差仅2.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_2与agent_5平均分差仅3.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_2与agent_6平均分差仅4.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_2与agent_7平均分差仅5.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_2与agent_8平均分差仅6.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_2与agent_9平均分差仅7.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_3与agent_4平均分差仅1.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_3与agent_5平均分差仅2.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_3与agent_6平均分差仅3.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_3与agent_7平均分差仅4.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_3与agent_8平均分差仅5.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_3与agent_9平均分差仅6.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_3与agent_10平均分差仅7.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_4与agent_5平均分差仅1.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_4与agent_6平均分差仅2.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_4与agent_7平均分差仅3.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_4与agent_8平均分差仅4.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_4与agent_9平均分差仅5.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_4与agent_10平均分差仅6.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_4与agent_11平均分差仅7.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_5与agent_6平均分差仅1.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_5与agent_7平均分差仅2.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_5与agent_8平均分差仅3.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_5与agent_9平均分差仅4.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_5与agent_10平均分差仅5.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_5与agent_11平均分差仅6.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_6与agent_7平均分差仅1.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_6与agent_8平均分差仅2.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_6与agent_9平均分差仅3.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_6与agent_10平均分差仅4.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_6与agent_11平均分差仅5.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_7与agent_8平均分差仅1.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_7与agent_9平均分差仅2.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_7与agent_10平均分差仅3.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_7与agent_11平均分差仅4.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_8与agent_9平均分差仅1.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_8与agent_10平均分差仅2.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_8与agent_11平均分差仅3.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_9与agent_10平均分差仅1.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_9与agent_11平均分差仅2.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "agent_10与agent_11平均分差仅1.0，高度冗余"
+      },
+      {
+        "type": "debate_low_impact",
+        "severity": "low",
+        "detail": "仅0%的辩论涉及实质性评分调整（0/4），辩论可能流于形式"
+      }
+    ],
+    "suggestions": [
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_0与agent_1中的一个（平均分差仅1.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_0与agent_2中的一个（平均分差仅2.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_0与agent_3中的一个（平均分差仅3.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_0与agent_4中的一个（平均分差仅4.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_0与agent_5中的一个（平均分差仅5.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_0与agent_6中的一个（平均分差仅6.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_0与agent_7中的一个（平均分差仅7.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_1与agent_2中的一个（平均分差仅1.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_1与agent_3中的一个（平均分差仅2.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_1与agent_4中的一个（平均分差仅3.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_1与agent_5中的一个（平均分差仅4.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_1与agent_6中的一个（平均分差仅5.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_1与agent_7中的一个（平均分差仅6.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_1与agent_8中的一个（平均分差仅7.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_2与agent_3中的一个（平均分差仅1.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_2与agent_4中的一个（平均分差仅2.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_2与agent_5中的一个（平均分差仅3.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_2与agent_6中的一个（平均分差仅4.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_2与agent_7中的一个（平均分差仅5.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_2与agent_8中的一个（平均分差仅6.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_2与agent_9中的一个（平均分差仅7.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_3与agent_4中的一个（平均分差仅1.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_3与agent_5中的一个（平均分差仅2.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_3与agent_6中的一个（平均分差仅3.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_3与agent_7中的一个（平均分差仅4.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_3与agent_8中的一个（平均分差仅5.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_3与agent_9中的一个（平均分差仅6.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_3与agent_10中的一个（平均分差仅7.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_4与agent_5中的一个（平均分差仅1.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_4与agent_6中的一个（平均分差仅2.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_4与agent_7中的一个（平均分差仅3.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_4与agent_8中的一个（平均分差仅4.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_4与agent_9中的一个（平均分差仅5.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_4与agent_10中的一个（平均分差仅6.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_4与agent_11中的一个（平均分差仅7.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_5与agent_6中的一个（平均分差仅1.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_5与agent_7中的一个（平均分差仅2.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_5与agent_8中的一个（平均分差仅3.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_5与agent_9中的一个（平均分差仅4.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_5与agent_10中的一个（平均分差仅5.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_5与agent_11中的一个（平均分差仅6.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_6与agent_7中的一个（平均分差仅1.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_6与agent_8中的一个（平均分差仅2.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_6与agent_9中的一个（平均分差仅3.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_6与agent_10中的一个（平均分差仅4.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_6与agent_11中的一个（平均分差仅5.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_7与agent_8中的一个（平均分差仅1.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_7与agent_9中的一个（平均分差仅2.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_7与agent_10中的一个（平均分差仅3.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_7与agent_11中的一个（平均分差仅4.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_8与agent_9中的一个（平均分差仅1.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_8与agent_10中的一个（平均分差仅2.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_8与agent_11中的一个（平均分差仅3.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_9与agent_10中的一个（平均分差仅1.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_9与agent_11中的一个（平均分差仅2.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除agent_10与agent_11中的一个（平均分差仅1.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "debate.py",
+        "action": "审查辩论流程是否流于形式，考虑引入对抗式辩论或预设分歧议题",
+        "priority": "low",
+        "reason": "仅0%的辩论涉及实质性评分调整（0/4），辩论可能流于形式"
+      }
+    ],
+    "data_quality": {},
+    "deep_analysis": {
+      "calibration": {
+        "buckets": {
+          "40": {
+            "count": 1,
+            "buys": 0,
+            "sells": 0,
+            "holds": 1
+          },
+          "50": {
+            "count": 1,
+            "buys": 0,
+            "sells": 0,
+            "holds": 1
+          },
+          "60": {
+            "count": 1,
+            "buys": 1,
+            "sells": 0,
+            "holds": 0
+          },
+          "70": {
+            "count": 1,
+            "buys": 1,
+            "sells": 0,
+            "holds": 0
+          },
+          "80": {
+            "count": 1,
+            "buys": 1,
+            "sells": 0,
+            "holds": 0
+          }
+        },
+        "issues": []
+      },
+      "redundancy": [
+        {
+          "agent_a": "agent_0",
+          "agent_b": "agent_1",
+          "avg_diff": 1.0
+        },
+        {
+          "agent_a": "agent_0",
+          "agent_b": "agent_2",
+          "avg_diff": 2.0
+        },
+        {
+          "agent_a": "agent_0",
+          "agent_b": "agent_3",
+          "avg_diff": 3.0
+        },
+        {
+          "agent_a": "agent_0",
+          "agent_b": "agent_4",
+          "avg_diff": 4.0
+        },
+        {
+          "agent_a": "agent_0",
+          "agent_b": "agent_5",
+          "avg_diff": 5.0
+        },
+        {
+          "agent_a": "agent_0",
+          "agent_b": "agent_6",
+          "avg_diff": 6.0
+        },
+        {
+          "agent_a": "agent_0",
+          "agent_b": "agent_7",
+          "avg_diff": 7.0
+        },
+        {
+          "agent_a": "agent_1",
+          "agent_b": "agent_2",
+          "avg_diff": 1.0
+        },
+        {
+          "agent_a": "agent_1",
+          "agent_b": "agent_3",
+          "avg_diff": 2.0
+        },
+        {
+          "agent_a": "agent_1",
+          "agent_b": "agent_4",
+          "avg_diff": 3.0
+        },
+        {
+          "agent_a": "agent_1",
+          "agent_b": "agent_5",
+          "avg_diff": 4.0
+        },
+        {
+          "agent_a": "agent_1",
+          "agent_b": "agent_6",
+          "avg_diff": 5.0
+        },
+        {
+          "agent_a": "agent_1",
+          "agent_b": "agent_7",
+          "avg_diff": 6.0
+        },
+        {
+          "agent_a": "agent_1",
+          "agent_b": "agent_8",
+          "avg_diff": 7.0
+        },
+        {
+          "agent_a": "agent_2",
+          "agent_b": "agent_3",
+          "avg_diff": 1.0
+        },
+        {
+          "agent_a": "agent_2",
+          "agent_b": "agent_4",
+          "avg_diff": 2.0
+        },
+        {
+          "agent_a": "agent_2",
+          "agent_b": "agent_5",
+          "avg_diff": 3.0
+        },
+        {
+          "agent_a": "agent_2",
+          "agent_b": "agent_6",
+          "avg_diff": 4.0
+        },
+        {
+          "agent_a": "agent_2",
+          "agent_b": "agent_7",
+          "avg_diff": 5.0
+        },
+        {
+          "agent_a": "agent_2",
+          "agent_b": "agent_8",
+          "avg_diff": 6.0
+        },
+        {
+          "agent_a": "agent_2",
+          "agent_b": "agent_9",
+          "avg_diff": 7.0
+        },
+        {
+          "agent_a": "agent_3",
+          "agent_b": "agent_4",
+          "avg_diff": 1.0
+        },
+        {
+          "agent_a": "agent_3",
+          "agent_b": "agent_5",
+          "avg_diff": 2.0
+        },
+        {
+          "agent_a": "agent_3",
+          "agent_b": "agent_6",
+          "avg_diff": 3.0
+        },
+        {
+          "agent_a": "agent_3",
+          "agent_b": "agent_7",
+          "avg_diff": 4.0
+        },
+        {
+          "agent_a": "agent_3",
+          "agent_b": "agent_8",
+          "avg_diff": 5.0
+        },
+        {
+          "agent_a": "agent_3",
+          "agent_b": "agent_9",
+          "avg_diff": 6.0
+        },
+        {
+          "agent_a": "agent_3",
+          "agent_b": "agent_10",
+          "avg_diff": 7.0
+        },
+        {
+          "agent_a": "agent_4",
+          "agent_b": "agent_5",
+          "avg_diff": 1.0
+        },
+        {
+          "agent_a": "agent_4",
+          "agent_b": "agent_6",
+          "avg_diff": 2.0
+        },
+        {
+          "agent_a": "agent_4",
+          "agent_b": "agent_7",
+          "avg_diff": 3.0
+        },
+        {
+          "agent_a": "agent_4",
+          "agent_b": "agent_8",
+          "avg_diff": 4.0
+        },
+        {
+          "agent_a": "agent_4",
+          "agent_b": "agent_9",
+          "avg_diff": 5.0
+        },
+        {
+          "agent_a": "agent_4",
+          "agent_b": "agent_10",
+          "avg_diff": 6.0
+        },
+        {
+          "agent_a": "agent_4",
+          "agent_b": "agent_11",
+          "avg_diff": 7.0
+        },
+        {
+          "agent_a": "agent_5",
+          "agent_b": "agent_6",
+          "avg_diff": 1.0
+        },
+        {
+          "agent_a": "agent_5",
+          "agent_b": "agent_7",
+          "avg_diff": 2.0
+        },
+        {
+          "agent_a": "agent_5",
+          "agent_b": "agent_8",
+          "avg_diff": 3.0
+        },
+        {
+          "agent_a": "agent_5",
+          "agent_b": "agent_9",
+          "avg_diff": 4.0
+        },
+        {
+          "agent_a": "agent_5",
+          "agent_b": "agent_10",
+          "avg_diff": 5.0
+        },
+        {
+          "agent_a": "agent_5",
+          "agent_b": "agent_11",
+          "avg_diff": 6.0
+        },
+        {
+          "agent_a": "agent_6",
+          "agent_b": "agent_7",
+          "avg_diff": 1.0
+        },
+        {
+          "agent_a": "agent_6",
+          "agent_b": "agent_8",
+          "avg_diff": 2.0
+        },
+        {
+          "agent_a": "agent_6",
+          "agent_b": "agent_9",
+          "avg_diff": 3.0
+        },
+        {
+          "agent_a": "agent_6",
+          "agent_b": "agent_10",
+          "avg_diff": 4.0
+        },
+        {
+          "agent_a": "agent_6",
+          "agent_b": "agent_11",
+          "avg_diff": 5.0
+        },
+        {
+          "agent_a": "agent_7",
+          "agent_b": "agent_8",
+          "avg_diff": 1.0
+        },
+        {
+          "agent_a": "agent_7",
+          "agent_b": "agent_9",
+          "avg_diff": 2.0
+        },
+        {
+          "agent_a": "agent_7",
+          "agent_b": "agent_10",
+          "avg_diff": 3.0
+        },
+        {
+          "agent_a": "agent_7",
+          "agent_b": "agent_11",
+          "avg_diff": 4.0
+        },
+        {
+          "agent_a": "agent_8",
+          "agent_b": "agent_9",
+          "avg_diff": 1.0
+        },
+        {
+          "agent_a": "agent_8",
+          "agent_b": "agent_10",
+          "avg_diff": 2.0
+        },
+        {
+          "agent_a": "agent_8",
+          "agent_b": "agent_11",
+          "avg_diff": 3.0
+        },
+        {
+          "agent_a": "agent_9",
+          "agent_b": "agent_10",
+          "avg_diff": 1.0
+        },
+        {
+          "agent_a": "agent_9",
+          "agent_b": "agent_11",
+          "avg_diff": 2.0
+        },
+        {
+          "agent_a": "agent_10",
+          "agent_b": "agent_11",
+          "avg_diff": 1.0
+        }
+      ],
+      "debate_impact": {
+        "total_with_debates": 4,
+        "meaningful_debates": 0,
+        "impact_pct": 0.0
+      },
+      "llm_override": {
+        "llm_count": 2,
+        "rule_count": 3,
+        "override_pct": 40.0
+      }
+    }
+  },
+  {
+    "date": "2026-06-03 03:32",
+    "total_etfs": 8,
+    "issues": [
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_0与ag_1平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_0与ag_2平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_0与ag_3平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_0与ag_4平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_0与ag_5平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_0与ag_6平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_0与ag_7平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_0与ag_8平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_0与ag_9平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_0与ag_10平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_0与ag_11平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_1与ag_2平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_1与ag_3平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_1与ag_4平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_1与ag_5平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_1与ag_6平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_1与ag_7平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_1与ag_8平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_1与ag_9平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_1与ag_10平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_1与ag_11平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_2与ag_3平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_2与ag_4平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_2与ag_5平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_2与ag_6平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_2与ag_7平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_2与ag_8平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_2与ag_9平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_2与ag_10平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_2与ag_11平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_3与ag_4平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_3与ag_5平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_3与ag_6平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_3与ag_7平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_3与ag_8平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_3与ag_9平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_3与ag_10平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_3与ag_11平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_4与ag_5平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_4与ag_6平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_4与ag_7平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_4与ag_8平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_4与ag_9平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_4与ag_10平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_4与ag_11平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_5与ag_6平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_5与ag_7平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_5与ag_8平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_5与ag_9平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_5与ag_10平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_5与ag_11平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_6与ag_7平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_6与ag_8平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_6与ag_9平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_6与ag_10平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_6与ag_11平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_7与ag_8平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_7与ag_9平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_7与ag_10平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_7与ag_11平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_8与ag_9平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_8与ag_10平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_8与ag_11平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_9与ag_10平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_9与ag_11平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_10与ag_11平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "debate_low_impact",
+        "severity": "low",
+        "detail": "仅0%的辩论涉及实质性评分调整（0/4），辩论可能流于形式"
+      },
+      {
+        "type": "position_too_concentrated",
+        "severity": "high",
+        "detail": "ETF_0(000000)仓位30% > 25%，集中度风险"
+      },
+      {
+        "type": "position_too_small",
+        "severity": "low",
+        "detail": "ETF_6(000600)仓位0.30%过小，无可操作性"
+      },
+      {
+        "type": "position_too_small",
+        "severity": "low",
+        "detail": "ETF_7(000700)仓位0.10%过小，无可操作性"
+      },
+      {
+        "type": "total_position_exceed_100",
+        "severity": "high",
+        "detail": "总仓位105% > 100%，异常（应已被scheduler归一化）"
+      }
+    ],
+    "suggestions": [
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_0与ag_1中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_0与ag_2中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_0与ag_3中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_0与ag_4中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_0与ag_5中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_0与ag_6中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_0与ag_7中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_0与ag_8中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_0与ag_9中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_0与ag_10中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_0与ag_11中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_1与ag_2中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_1与ag_3中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_1与ag_4中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_1与ag_5中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_1与ag_6中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_1与ag_7中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_1与ag_8中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_1与ag_9中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_1与ag_10中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_1与ag_11中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_2与ag_3中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_2与ag_4中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_2与ag_5中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_2与ag_6中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_2与ag_7中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_2与ag_8中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_2与ag_9中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_2与ag_10中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_2与ag_11中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_3与ag_4中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_3与ag_5中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_3与ag_6中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_3与ag_7中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_3与ag_8中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_3与ag_9中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_3与ag_10中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_3与ag_11中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_4与ag_5中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_4与ag_6中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_4与ag_7中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_4与ag_8中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_4与ag_9中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_4与ag_10中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_4与ag_11中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_5与ag_6中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_5与ag_7中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_5与ag_8中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_5与ag_9中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_5与ag_10中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_5与ag_11中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_6与ag_7中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_6与ag_8中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_6与ag_9中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_6与ag_10中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_6与ag_11中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_7与ag_8中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_7与ag_9中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_7与ag_10中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_7与ag_11中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_8与ag_9中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_8与ag_10中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_8与ag_11中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_9与ag_10中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_9与ag_11中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_10与ag_11中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "decision.py 凯利公式",
+        "action": "检查 Kelly 公式是否未正确限制最大仓位，当前上限应为 25%",
+        "priority": "high",
+        "reason": "ETF_0(000000)仓位30% > 25%，集中度风险"
+      },
+      {
+        "target": "scheduler.py 组合约束",
+        "action": "增强 Phase 2.5 归一化逻辑，防止总仓位超过 100%",
+        "priority": "high",
+        "reason": "总仓位105% > 100%，异常（应已被scheduler归一化）"
+      },
+      {
+        "target": "debate.py",
+        "action": "审查辩论流程是否流于形式，考虑引入对抗式辩论或预设分歧议题",
+        "priority": "low",
+        "reason": "仅0%的辩论涉及实质性评分调整（0/4），辩论可能流于形式"
+      }
+    ],
+    "data_quality": {},
+    "deep_analysis": {
+      "calibration": {
+        "buckets": {
+          "20": {
+            "count": 2,
+            "buys": 0,
+            "sells": 2,
+            "holds": 0
+          },
+          "30": {
+            "count": 1,
+            "buys": 0,
+            "sells": 1,
+            "holds": 0
+          },
+          "40": {
+            "count": 1,
+            "buys": 0,
+            "sells": 1,
+            "holds": 0
+          },
+          "70": {
+            "count": 2,
+            "buys": 2,
+            "sells": 0,
+            "holds": 0
+          },
+          "80": {
+            "count": 2,
+            "buys": 2,
+            "sells": 0,
+            "holds": 0
+          }
+        },
+        "issues": []
+      },
+      "redundancy": [
+        {
+          "agent_a": "ag_0",
+          "agent_b": "ag_1",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_0",
+          "agent_b": "ag_2",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_0",
+          "agent_b": "ag_3",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_0",
+          "agent_b": "ag_4",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_0",
+          "agent_b": "ag_5",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_0",
+          "agent_b": "ag_6",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_0",
+          "agent_b": "ag_7",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_0",
+          "agent_b": "ag_8",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_0",
+          "agent_b": "ag_9",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_0",
+          "agent_b": "ag_10",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_0",
+          "agent_b": "ag_11",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_1",
+          "agent_b": "ag_2",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_1",
+          "agent_b": "ag_3",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_1",
+          "agent_b": "ag_4",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_1",
+          "agent_b": "ag_5",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_1",
+          "agent_b": "ag_6",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_1",
+          "agent_b": "ag_7",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_1",
+          "agent_b": "ag_8",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_1",
+          "agent_b": "ag_9",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_1",
+          "agent_b": "ag_10",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_1",
+          "agent_b": "ag_11",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_2",
+          "agent_b": "ag_3",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_2",
+          "agent_b": "ag_4",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_2",
+          "agent_b": "ag_5",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_2",
+          "agent_b": "ag_6",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_2",
+          "agent_b": "ag_7",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_2",
+          "agent_b": "ag_8",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_2",
+          "agent_b": "ag_9",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_2",
+          "agent_b": "ag_10",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_2",
+          "agent_b": "ag_11",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_3",
+          "agent_b": "ag_4",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_3",
+          "agent_b": "ag_5",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_3",
+          "agent_b": "ag_6",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_3",
+          "agent_b": "ag_7",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_3",
+          "agent_b": "ag_8",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_3",
+          "agent_b": "ag_9",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_3",
+          "agent_b": "ag_10",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_3",
+          "agent_b": "ag_11",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_4",
+          "agent_b": "ag_5",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_4",
+          "agent_b": "ag_6",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_4",
+          "agent_b": "ag_7",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_4",
+          "agent_b": "ag_8",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_4",
+          "agent_b": "ag_9",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_4",
+          "agent_b": "ag_10",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_4",
+          "agent_b": "ag_11",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_5",
+          "agent_b": "ag_6",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_5",
+          "agent_b": "ag_7",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_5",
+          "agent_b": "ag_8",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_5",
+          "agent_b": "ag_9",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_5",
+          "agent_b": "ag_10",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_5",
+          "agent_b": "ag_11",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_6",
+          "agent_b": "ag_7",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_6",
+          "agent_b": "ag_8",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_6",
+          "agent_b": "ag_9",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_6",
+          "agent_b": "ag_10",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_6",
+          "agent_b": "ag_11",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_7",
+          "agent_b": "ag_8",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_7",
+          "agent_b": "ag_9",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_7",
+          "agent_b": "ag_10",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_7",
+          "agent_b": "ag_11",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_8",
+          "agent_b": "ag_9",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_8",
+          "agent_b": "ag_10",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_8",
+          "agent_b": "ag_11",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_9",
+          "agent_b": "ag_10",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_9",
+          "agent_b": "ag_11",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_10",
+          "agent_b": "ag_11",
+          "avg_diff": 0.0
+        }
+      ],
+      "debate_impact": {
+        "total_with_debates": 4,
+        "meaningful_debates": 0,
+        "impact_pct": 0.0
+      },
+      "llm_override": {
+        "llm_count": 4,
+        "rule_count": 4,
+        "override_pct": 50.0
+      },
+      "position_sizing": {
+        "issues": [
+          "ETF_0(000000)仓位30% > 25%，集中度风险",
+          "ETF_6(000600)仓位0.30%过小，无可操作性",
+          "ETF_7(000700)仓位0.10%过小，无可操作性",
+          "总仓位105% > 100%，异常（应已被scheduler归一化）"
+        ],
+        "total_position_pct": 105.4
+      }
+    }
+  },
+  {
+    "date": "2026-06-03 03:32",
+    "total_etfs": 10,
+    "issues": [
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_0与ag_1平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_0与ag_2平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_0与ag_3平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_0与ag_4平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_0与ag_5平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_0与ag_6平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_0与ag_7平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_0与ag_8平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_0与ag_9平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_0与ag_10平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_0与ag_11平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_1与ag_2平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_1与ag_3平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_1与ag_4平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_1与ag_5平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_1与ag_6平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_1与ag_7平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_1与ag_8平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_1与ag_9平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_1与ag_10平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_1与ag_11平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_2与ag_3平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_2与ag_4平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_2与ag_5平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_2与ag_6平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_2与ag_7平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_2与ag_8平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_2与ag_9平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_2与ag_10平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_2与ag_11平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_3与ag_4平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_3与ag_5平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_3与ag_6平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_3与ag_7平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_3与ag_8平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_3与ag_9平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_3与ag_10平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_3与ag_11平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_4与ag_5平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_4与ag_6平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_4与ag_7平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_4与ag_8平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_4与ag_9平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_4与ag_10平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_4与ag_11平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_5与ag_6平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_5与ag_7平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_5与ag_8平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_5与ag_9平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_5与ag_10平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_5与ag_11平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_6与ag_7平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_6与ag_8平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_6与ag_9平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_6与ag_10平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_6与ag_11平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_7与ag_8平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_7与ag_9平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_7与ag_10平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_7与ag_11平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_8与ag_9平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_8与ag_10平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_8与ag_11平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_9与ag_10平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_9与ag_11平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_10与ag_11平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "llm_override_excessive",
+        "severity": "medium",
+        "detail": "LLM覆盖规则占比80%（8/10），规则系统可能需要增强"
+      }
+    ],
+    "suggestions": [
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_0与ag_1中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_0与ag_2中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_0与ag_3中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_0与ag_4中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_0与ag_5中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_0与ag_6中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_0与ag_7中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_0与ag_8中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_0与ag_9中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_0与ag_10中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_0与ag_11中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_1与ag_2中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_1与ag_3中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_1与ag_4中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_1与ag_5中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_1与ag_6中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_1与ag_7中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_1与ag_8中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_1与ag_9中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_1与ag_10中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_1与ag_11中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_2与ag_3中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_2与ag_4中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_2与ag_5中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_2与ag_6中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_2与ag_7中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_2与ag_8中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_2与ag_9中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_2与ag_10中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_2与ag_11中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_3与ag_4中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_3与ag_5中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_3与ag_6中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_3与ag_7中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_3与ag_8中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_3与ag_9中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_3与ag_10中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_3与ag_11中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_4与ag_5中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_4与ag_6中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_4与ag_7中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_4与ag_8中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_4与ag_9中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_4与ag_10中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_4与ag_11中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_5与ag_6中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_5与ag_7中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_5与ag_8中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_5与ag_9中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_5与ag_10中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_5与ag_11中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_6与ag_7中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_6与ag_8中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_6与ag_9中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_6与ag_10中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_6与ag_11中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_7与ag_8中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_7与ag_9中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_7与ag_10中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_7与ag_11中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_8与ag_9中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_8与ag_10中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_8与ag_11中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_9与ag_10中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_9与ag_11中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_10与ag_11中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "决策引擎",
+        "action": "增强规则评分系统的特征覆盖，减少对 LLM 判断的依赖",
+        "priority": "medium",
+        "reason": "LLM覆盖规则占比80%（8/10），规则系统可能需要增强"
+      }
+    ],
+    "data_quality": {},
+    "deep_analysis": {
+      "calibration": {
+        "buckets": {
+          "20": {
+            "count": 3,
+            "buys": 0,
+            "sells": 3,
+            "holds": 0
+          },
+          "30": {
+            "count": 2,
+            "buys": 0,
+            "sells": 2,
+            "holds": 0
+          },
+          "60": {
+            "count": 2,
+            "buys": 0,
+            "sells": 0,
+            "holds": 2
+          },
+          "70": {
+            "count": 3,
+            "buys": 0,
+            "sells": 0,
+            "holds": 3
+          }
+        },
+        "issues": []
+      },
+      "redundancy": [
+        {
+          "agent_a": "ag_0",
+          "agent_b": "ag_1",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_0",
+          "agent_b": "ag_2",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_0",
+          "agent_b": "ag_3",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_0",
+          "agent_b": "ag_4",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_0",
+          "agent_b": "ag_5",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_0",
+          "agent_b": "ag_6",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_0",
+          "agent_b": "ag_7",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_0",
+          "agent_b": "ag_8",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_0",
+          "agent_b": "ag_9",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_0",
+          "agent_b": "ag_10",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_0",
+          "agent_b": "ag_11",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_1",
+          "agent_b": "ag_2",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_1",
+          "agent_b": "ag_3",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_1",
+          "agent_b": "ag_4",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_1",
+          "agent_b": "ag_5",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_1",
+          "agent_b": "ag_6",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_1",
+          "agent_b": "ag_7",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_1",
+          "agent_b": "ag_8",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_1",
+          "agent_b": "ag_9",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_1",
+          "agent_b": "ag_10",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_1",
+          "agent_b": "ag_11",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_2",
+          "agent_b": "ag_3",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_2",
+          "agent_b": "ag_4",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_2",
+          "agent_b": "ag_5",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_2",
+          "agent_b": "ag_6",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_2",
+          "agent_b": "ag_7",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_2",
+          "agent_b": "ag_8",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_2",
+          "agent_b": "ag_9",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_2",
+          "agent_b": "ag_10",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_2",
+          "agent_b": "ag_11",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_3",
+          "agent_b": "ag_4",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_3",
+          "agent_b": "ag_5",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_3",
+          "agent_b": "ag_6",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_3",
+          "agent_b": "ag_7",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_3",
+          "agent_b": "ag_8",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_3",
+          "agent_b": "ag_9",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_3",
+          "agent_b": "ag_10",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_3",
+          "agent_b": "ag_11",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_4",
+          "agent_b": "ag_5",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_4",
+          "agent_b": "ag_6",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_4",
+          "agent_b": "ag_7",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_4",
+          "agent_b": "ag_8",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_4",
+          "agent_b": "ag_9",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_4",
+          "agent_b": "ag_10",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_4",
+          "agent_b": "ag_11",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_5",
+          "agent_b": "ag_6",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_5",
+          "agent_b": "ag_7",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_5",
+          "agent_b": "ag_8",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_5",
+          "agent_b": "ag_9",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_5",
+          "agent_b": "ag_10",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_5",
+          "agent_b": "ag_11",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_6",
+          "agent_b": "ag_7",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_6",
+          "agent_b": "ag_8",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_6",
+          "agent_b": "ag_9",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_6",
+          "agent_b": "ag_10",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_6",
+          "agent_b": "ag_11",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_7",
+          "agent_b": "ag_8",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_7",
+          "agent_b": "ag_9",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_7",
+          "agent_b": "ag_10",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_7",
+          "agent_b": "ag_11",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_8",
+          "agent_b": "ag_9",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_8",
+          "agent_b": "ag_10",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_8",
+          "agent_b": "ag_11",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_9",
+          "agent_b": "ag_10",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_9",
+          "agent_b": "ag_11",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_10",
+          "agent_b": "ag_11",
+          "avg_diff": 0.0
+        }
+      ],
+      "llm_override": {
+        "llm_count": 8,
+        "rule_count": 2,
+        "override_pct": 80.0
+      }
+    }
+  },
+  {
+    "date": "2026-06-03 03:32",
+    "total_etfs": 10,
+    "issues": [
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_0与ag_1平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_0与ag_2平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_0与ag_3平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_0与ag_4平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_0与ag_5平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_0与ag_6平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_0与ag_7平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_0与ag_8平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_0与ag_9平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_0与ag_10平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_0与ag_11平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_1与ag_2平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_1与ag_3平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_1与ag_4平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_1与ag_5平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_1与ag_6平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_1与ag_7平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_1与ag_8平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_1与ag_9平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_1与ag_10平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_1与ag_11平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_2与ag_3平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_2与ag_4平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_2与ag_5平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_2与ag_6平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_2与ag_7平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_2与ag_8平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_2与ag_9平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_2与ag_10平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_2与ag_11平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_3与ag_4平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_3与ag_5平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_3与ag_6平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_3与ag_7平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_3与ag_8平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_3与ag_9平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_3与ag_10平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_3与ag_11平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_4与ag_5平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_4与ag_6平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_4与ag_7平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_4与ag_8平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_4与ag_9平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_4与ag_10平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_4与ag_11平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_5与ag_6平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_5与ag_7平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_5与ag_8平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_5与ag_9平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_5与ag_10平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_5与ag_11平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_6与ag_7平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_6与ag_8平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_6与ag_9平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_6与ag_10平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_6与ag_11平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_7与ag_8平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_7与ag_9平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_7与ag_10平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_7与ag_11平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_8与ag_9平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_8与ag_10平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_8与ag_11平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_9与ag_10平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_9与ag_11平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_10与ag_11平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "llm_override_excessive",
+        "severity": "medium",
+        "detail": "LLM覆盖规则占比80%（8/10），规则系统可能需要增强"
+      }
+    ],
+    "suggestions": [
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_0与ag_1中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_0与ag_2中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_0与ag_3中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_0与ag_4中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_0与ag_5中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_0与ag_6中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_0与ag_7中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_0与ag_8中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_0与ag_9中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_0与ag_10中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_0与ag_11中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_1与ag_2中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_1与ag_3中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_1与ag_4中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_1与ag_5中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_1与ag_6中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_1与ag_7中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_1与ag_8中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_1与ag_9中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_1与ag_10中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_1与ag_11中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_2与ag_3中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_2与ag_4中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_2与ag_5中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_2与ag_6中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_2与ag_7中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_2与ag_8中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_2与ag_9中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_2与ag_10中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_2与ag_11中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_3与ag_4中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_3与ag_5中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_3与ag_6中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_3与ag_7中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_3与ag_8中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_3与ag_9中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_3与ag_10中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_3与ag_11中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_4与ag_5中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_4与ag_6中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_4与ag_7中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_4与ag_8中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_4与ag_9中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_4与ag_10中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_4与ag_11中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_5与ag_6中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_5与ag_7中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_5与ag_8中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_5与ag_9中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_5与ag_10中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_5与ag_11中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_6与ag_7中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_6与ag_8中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_6与ag_9中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_6与ag_10中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_6与ag_11中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_7与ag_8中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_7与ag_9中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_7与ag_10中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_7与ag_11中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_8与ag_9中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_8与ag_10中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_8与ag_11中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_9与ag_10中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_9与ag_11中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_10与ag_11中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "决策引擎",
+        "action": "增强规则评分系统的特征覆盖，减少对 LLM 判断的依赖",
+        "priority": "medium",
+        "reason": "LLM覆盖规则占比80%（8/10），规则系统可能需要增强"
+      }
+    ],
+    "data_quality": {},
+    "deep_analysis": {
+      "calibration": {
+        "buckets": {
+          "20": {
+            "count": 3,
+            "buys": 0,
+            "sells": 3,
+            "holds": 0
+          },
+          "30": {
+            "count": 2,
+            "buys": 0,
+            "sells": 2,
+            "holds": 0
+          },
+          "60": {
+            "count": 2,
+            "buys": 0,
+            "sells": 0,
+            "holds": 2
+          },
+          "70": {
+            "count": 3,
+            "buys": 0,
+            "sells": 0,
+            "holds": 3
+          }
+        },
+        "issues": []
+      },
+      "redundancy": [
+        {
+          "agent_a": "ag_0",
+          "agent_b": "ag_1",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_0",
+          "agent_b": "ag_2",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_0",
+          "agent_b": "ag_3",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_0",
+          "agent_b": "ag_4",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_0",
+          "agent_b": "ag_5",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_0",
+          "agent_b": "ag_6",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_0",
+          "agent_b": "ag_7",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_0",
+          "agent_b": "ag_8",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_0",
+          "agent_b": "ag_9",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_0",
+          "agent_b": "ag_10",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_0",
+          "agent_b": "ag_11",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_1",
+          "agent_b": "ag_2",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_1",
+          "agent_b": "ag_3",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_1",
+          "agent_b": "ag_4",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_1",
+          "agent_b": "ag_5",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_1",
+          "agent_b": "ag_6",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_1",
+          "agent_b": "ag_7",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_1",
+          "agent_b": "ag_8",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_1",
+          "agent_b": "ag_9",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_1",
+          "agent_b": "ag_10",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_1",
+          "agent_b": "ag_11",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_2",
+          "agent_b": "ag_3",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_2",
+          "agent_b": "ag_4",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_2",
+          "agent_b": "ag_5",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_2",
+          "agent_b": "ag_6",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_2",
+          "agent_b": "ag_7",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_2",
+          "agent_b": "ag_8",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_2",
+          "agent_b": "ag_9",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_2",
+          "agent_b": "ag_10",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_2",
+          "agent_b": "ag_11",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_3",
+          "agent_b": "ag_4",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_3",
+          "agent_b": "ag_5",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_3",
+          "agent_b": "ag_6",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_3",
+          "agent_b": "ag_7",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_3",
+          "agent_b": "ag_8",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_3",
+          "agent_b": "ag_9",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_3",
+          "agent_b": "ag_10",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_3",
+          "agent_b": "ag_11",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_4",
+          "agent_b": "ag_5",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_4",
+          "agent_b": "ag_6",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_4",
+          "agent_b": "ag_7",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_4",
+          "agent_b": "ag_8",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_4",
+          "agent_b": "ag_9",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_4",
+          "agent_b": "ag_10",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_4",
+          "agent_b": "ag_11",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_5",
+          "agent_b": "ag_6",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_5",
+          "agent_b": "ag_7",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_5",
+          "agent_b": "ag_8",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_5",
+          "agent_b": "ag_9",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_5",
+          "agent_b": "ag_10",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_5",
+          "agent_b": "ag_11",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_6",
+          "agent_b": "ag_7",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_6",
+          "agent_b": "ag_8",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_6",
+          "agent_b": "ag_9",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_6",
+          "agent_b": "ag_10",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_6",
+          "agent_b": "ag_11",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_7",
+          "agent_b": "ag_8",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_7",
+          "agent_b": "ag_9",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_7",
+          "agent_b": "ag_10",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_7",
+          "agent_b": "ag_11",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_8",
+          "agent_b": "ag_9",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_8",
+          "agent_b": "ag_10",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_8",
+          "agent_b": "ag_11",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_9",
+          "agent_b": "ag_10",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_9",
+          "agent_b": "ag_11",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_10",
+          "agent_b": "ag_11",
+          "avg_diff": 0.0
+        }
+      ],
+      "llm_override": {
+        "llm_count": 8,
+        "rule_count": 2,
+        "override_pct": 80.0
+      }
+    }
+  },
+  {
+    "date": "2026-06-03 03:33",
+    "total_etfs": 10,
+    "issues": [
+      {
+        "type": "rating_bias",
+        "severity": "high",
+        "detail": "看多 占比 100%，可能存在系统性偏斜"
+      },
+      {
+        "type": "calibration_conservative",
+        "severity": "medium",
+        "detail": "高分标的(≥70)仅0%为买入操作，评分体系可能偏保守"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_0与ag_1平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_0与ag_2平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_0与ag_3平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_0与ag_4平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_0与ag_5平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_0与ag_6平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_0与ag_7平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_0与ag_8平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_0与ag_9平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_0与ag_10平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_0与ag_11平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_1与ag_2平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_1与ag_3平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_1与ag_4平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_1与ag_5平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_1与ag_6平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_1与ag_7平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_1与ag_8平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_1与ag_9平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_1与ag_10平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_1与ag_11平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_2与ag_3平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_2与ag_4平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_2与ag_5平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_2与ag_6平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_2与ag_7平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_2与ag_8平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_2与ag_9平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_2与ag_10平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_2与ag_11平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_3与ag_4平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_3与ag_5平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_3与ag_6平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_3与ag_7平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_3与ag_8平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_3与ag_9平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_3与ag_10平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_3与ag_11平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_4与ag_5平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_4与ag_6平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_4与ag_7平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_4与ag_8平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_4与ag_9平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_4与ag_10平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_4与ag_11平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_5与ag_6平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_5与ag_7平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_5与ag_8平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_5与ag_9平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_5与ag_10平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_5与ag_11平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_6与ag_7平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_6与ag_8平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_6与ag_9平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_6与ag_10平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_6与ag_11平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_7与ag_8平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_7与ag_9平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_7与ag_10平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_7与ag_11平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_8与ag_9平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_8与ag_10平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_8与ag_11平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_9与ag_10平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_9与ag_11平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "ag_10与ag_11平均分差仅0.0，高度冗余"
+      },
+      {
+        "type": "llm_override_excessive",
+        "severity": "medium",
+        "detail": "LLM覆盖规则占比80%（8/10），规则系统可能需要增强"
+      }
+    ],
+    "suggestions": [
+      {
+        "target": "decision.py 决策树阈值",
+        "action": "检查评分分布是否合理，考虑调整 z-score 缩放因子",
+        "priority": "high",
+        "reason": "看多 占比 100%，可能存在系统性偏斜"
+      },
+      {
+        "target": "decision.py 评分映射",
+        "action": "高分标的买入操作占比不足，考虑扩大评分范围或调整买入阈值",
+        "priority": "medium",
+        "reason": "高分标的(≥70)仅0%为买入操作，评分体系可能偏保守"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_0与ag_1中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_0与ag_2中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_0与ag_3中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_0与ag_4中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_0与ag_5中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_0与ag_6中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_0与ag_7中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_0与ag_8中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_0与ag_9中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_0与ag_10中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_0与ag_11中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_1与ag_2中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_1与ag_3中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_1与ag_4中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_1与ag_5中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_1与ag_6中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_1与ag_7中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_1与ag_8中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_1与ag_9中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_1与ag_10中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_1与ag_11中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_2与ag_3中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_2与ag_4中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_2与ag_5中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_2与ag_6中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_2与ag_7中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_2与ag_8中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_2与ag_9中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_2与ag_10中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_2与ag_11中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_3与ag_4中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_3与ag_5中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_3与ag_6中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_3与ag_7中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_3与ag_8中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_3与ag_9中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_3与ag_10中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_3与ag_11中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_4与ag_5中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_4与ag_6中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_4与ag_7中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_4与ag_8中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_4与ag_9中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_4与ag_10中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_4与ag_11中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_5与ag_6中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_5与ag_7中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_5与ag_8中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_5与ag_9中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_5与ag_10中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_5与ag_11中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_6与ag_7中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_6与ag_8中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_6与ag_9中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_6与ag_10中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_6与ag_11中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_7与ag_8中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_7与ag_9中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_7与ag_10中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_7与ag_11中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_8与ag_9中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_8与ag_10中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_8与ag_11中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_9与ag_10中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_9与ag_11中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除ag_10与ag_11中的一个（平均分差仅0.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "决策引擎",
+        "action": "增强规则评分系统的特征覆盖，减少对 LLM 判断的依赖",
+        "priority": "medium",
+        "reason": "LLM覆盖规则占比80%（8/10），规则系统可能需要增强"
+      }
+    ],
+    "data_quality": {},
+    "deep_analysis": {
+      "calibration": {
+        "buckets": {
+          "20": {
+            "count": 3,
+            "buys": 0,
+            "sells": 3,
+            "holds": 0
+          },
+          "30": {
+            "count": 2,
+            "buys": 0,
+            "sells": 0,
+            "holds": 2
+          },
+          "70": {
+            "count": 3,
+            "buys": 0,
+            "sells": 0,
+            "holds": 3
+          },
+          "80": {
+            "count": 2,
+            "buys": 0,
+            "sells": 0,
+            "holds": 2
+          }
+        },
+        "issues": [
+          "高分标的(≥70)仅0%为买入操作，评分体系可能偏保守"
+        ]
+      },
+      "redundancy": [
+        {
+          "agent_a": "ag_0",
+          "agent_b": "ag_1",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_0",
+          "agent_b": "ag_2",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_0",
+          "agent_b": "ag_3",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_0",
+          "agent_b": "ag_4",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_0",
+          "agent_b": "ag_5",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_0",
+          "agent_b": "ag_6",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_0",
+          "agent_b": "ag_7",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_0",
+          "agent_b": "ag_8",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_0",
+          "agent_b": "ag_9",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_0",
+          "agent_b": "ag_10",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_0",
+          "agent_b": "ag_11",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_1",
+          "agent_b": "ag_2",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_1",
+          "agent_b": "ag_3",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_1",
+          "agent_b": "ag_4",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_1",
+          "agent_b": "ag_5",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_1",
+          "agent_b": "ag_6",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_1",
+          "agent_b": "ag_7",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_1",
+          "agent_b": "ag_8",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_1",
+          "agent_b": "ag_9",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_1",
+          "agent_b": "ag_10",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_1",
+          "agent_b": "ag_11",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_2",
+          "agent_b": "ag_3",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_2",
+          "agent_b": "ag_4",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_2",
+          "agent_b": "ag_5",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_2",
+          "agent_b": "ag_6",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_2",
+          "agent_b": "ag_7",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_2",
+          "agent_b": "ag_8",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_2",
+          "agent_b": "ag_9",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_2",
+          "agent_b": "ag_10",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_2",
+          "agent_b": "ag_11",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_3",
+          "agent_b": "ag_4",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_3",
+          "agent_b": "ag_5",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_3",
+          "agent_b": "ag_6",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_3",
+          "agent_b": "ag_7",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_3",
+          "agent_b": "ag_8",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_3",
+          "agent_b": "ag_9",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_3",
+          "agent_b": "ag_10",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_3",
+          "agent_b": "ag_11",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_4",
+          "agent_b": "ag_5",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_4",
+          "agent_b": "ag_6",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_4",
+          "agent_b": "ag_7",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_4",
+          "agent_b": "ag_8",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_4",
+          "agent_b": "ag_9",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_4",
+          "agent_b": "ag_10",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_4",
+          "agent_b": "ag_11",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_5",
+          "agent_b": "ag_6",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_5",
+          "agent_b": "ag_7",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_5",
+          "agent_b": "ag_8",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_5",
+          "agent_b": "ag_9",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_5",
+          "agent_b": "ag_10",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_5",
+          "agent_b": "ag_11",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_6",
+          "agent_b": "ag_7",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_6",
+          "agent_b": "ag_8",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_6",
+          "agent_b": "ag_9",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_6",
+          "agent_b": "ag_10",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_6",
+          "agent_b": "ag_11",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_7",
+          "agent_b": "ag_8",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_7",
+          "agent_b": "ag_9",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_7",
+          "agent_b": "ag_10",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_7",
+          "agent_b": "ag_11",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_8",
+          "agent_b": "ag_9",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_8",
+          "agent_b": "ag_10",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_8",
+          "agent_b": "ag_11",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_9",
+          "agent_b": "ag_10",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_9",
+          "agent_b": "ag_11",
+          "avg_diff": 0.0
+        },
+        {
+          "agent_a": "ag_10",
+          "agent_b": "ag_11",
+          "avg_diff": 0.0
+        }
+      ],
+      "llm_override": {
+        "llm_count": 8,
+        "rule_count": 2,
+        "override_pct": 80.0
+      }
+    }
   }
 ]

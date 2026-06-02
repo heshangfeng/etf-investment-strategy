@@ -21,23 +21,25 @@ from config import (
     REQUEST_DELAY, HEADERS,
     CACHE_ETF_PRICE, CACHE_INDEX_VAL, CACHE_ETF_PREMIUM,
     CACHE_NORTH_CAP, CACHE_MARKET_VOL, CACHE_OPINION, CACHE_OPINION_HIST,
-    CACHE_TIMESTAMPS, CACHE_IVIX,
+    CACHE_IVIX,
     PREMIUM_RISK_THRESHOLD, VOL_RISK_THRESHOLD, LIQ_THRESHOLD,
     OPINION_WARN_THRESHOLD, TREND_DAY_COUNT,
     LLM_API_KEY, LLM_BASE_URL, LLM_MODEL, LLM_TEMPERATURE,
     AGENT_WORKERS, WEIGHT,
-    _cache_check, _cache_set
 )
+from cache import PersistentCache
 from keywords import BASE_POS_KEYWORDS, BASE_NEG_KEYWORDS, INDUSTRY_POS, INDUSTRY_NEG
+
+_CACHE = PersistentCache("misc", default_ttl=3600)
 
 
 # ====================== 【1. 基础数据采集智能体】 ======================
 class DataCollectAgent:
     @staticmethod
     def get_market_total_volume() -> float:
-        global CACHE_MARKET_VOL
-        if CACHE_MARKET_VOL > 0 and _cache_check("market_vol", 1800):
-            return CACHE_MARKET_VOL
+        cached = CACHE_MARKET_VOL.get("value", 0)
+        if cached > 0 and CACHE_MARKET_VOL.is_fresh("value", 1800):
+            return cached
         try:
             # SSE成交金额(亿)
             sse = ak.stock_sse_deal_daily()
@@ -47,11 +49,10 @@ class DataCollectAgent:
             szse_vol = float(szse.loc[szse["证券类别"] == "股票", "成交金额"].values[0]) / 1e8
             vol = round(sse_vol + szse_vol, 1)
         except Exception:
-            if CACHE_MARKET_VOL > 0:
-                return CACHE_MARKET_VOL
+            if cached > 0:
+                return cached
             vol = 7000.0  # fallback中性值
-        CACHE_MARKET_VOL = vol
-        _cache_set("market_vol")
+        CACHE_MARKET_VOL["value"] = vol
         return vol
 
     @staticmethod
@@ -64,8 +65,7 @@ class DataCollectAgent:
     @staticmethod
     def get_etf_price(etf_code: str) -> pd.DataFrame:
         time.sleep(REQUEST_DELAY)
-        cache_key = f"price_{etf_code}"
-        if etf_code in CACHE_ETF_PRICE and _cache_check(cache_key, 3600):
+        if CACHE_ETF_PRICE.is_fresh(etf_code, 3600):
             return CACHE_ETF_PRICE[etf_code]
         df = ak.fund_etf_hist_sina(symbol=DataCollectAgent._etf_code_with_prefix(etf_code))
         df = df.sort_values("date").reset_index(drop=True)
@@ -73,14 +73,12 @@ class DataCollectAgent:
         df["ma20"] = df["close"].rolling(20).mean()
         df["volatility"] = df["close"].pct_change().abs()
         CACHE_ETF_PRICE[etf_code] = df
-        _cache_set(cache_key)
         return df
 
     @staticmethod
     def get_index_val(index_code: str) -> dict:
         time.sleep(REQUEST_DELAY)
-        cache_key = f"idx_{index_code}"
-        if index_code in CACHE_INDEX_VAL and _cache_check(cache_key, 7200):
+        if CACHE_INDEX_VAL.is_fresh(index_code, 7200):
             return CACHE_INDEX_VAL[index_code]
         try:
             df = ak.stock_zh_index_valuation(symbol=index_code)
@@ -93,14 +91,12 @@ class DataCollectAgent:
             pe, pb, pe_pct = 25, 2, 50
         result = {"pe": pe, "pb": pb, "pe_percent": pe_pct}
         CACHE_INDEX_VAL[index_code] = result
-        _cache_set(cache_key)
         return result
 
     @staticmethod
     def get_etf_premium(etf_code: str) -> float:
         time.sleep(REQUEST_DELAY)
-        cache_key = f"prem_{etf_code}"
-        if etf_code in CACHE_ETF_PREMIUM and _cache_check(cache_key, 3600):
+        if CACHE_ETF_PREMIUM.is_fresh(etf_code, 3600):
             return CACHE_ETF_PREMIUM[etf_code]
         try:
             df = ak.fund_etf_premium()
@@ -110,14 +106,12 @@ class DataCollectAgent:
                 return CACHE_ETF_PREMIUM[etf_code]
             premium = 0
         CACHE_ETF_PREMIUM[etf_code] = premium
-        _cache_set(cache_key)
         return premium
 
     @staticmethod
     def get_north_flow(index_code: str) -> float:
         time.sleep(REQUEST_DELAY)
-        cache_key = f"north_{index_code}"
-        if index_code in CACHE_NORTH_CAP and _cache_check(cache_key, 3600):
+        if CACHE_NORTH_CAP.is_fresh(index_code, 3600):
             return CACHE_NORTH_CAP[index_code]
         try:
             df = ak.stock_hsgt_fund_flow(symbol=index_code)
@@ -127,15 +121,13 @@ class DataCollectAgent:
                 return CACHE_NORTH_CAP[index_code]
             flow = 0
         CACHE_NORTH_CAP[index_code] = flow
-        _cache_set(cache_key)
         return flow
 
     @staticmethod
     def get_margin_balance() -> dict:
         """融资融券余额（两融情绪指标）"""
-        cache_key = "margin"
-        if hasattr(DataCollectAgent.get_margin_balance, "_cache") and _cache_check(cache_key, 3600):
-            return DataCollectAgent.get_margin_balance._cache
+        if _CACHE.is_fresh("margin", 3600):
+            return _CACHE["margin"]
         try:
             szse = ak.stock_margin_detail_szse()
             sse = ak.stock_margin_detail_sse()
@@ -146,16 +138,14 @@ class DataCollectAgent:
             }
         except:
             return {"szse_margin": 0, "sse_margin": 0, "szse_short": 0}
-        DataCollectAgent.get_margin_balance._cache = result
-        _cache_set(cache_key)
+        _CACHE["margin"] = result
         return result
 
     @staticmethod
     def get_bond_yield() -> dict:
         """中美国债收益率"""
-        cache_key = "bond"
-        if hasattr(DataCollectAgent.get_bond_yield, "_cache") and _cache_check(cache_key, 7200):
-            return DataCollectAgent.get_bond_yield._cache
+        if _CACHE.is_fresh("bond", 7200):
+            return _CACHE["bond"]
         try:
             df = ak.bond_zh_us_rate()
             cn10y = float(df[df["指标名称"] == "中国国债收益率10年"]["收益率"].iloc[-1])
@@ -163,16 +153,14 @@ class DataCollectAgent:
             result = {"cn_10y": cn10y, "us_10y": us10y, "spread": cn10y - us10y}
         except:
             result = {"cn_10y": 2.5, "us_10y": 4.0, "spread": -1.5}
-        DataCollectAgent.get_bond_yield._cache = result
-        _cache_set(cache_key)
+        _CACHE["bond"] = result
         return result
 
     @staticmethod
     def get_sector_fund_flow() -> dict:
         """板块资金流向"""
-        cache_key = "sector_flow"
-        if hasattr(DataCollectAgent.get_sector_fund_flow, "_cache") and _cache_check(cache_key, 3600):
-            return DataCollectAgent.get_sector_fund_flow._cache
+        if _CACHE.is_fresh("sector_flow", 3600):
+            return _CACHE["sector_flow"]
         try:
             df = ak.stock_sector_fund_flow_summary()
             sector_map = {}
@@ -184,15 +172,13 @@ class DataCollectAgent:
             result = sector_map
         except:
             result = {}
-        DataCollectAgent.get_sector_fund_flow._cache = result
-        _cache_set(cache_key)
+        _CACHE["sector_flow"] = result
         return result
 
     @staticmethod
     def get_ivix(etf_code: str) -> float:
         """获取ETF对应指数的隐含波动率(VIX-like)。3600s TTL，失败返回25.0。"""
-        cache_key = f"ivix_{etf_code}"
-        if etf_code in CACHE_IVIX and _cache_check(cache_key, 3600):
+        if CACHE_IVIX.is_fresh(etf_code, 3600):
             return CACHE_IVIX[etf_code]
         try:
             func_map = {
@@ -211,15 +197,13 @@ class DataCollectAgent:
                 return CACHE_IVIX[etf_code]
             val = 25.0
         CACHE_IVIX[etf_code] = val
-        _cache_set(cache_key)
         return val
 
     @staticmethod
     def get_futures_basis() -> dict:
         """获取股指期货基差。1800s TTL，失败返回{}。"""
-        cache_key = "futures_basis"
-        if hasattr(DataCollectAgent.get_futures_basis, "_cache") and _cache_check(cache_key, 1800):
-            return DataCollectAgent.get_futures_basis._cache
+        if _CACHE.is_fresh("futures_basis", 1800):
+            return _CACHE["futures_basis"]
         try:
             df = ak.futures_zh_realtime()
             contract_map = {"IF": "000300", "IC": "000905", "IH": "000016", "IM": "000852"}
@@ -250,8 +234,7 @@ class DataCollectAgent:
                 result[prefix] = round(basis, 2)
         except Exception:
             result = {}
-        DataCollectAgent.get_futures_basis._cache = result
-        _cache_set(cache_key)
+        _CACHE["futures_basis"] = result
         return result
 
 

@@ -2,9 +2,9 @@
 ETF 智能投资分析系统 - 全局配置与缓存
 """
 import os
-import time
 import warnings
 from dotenv import load_dotenv
+from cache import PersistentCache
 
 warnings.filterwarnings("ignore")
 load_dotenv()
@@ -108,23 +108,11 @@ ETF_POOL = [
 ]
 
 # ====================== 【全局缓存 - 带TTL】 ======================
-CACHE_ETF_PRICE = {}
-CACHE_INDEX_VAL = {}
-CACHE_ETF_PREMIUM = {}
-CACHE_NORTH_CAP = {}
-CACHE_MARKET_VOL: float = 0
-CACHE_OPINION = {}          # 当日舆情缓存
-CACHE_OPINION_HIST = {}     # 历史舆情时序缓存（趋势用）
-CACHE_TIMESTAMPS = {}       # key→最后更新时间, 用于TTL检查
-CACHE_IVIX = {}            # 隐含波动率VIX缓存 {etf_code: value}
-
-
-def _cache_check(cache_key: str, max_age_seconds: int = 3600) -> bool:
-    """检查缓存是否过期。过期返回False（需刷新），有效返回True。"""
-    ts = CACHE_TIMESTAMPS.get(cache_key, 0)
-    return time.time() - ts < max_age_seconds
-
-
-def _cache_set(cache_key: str):
-    """设置缓存时间戳。"""
-    CACHE_TIMESTAMPS[cache_key] = time.time()
+CACHE_ETF_PRICE = PersistentCache("etf_price", default_ttl=3600)
+CACHE_INDEX_VAL = PersistentCache("index_val", default_ttl=7200)
+CACHE_ETF_PREMIUM = PersistentCache("etf_premium", default_ttl=3600)
+CACHE_NORTH_CAP = PersistentCache("north_cap", default_ttl=3600)
+CACHE_MARKET_VOL = PersistentCache("market_vol", default_ttl=1800)
+CACHE_OPINION = PersistentCache("opinion", default_ttl=3600)
+CACHE_OPINION_HIST = PersistentCache("opinion_hist", default_ttl=86400)
+CACHE_IVIX = PersistentCache("ivix", default_ttl=3600)

@@ -64,12 +64,12 @@ try {
     Write-Log "Python script completed successfully"
 
     # ---- find latest txt report ----
-    $reportFile = Get-ChildItem -Path $ProjectDir -Filter "ETF_多智能体投研报告_${DateStr}.txt" -ErrorAction SilentlyContinue `
+$reportFile = Get-ChildItem -Path $ProjectDir -Filter "ETF_多智能体投研报告_${DateStr}_*.txt" -ErrorAction SilentlyContinue `
         | Sort-Object LastWriteTime -Descending | Select-Object -First 1
 
     if (-not $reportFile) {
         $reportFile = Get-ChildItem -Path $ProjectDir -Filter "ETF_多智能体投研报告_*.txt" -ErrorAction SilentlyContinue `
-            | Sort-Object LastWriteTime -Descending | Select-Object -First 1
+        | Sort-Object LastWriteTime -Descending | Select-Object -First 1
     }
 
     if ($reportFile) {

@@ -192,12 +192,12 @@ class ResearchReportGenerator:
                 print(f"  {fr.etf_info['code']} {fr.etf_info['name']} | 止损: 未设置 | 止盈: 未设置")
 
         # 10. 保存台账
-        save_path = f"ETF_多智能体投研报告_{datetime.now().strftime('%Y%m%d')}.xlsx"
+        save_path = f"ETF_多智能体投研报告_{datetime.now().strftime('%Y%m%d_%H%M')}.xlsx"
         df_summary.to_excel(save_path, index=False)
         print(f"\n✅ 投研摘要已保存：{save_path}")
 
         # 11. 保存完整详细报告到文本文件
-        txt_path = f"ETF_多智能体投研报告_{datetime.now().strftime('%Y%m%d')}.txt"
+        txt_path = f"ETF_多智能体投研报告_{datetime.now().strftime('%Y%m%d_%H%M')}.txt"
         full_text = ResearchReportGenerator._build_full_report_text(all_reports)
         with open(txt_path, "w", encoding="utf-8") as f:
             f.write(full_text)

@@ -15,7 +15,13 @@ $ProjectDir   = "D:\project\ETF投资策略"
 $LogDir       = Join-Path $ProjectDir "logs"
 $DateStr      = Get-Date -Format "yyyyMMdd"
 $LogFile      = Join-Path $LogDir "${DateStr}_run.log"
-$PushDeerKey  = "PUSHDEER_KEY_REMOVED_PLEASE_SET_NEW_KEY"
+# 从 .env 读取 PushDeer Key（不在代码中硬编码敏感信息）
+$EnvFile = Join-Path $ProjectDir ".env"
+$PushDeerKey = if (Test-Path $EnvFile) {
+    $envContent = Get-Content $EnvFile -Encoding utf8
+    $line = $envContent | Where-Object { $_ -match "^PUSHDEER_KEY=" } | Select-Object -First 1
+    if ($line) { $line -replace "^PUSHDEER_KEY=", "" } else { "" }
+} else { "" }
 $PushDeerUrl  = "https://api2.pushdeer.com/message/push"
 
 function Write-Log {

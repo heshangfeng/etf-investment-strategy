@@ -16,5 +16,6 @@ install_package("beautifulsoup4")
 install_package("jieba")
 install_package("snownlp")
 install_package("openai")
+install_package("python-dotenv")
 
 print("✅ 全部依赖安装完成！")

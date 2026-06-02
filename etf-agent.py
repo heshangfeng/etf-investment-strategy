@@ -15,8 +15,12 @@ from snownlp import SnowNLP
 from datetime import datetime, timedelta
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from openai import OpenAI
+from dotenv import load_dotenv
 
 warnings.filterwarnings("ignore")
+
+# 加载 .env 环境变量
+load_dotenv()
 
 # ====================== 【全局核心配置区 - 可直接修改】 ======================
 # 1. 综合评分权重
@@ -42,17 +46,13 @@ AGENT_WORKERS = 8
 REQUEST_DELAY = 0.1
 HEADERS = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
 
-# 4. 大模型配置（替换为你的API信息）
-LLM_API_KEY = "sk-LEAKED_KEY_REMOVED_PLEASE_SET_NEW_KEY"
-LLM_BASE_URL = "https://api.deepseek.com/v1"
+# 4. 大模型配置（从 .env 读取）
+LLM_API_KEY = os.getenv("DEEPSEEK_API_KEY", "")
+LLM_BASE_URL = os.getenv("DEEPSEEK_BASE_URL", "https://api.deepseek.com/v1")
 LLM_MODEL = "deepseek-chat"           # DeepSeek高性价比模型
 LLM_MAX_TOKENS = 2048                 # 增加到2048以支持详细分析
 LLM_TEMPERATURE = 0.3
 LLM_ENABLED = True                    # 总开关：True=LLM多智能体模式
-
-# 5. 专业财经API配置（预留接口，可替换商用API）
-FIN_API_KEY = "your-fin-api-key"
-FIN_API_URL = "https://api.finance.example.com/news"
 
 # 6. 多智能体辩论配置
 DEBATE_ENABLED = True

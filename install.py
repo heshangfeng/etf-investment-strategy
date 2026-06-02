@@ -17,5 +17,7 @@ install_package("jieba")
 install_package("snownlp")
 install_package("openai")
 install_package("python-dotenv")
+install_package("scipy")
+install_package("streamlit")
 
 print("✅ 全部依赖安装完成！")

@@ -8,13 +8,14 @@ import glob
 import os
 import numpy as np
 from datetime import datetime
-from pathlib import Path
 
 from core.config import SNAPSHOT_DIR, ETF_POOL
 from core.data import DataCollectAgent
 from agents import MacroAnalystAgent
 from core.decision import ChiefDecisionAgent
 from core.scheduler import MainSchedulerAgent
+
+from infra.logger import get_logger; logger = get_logger(__name__)
 
 # 自动更新项目目录结构文档（静默，失败不影响分析）
 try:
@@ -25,7 +26,7 @@ except Exception:
     pass
 
 
-SNAPSHOT_PATH = Path(__file__).parent / SNAPSHOT_DIR
+SNAPSHOT_PATH = SNAPSHOT_DIR
 
 
 def load_latest_snapshot() -> dict | None:

@@ -6,7 +6,7 @@ ETF 智能投研看板 - Streamlit Dashboard
 import json
 import glob
 import os
-from pathlib import Path
+
 
 import pandas as pd
 import numpy as np
@@ -14,13 +14,12 @@ import streamlit as st
 import plotly.express as px
 import plotly.graph_objects as go
 
+from infra.logger import get_logger; logger = get_logger(__name__)
+
 # ── 页面配置 ──
 st.set_page_config(page_title="ETF 智能投研看板", layout="wide")
 
 from core.config import OUTPUT_DIR, SNAPSHOT_DIR, REVIEW_DIR, FEE_RATE
-SNAPSHOT_DIR = Path(__file__).parent / SNAPSHOT_DIR
-REVIEW_DIR = Path(__file__).parent / REVIEW_DIR
-OUTPUT_DIR = Path(__file__).parent / OUTPUT_DIR
 REPORT_PREFIX = "ETF_多智能体投研报告_"
 
 

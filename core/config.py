@@ -4,11 +4,15 @@ ETF 智能投资分析系统 - 全局配置与缓存
 import os
 import sys
 import warnings
+from pathlib import Path
 from dotenv import load_dotenv
 from infra.cache import PersistentCache
 from infra.logger import get_logger
 
 logger = get_logger("config")
+
+# 项目根目录路径锚点（所有相对路径基于此）
+BASE_DIR = Path(__file__).resolve().parent
 
 warnings.filterwarnings("ignore")
 load_dotenv()
@@ -70,10 +74,10 @@ DISAGREEMENT_RATING_GAP = 2          # 评级级差≥此值触发辩论
 RATING_ORDER = ["强烈看空", "看空", "中性", "看多", "强烈看多"]
 
 # ====================== 【项目路径配置】 ======================
-OUTPUT_DIR = "output"               # 报告文件输出目录
-SNAPSHOT_DIR = "data/snapshots"     # 每日快照目录
-REVIEW_DIR = "data/review"          # 复盘数据目录
-CACHE_DB_PATH = "data/cache.db"     # SQLite 缓存数据库
+OUTPUT_DIR = str(BASE_DIR / "output")               # 报告文件输出目录
+SNAPSHOT_DIR = str(BASE_DIR / "data/snapshots")     # 每日快照目录
+REVIEW_DIR = str(BASE_DIR / "data/review")          # 复盘数据目录
+CACHE_DB_PATH = str(BASE_DIR / "data/cache.db")     # SQLite 缓存数据库
 
 # ====================== 【ETF标的池】 ======================
 ETF_POOL = [

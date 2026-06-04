@@ -194,7 +194,7 @@
 
 ### 3.3 `autotrade.py` 修改
 
-在 `performance.json` 写入时增加 `daily_pnl`、`daily_pnl_pct`、`cumulative_pnl` 字段，从 `trade_log.json` 最近两天的 snapshots 差值计算。
+在 `performance.json` 写入时增加 `daily_pnl`、`daily_pnl_pct`、`cumulative_pnl` 字段，从 `trade_log.json` 最新两笔 snapshots 差值计算。
 
 ---
 

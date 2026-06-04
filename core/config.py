@@ -2,9 +2,13 @@
 ETF 智能投资分析系统 - 全局配置与缓存
 """
 import os
+import sys
 import warnings
 from dotenv import load_dotenv
 from infra.cache import PersistentCache
+from infra.logger import get_logger
+
+logger = get_logger("config")
 
 warnings.filterwarnings("ignore")
 load_dotenv()
@@ -35,6 +39,10 @@ FEE_RATE = 0.0003             # ETF 交易费率（万三）
 HEADERS = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
 
 # 4. 大模型配置（从 .env 读取）
+if not os.getenv("DEEPSEEK_API_KEY"):
+    logger.warning(".env 未找到或 DEEPSEEK_API_KEY 未设置，LLM 模式将不可用")
+    logger.warning("请创建 .env 文件: echo DEEPSEEK_API_KEY=sk-xxx > .env")
+
 # ── 深度模型（复杂推理：首席决策、辩论、宏观、政策） ──
 LLM_API_KEY = os.getenv("DEEPSEEK_API_KEY", "")
 LLM_BASE_URL = os.getenv("DEEPSEEK_BASE_URL", "https://api.deepseek.com/v1")

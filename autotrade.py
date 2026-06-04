@@ -519,6 +519,26 @@ def _log_performance(pf: Portfolio, date: str):
         except Exception:
             pass
 
+    # ── 日盈亏计算 ──
+    try:
+        if TRADE_LOG.exists():
+            with open(TRADE_LOG, "r", encoding="utf-8") as f:
+                snaps = json.load(f)
+            if len(snaps) >= 2:
+                prev_total = snaps[-2].get("total", total)
+                daily_pnl = total - prev_total
+                daily_pnl_pct = round((daily_pnl / prev_total) * 100, 2) if prev_total > 0 else 0
+                perf["daily_pnl"] = round(daily_pnl, 2)
+                perf["daily_pnl_pct"] = daily_pnl_pct
+            elif len(snaps) == 1:
+                init = perf.get("initial_capital", total)
+                perf["daily_pnl"] = round(total - init, 2)
+                perf["daily_pnl_pct"] = round(perf.get("total_return_pct", 0), 2)
+        cumulative_pnl = total - perf.get("initial_capital", total)
+        perf["cumulative_pnl"] = round(cumulative_pnl, 2)
+    except Exception:
+        pass
+
     perf["last_updated"] = date
     with open(PERF_LOG, "w", encoding="utf-8") as f:
         json.dump(perf, f, ensure_ascii=False, indent=2)

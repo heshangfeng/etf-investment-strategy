@@ -1,10 +1,10 @@
-"""
+﻿"""
 ETF 智能投资分析系统 - 全局配置与缓存
 """
 import os
 import warnings
 from dotenv import load_dotenv
-from cache import PersistentCache
+from infra.cache import PersistentCache
 
 warnings.filterwarnings("ignore")
 load_dotenv()
@@ -127,3 +127,4 @@ CACHE_MARKET_VOL = PersistentCache("market_vol", default_ttl=1800)
 CACHE_OPINION = PersistentCache("opinion", default_ttl=3600)
 CACHE_OPINION_HIST = PersistentCache("opinion_hist", default_ttl=86400)
 CACHE_IVIX = PersistentCache("ivix", default_ttl=3600)
+

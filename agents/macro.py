@@ -5,9 +5,9 @@ import akshare as ak
 import numpy as np
 from datetime import datetime
 
-from config import LLM_ENABLED
-from models import AgentReport
-from data import DataCollectAgent
+from core.config import LLM_ENABLED
+from core.models import AgentReport
+from core.data import DataCollectAgent
 from agents.base import BaseLLMAgent
 
 
@@ -205,7 +205,7 @@ A股特征：两会前后春季躁动，政治局会议定调影响季度级别�
         # 获取最新政策新闻（多源）
         policy_news = ""
         try:
-            from data import PublicOpinionAgent
+            from core.data import PublicOpinionAgent
             kw_list = ["宏观经济 政策", "政治局会议", "国务院 政策", "金融监管",
                        "货币政策", "房地产 政策", "资本市场 改革"]
             news_parts = []

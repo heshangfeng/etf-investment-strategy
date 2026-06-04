@@ -21,7 +21,7 @@ class PersistentCache:
         self._lock = threading.Lock()
 
         if not db_path:
-            from config import CACHE_DB_PATH
+            from core.config import CACHE_DB_PATH
             db_path = CACHE_DB_PATH
         Path(db_path).parent.mkdir(parents=True, exist_ok=True)
 

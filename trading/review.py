@@ -1,4 +1,4 @@
-"""
+﻿"""
 ETF 智能投资分析系统 - 复盘引擎
 """
 import json
@@ -9,9 +9,9 @@ from datetime import datetime
 import pandas as pd
 from math import comb, log, exp
 
-from config import ETF_POOL, RATING_ORDER, SNAPSHOT_DIR as CFG_SNAPSHOT, REVIEW_DIR as CFG_REVIEW
-from data import DataCollectAgent
-from models import FinalResearchReport, AgentReport
+from core.config import ETF_POOL, RATING_ORDER, SNAPSHOT_DIR as CFG_SNAPSHOT, REVIEW_DIR as CFG_REVIEW
+from core.data import DataCollectAgent
+from core.models import FinalResearchReport, AgentReport
 
 
 # ====================== 【复盘引擎】 ======================
@@ -480,3 +480,4 @@ class ReviewManager:
             cls._update_agent_stats(stats)
         with open(cls.REVIEW_FILE, "w", encoding="utf-8") as f:
             json.dump(stats, f, ensure_ascii=False, indent=2)
+

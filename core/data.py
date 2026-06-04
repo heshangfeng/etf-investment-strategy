@@ -1,4 +1,4 @@
-"""
+﻿"""
 ETF 智能投资分析系统 - 数据采集与规则评分智能体
 """
 import akshare as ak
@@ -13,14 +13,14 @@ import logging
 import jieba
 import requests
 from bs4 import BeautifulSoup
-from sentiment_skill import FinBertSentiment
+from infra.sentiment_skill import FinBertSentiment
 from datetime import datetime, timedelta
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from openai import OpenAI
 
 logger = logging.getLogger(__name__)
 
-from config import (
+from core.config import (
     REQUEST_DELAY, HEADERS,
     CACHE_ETF_PRICE, CACHE_INDEX_VAL, CACHE_ETF_PREMIUM,
     CACHE_NORTH_CAP, CACHE_MARKET_VOL, CACHE_OPINION, CACHE_OPINION_HIST,
@@ -31,8 +31,8 @@ from config import (
     AGENT_WORKERS, WEIGHT,
     FIN_API_KEY, FIN_API_URL,
 )
-from cache import PersistentCache
-from keywords import BASE_POS_KEYWORDS, BASE_NEG_KEYWORDS, INDUSTRY_POS, INDUSTRY_NEG
+from infra.cache import PersistentCache
+from core.keywords import BASE_POS_KEYWORDS, BASE_NEG_KEYWORDS, INDUSTRY_POS, INDUSTRY_NEG
 
 _CACHE = PersistentCache("misc", default_ttl=3600)
 
@@ -851,3 +851,4 @@ class EnhancedBacktestAgent:
             "索提诺比率": round(sortino, 2),
             "交易次数": trade_count,
         }
+

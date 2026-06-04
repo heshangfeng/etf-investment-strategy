@@ -1,4 +1,4 @@
-"""
+﻿"""
 ETF 智能投研看板 - Streamlit Dashboard
 
 启动: streamlit run dashboard.py
@@ -17,7 +17,7 @@ import plotly.graph_objects as go
 # ── 页面配置 ──
 st.set_page_config(page_title="ETF 智能投研看板", layout="wide")
 
-from config import OUTPUT_DIR, SNAPSHOT_DIR, REVIEW_DIR, FEE_RATE
+from core.config import OUTPUT_DIR, SNAPSHOT_DIR, REVIEW_DIR, FEE_RATE
 SNAPSHOT_DIR = Path(__file__).parent / SNAPSHOT_DIR
 REVIEW_DIR = Path(__file__).parent / REVIEW_DIR
 OUTPUT_DIR = Path(__file__).parent / OUTPUT_DIR
@@ -265,7 +265,7 @@ def main():
     st.subheader("我的投资组合（实际持仓）")
     st.caption("顶部[建议总仓位]=系统推荐 ｜ 此处[实际仓位]=你的真实持仓比例, 自动交易后两者应基本一致")
     try:
-        from portfolio import load, _price
+        from trading.portfolio import load, _price
         pf = load()
         col_a, col_b, col_c = st.columns(3)
         cash = pf.cash
@@ -298,7 +298,7 @@ def main():
 
     # ── 模拟交易策略表现 ──
     try:
-        from autotrade import PERF_LOG
+        from trading.autotrade import PERF_LOG
         import json
         if PERF_LOG.exists():
             with open(PERF_LOG, "r", encoding="utf-8") as f:
@@ -310,7 +310,7 @@ def main():
             c3.metric("夏普比率", perf.get("sharpe_ratio", "N/A"))
             c4.metric("当前总值", f"{perf.get('current_value', 0):.0f}")
 
-            from autotrade import TRADE_LOG
+            from trading.autotrade import TRADE_LOG
             if TRADE_LOG.exists():
                 with open(TRADE_LOG, "r", encoding="utf-8") as f:
                     snaps = json.load(f)
@@ -341,7 +341,7 @@ def main():
     st.divider()
     st.subheader("历史交易记录")
     try:
-        from autotrade import TRADE_LOG
+        from trading.autotrade import TRADE_LOG
         if TRADE_LOG.exists():
             with open(TRADE_LOG, "r", encoding="utf-8") as f:
                 tl_snaps = json.load(f)
@@ -410,3 +410,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

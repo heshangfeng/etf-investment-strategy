@@ -1,4 +1,4 @@
-"""
+﻿"""
 ETF 智能投资分析系统 - 实盘投资组合管理
 
 记录真实持仓、买入成本，结合分析报告给出个性化建议。
@@ -17,7 +17,7 @@ from dataclasses import dataclass, field, asdict
 from datetime import datetime
 from pathlib import Path
 
-from config import ETF_POOL
+from core.config import ETF_POOL
 
 PORTFOLIO_FILE = Path(__file__).parent / "data" / "portfolio.json"
 
@@ -87,7 +87,7 @@ def _name(code: str) -> str:
 
 def _price(code: str, fallback: float) -> float:
     try:
-        from data import DataCollectAgent
+        from core.data import DataCollectAgent
         df = DataCollectAgent.get_etf_price(code)
         return float(df["close"].iloc[-1])
     except Exception:
@@ -331,7 +331,7 @@ def portfolio_optimize(etf_results: list, method: str = "risk_parity") -> dict |
     """从 FinalResearchReport 提取数据执行组合优化。"""
     if len(etf_results) < 5:
         return None
-    from data import DataCollectAgent
+    from core.data import DataCollectAgent
     codes = []
     rets = []
     for fr in etf_results:
@@ -391,3 +391,4 @@ def cli():
 
 if __name__ == "__main__":
     cli()
+

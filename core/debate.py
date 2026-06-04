@@ -1,17 +1,17 @@
-"""
+﻿"""
 ETF 智能投资分析系统 - 仲裁引擎
 """
 import re
 import json
 from openai import OpenAI
 
-from config import (
+from core.config import (
     LLM_API_KEY, LLM_BASE_URL, LLM_MODEL, LLM_MAX_TOKENS,
     LLM_TEMPERATURE, LLM_ENABLED, DEBATE_ENABLED,
     DISAGREEMENT_SCORE_THRESHOLD, DISAGREEMENT_RATING_GAP, RATING_ORDER,
     LLM_CALL_COUNT
 )
-from models import AgentReport
+from core.models import AgentReport
 
 
 ARBITRATION_PROMPT = """你作为投资委员会仲裁员，需要裁决两位分析师的分歧。
@@ -158,3 +158,4 @@ class DebateEngine:
             arbitration_results.append(result)
 
         return arbitration_results
+

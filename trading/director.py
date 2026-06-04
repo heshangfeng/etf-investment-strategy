@@ -1,4 +1,4 @@
-"""
+﻿"""
 ETF 智能投资分析系统 - 工作流总监 Agent
 
 每次运行后自动审查各 Agent 输出质量，发现盲点，累积优化建议。
@@ -11,7 +11,7 @@ from pathlib import Path
 
 import numpy as np
 
-from config import OUTPUT_DIR, REVIEW_DIR
+from core.config import OUTPUT_DIR, REVIEW_DIR
 
 OPTIMIZATION_FILE = Path(REVIEW_DIR) / "optimization.json"
 REVIEW_STATS_FILE = Path(REVIEW_DIR) / "cumulative_stats.json"
@@ -341,7 +341,7 @@ class WorkflowDirector:
     def _check_data_pipeline(cls, all_reports: list, findings: dict):
         """数据管道健康检查：验证配置参数和数据源链路的合理性。"""
         try:
-            from config import TREND_DAY_COUNT
+            from core.config import TREND_DAY_COUNT
 
             # 1. 舆情趋势天数
             if TREND_DAY_COUNT < 5:
@@ -781,3 +781,4 @@ class WorkflowDirector:
                     for s in by_pri[pri][:2]:
                         print(f"      → {s['action'][:70]}")
         print(f"{'='*60}\n")
+

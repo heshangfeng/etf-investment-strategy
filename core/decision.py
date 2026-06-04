@@ -1,4 +1,4 @@
-"""
+﻿"""
 ETF 智能投资分析系统 - 首席决策智能体
 """
 import numpy as np
@@ -7,12 +7,12 @@ import os
 import math
 from datetime import datetime
 
-from config import (
+from core.config import (
     LLM_MODEL, LLM_MAX_TOKENS, LLM_TEMPERATURE, LLM_ENABLED,
     LLM_API_KEY, LLM_BASE_URL, RATING_ORDER, ETF_POOL
 )
-from models import AgentReport, FinalResearchReport
-from data import DataCollectAgent
+from core.models import AgentReport, FinalResearchReport
+from core.data import DataCollectAgent
 from agents import BaseLLMAgent
 
 
@@ -95,7 +95,7 @@ class ChiefDecisionAgent(BaseLLMAgent):
 
         # 1. 尝试从回测结果加载代理准确率
         try:
-            from data import EnhancedBacktestAgent
+            from core.data import EnhancedBacktestAgent
             # 用几只代表性宽基ETF的平均回测胜率作为代理
             etf_codes = [e["code"] for e in ETF_POOL if e["type"] == "宽基"][:3]
             win_rates = []
@@ -106,7 +106,7 @@ class ChiefDecisionAgent(BaseLLMAgent):
             if win_rates:
                 avg_win_rate = np.mean(win_rates)
                 # 以此为中心，各Agent根据各自特点微调
-                from config import WEIGHT
+                from core.config import WEIGHT
                 for name in weights:
                     base = avg_win_rate
                     weights[name] = 0.3 + base * 1.4
@@ -115,7 +115,7 @@ class ChiefDecisionAgent(BaseLLMAgent):
 
         # 2. 尝试从 memory 加载 flip 检测降权
         try:
-            from memory import MemoryRetriever
+            from infra.memory import MemoryRetriever
             flip_counts = {}
             # 检查全市场所有ETF，统计每Agent的flip频率
             for etf in ETF_POOL:
@@ -155,7 +155,7 @@ class ChiefDecisionAgent(BaseLLMAgent):
         weights = {name: 1.0 for name in ChiefDecisionAgent.SCORING_AGENTS}
         try:
             # Lazy import to avoid circular dependency
-            from review import ReviewManager
+            from trading.review import ReviewManager
             if os.path.exists(ReviewManager.REVIEW_FILE):
                 with open(ReviewManager.REVIEW_FILE, "r", encoding="utf-8") as f:
                     stats = json.load(f)
@@ -331,7 +331,7 @@ class ChiefDecisionAgent(BaseLLMAgent):
         total_verified = 0
         try:
             # Lazy import to avoid circular dependency
-            from review import ReviewManager
+            from trading.review import ReviewManager
             if os.path.exists(ReviewManager.REVIEW_FILE):
                 with open(ReviewManager.REVIEW_FILE, "r", encoding="utf-8") as f:
                     stats = json.load(f)
@@ -345,7 +345,7 @@ class ChiefDecisionAgent(BaseLLMAgent):
         # Fallback: use backtest data as proxy win rate
         if win_rate == 0.55 and total_verified <= 10:
             try:
-                from data import EnhancedBacktestAgent
+                from core.data import EnhancedBacktestAgent
                 bt_codes = ["159915", "510300", "588000"]  # representative ETFs
                 bt_wins = []
                 bt_pl = []
@@ -589,7 +589,7 @@ class ChiefDecisionAgent(BaseLLMAgent):
         avg_win_ratio = 1.5
         total_verified = 0
         try:
-            from review import ReviewManager
+            from trading.review import ReviewManager
             if os.path.exists(ReviewManager.REVIEW_FILE):
                 with open(ReviewManager.REVIEW_FILE, "r", encoding="utf-8") as f:
                     stats = json.load(f)
@@ -602,7 +602,7 @@ class ChiefDecisionAgent(BaseLLMAgent):
 
         if win_rate == 0.55 and total_verified <= 10:
             try:
-                from data import EnhancedBacktestAgent
+                from core.data import EnhancedBacktestAgent
                 bt_codes = ["159915", "510300", "588000"]
                 bt_wins = []
                 bt_pl = []
@@ -629,7 +629,7 @@ class ChiefDecisionAgent(BaseLLMAgent):
         pos_pct = min(kelly_pos, baseline_pos)
 
         try:
-            from data import DataCollectAgent
+            from core.data import DataCollectAgent
             df = DataCollectAgent.get_etf_price(etf_code)
             hist_vol = float(df["volatility"].rolling(20).mean().iloc[-1])
             vol_factor = max(hist_vol * 100, 1.0)
@@ -649,3 +649,4 @@ class ChiefDecisionAgent(BaseLLMAgent):
             "stop_loss_pct": stop_loss_pct,
             "take_profit_pct": take_profit_pct,
         }
+

@@ -1,4 +1,4 @@
-"""
+﻿"""
 ETF 智能投资分析系统 - 顶层主控调度
 """
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -7,17 +7,17 @@ import pandas as pd
 import os
 from datetime import datetime
 
-from config import (
+from core.config import (
     LLM_ENABLED, DEBATE_ENABLED, LLM_MODEL, LLM_BASE_URL,
     QUICK_LLM_MODEL, LLM_CALL_COUNT,
     MAIN_WORKERS, AGENT_WORKERS, ETF_POOL
 )
-from data import (
+from core.data import (
     DataCollectAgent, ValueScoreAgent, BoomScoreAgent,
     TechScoreAgent, FundScoreAgent, RiskScoreAgent,
     BacktestAgent, EnhancedBacktestAgent, PublicOpinionAgent
 )
-from models import AgentReport, FinalResearchReport
+from core.models import AgentReport, FinalResearchReport
 from agents import (
     MacroAnalystAgent, MonetaryPolicyAgent, PolicyEventAgent,
     ValueAnalystAgent, TechAnalystAgent, SentimentAnalystAgent,
@@ -26,11 +26,11 @@ from agents import (
     HotMoneyAnalystAgent, UnlockPressureAgent, PatternRecognitionAgent,
     TrendPredictorAgent,
 )
-from debate import DebateEngine
-from decision import ChiefDecisionAgent
-from report import ResearchReportGenerator
-from review import ReviewManager
-from portfolio import PortfolioOptimizer, portfolio_optimize
+from core.debate import DebateEngine
+from core.decision import ChiefDecisionAgent
+from core.report import ResearchReportGenerator
+from trading.review import ReviewManager
+from trading.portfolio import PortfolioOptimizer, portfolio_optimize
 
 
 # ====================== 【顶层主控调度 - 三段式多智能体】 ======================
@@ -350,7 +350,7 @@ class MainSchedulerAgent:
 
         # Phase 4: 个性化投资组合建议 + 自动化模拟交易
         try:
-            from portfolio import advise
+            from trading.portfolio import advise
             advice = advise(final_reports)
             if advice:
                 print(advice)
@@ -358,7 +358,7 @@ class MainSchedulerAgent:
             print(f"  ⚠️ 投资组合建议不可用: {e}")
 
         try:
-            from autotrade import auto_trade
+            from trading.autotrade import auto_trade
             trades = auto_trade(final_reports)
             b, s = len(trades["buys"]), len(trades["sells"])
             if b or s:
@@ -372,7 +372,7 @@ class MainSchedulerAgent:
 
         # Phase 5: 工作流总监审查
         try:
-            from director import WorkflowDirector
+            from trading.director import WorkflowDirector
             findings = WorkflowDirector.review(final_reports)
             WorkflowDirector.print_summary(findings)
         except Exception as e:
@@ -724,3 +724,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

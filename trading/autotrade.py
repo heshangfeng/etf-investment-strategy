@@ -1,4 +1,4 @@
-"""
+﻿"""
 ETF 智能投资分析系统 - 自动化模拟交易引擎
 
 每次分析完成后自动执行：读取建议 → 调仓 → 记录 → 复盘。
@@ -11,8 +11,8 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Optional
 
-from config import ETF_POOL, FEE_RATE
-from portfolio import Portfolio, Holding, Transaction, load, save, _price, PORTFOLIO_FILE
+from core.config import ETF_POOL, FEE_RATE
+from trading.portfolio import Portfolio, Holding, Transaction, load, save, _price, PORTFOLIO_FILE
 
 TRADE_LOG = Path(__file__).parent / "data" / "trade_log.json"
 PERF_LOG = Path(__file__).parent / "data" / "performance.json"
@@ -636,3 +636,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

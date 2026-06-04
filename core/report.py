@@ -1,4 +1,4 @@
-"""
+﻿"""
 ETF 智能投资分析系统 - 投研报告生成器
 """
 import os
@@ -6,8 +6,8 @@ import pandas as pd
 import numpy as np
 from datetime import datetime, timedelta
 
-from config import RATING_ORDER
-from models import FinalResearchReport
+from core.config import RATING_ORDER
+from core.models import FinalResearchReport
 
 
 # ====================== 【完整投研报告输出】 ======================
@@ -193,7 +193,7 @@ class ResearchReportGenerator:
                 print(f"  {fr.etf_info['code']} {fr.etf_info['name']} | 止损: 未设置 | 止盈: 未设置")
 
         # 10. 保存台账
-        from config import OUTPUT_DIR
+        from core.config import OUTPUT_DIR
         os.makedirs(OUTPUT_DIR, exist_ok=True)
 
         save_path = f"{OUTPUT_DIR}/ETF_多智能体投研报告_{datetime.now().strftime('%Y%m%d')}.xlsx"
@@ -213,7 +213,7 @@ class ResearchReportGenerator:
     @staticmethod
     def _cleanup_old_reports():
         """保留当天最新报告，删除同一日期的旧版本（带时间戳的旧格式）。"""
-        from config import OUTPUT_DIR
+        from core.config import OUTPUT_DIR
         today = datetime.now().strftime("%Y%m%d")
         removed = 0
         for fname in list(os.listdir(OUTPUT_DIR)):
@@ -478,3 +478,4 @@ class ResearchReportGenerator:
             print(f"  止损 {sl:+.1f}% / 止盈 {tp:+.1f}%")
         else:
             print(f"  止损 未设置 / 止盈 未设置")
+

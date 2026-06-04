@@ -4,11 +4,11 @@ ETF 智能投资分析系统 - 基本面 Agent（价值/技术/情绪/资金/风
 import numpy as np
 import pandas as pd
 import akshare as ak
-from config import CACHE_OPINION
-from models import AgentReport
-from data import DataCollectAgent, PublicOpinionAgent
+from core.config import CACHE_OPINION
+from core.models import AgentReport
+from core.data import DataCollectAgent, PublicOpinionAgent
 from agents.base import BaseLLMAgent
-from keywords import INDUSTRY_POS
+from core.keywords import INDUSTRY_POS
 
 
 # ====================== 【LLM多智能体 - 价值估值】 ======================

@@ -7,7 +7,7 @@ import json
 from datetime import datetime
 from openai import OpenAI
 
-from config import (
+from core.config import (
     LLM_API_KEY, LLM_BASE_URL, LLM_MODEL, LLM_MAX_TOKENS,
     LLM_TEMPERATURE, LLM_ENABLED, RATING_ORDER, REQUEST_DELAY,
     CACHE_OPINION,
@@ -15,8 +15,8 @@ from config import (
     QUICK_LLM_MAX_TOKENS, QUICK_LLM_TEMPERATURE,
     LLM_CALL_COUNT
 )
-from models import AgentReport, LLMOutput
-from memory import MemoryRetriever
+from core.models import AgentReport, LLMOutput
+from infra.memory import MemoryRetriever
 
 
 # ====================== 【LLM多智能体基类】 ======================

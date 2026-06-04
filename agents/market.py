@@ -5,8 +5,8 @@ import numpy as np
 import pandas as pd
 import akshare as ak
 from datetime import datetime, timedelta
-from models import AgentReport
-from data import DataCollectAgent
+from core.models import AgentReport
+from core.data import DataCollectAgent
 from agents.base import BaseLLMAgent
 
 

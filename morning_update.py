@@ -1,4 +1,4 @@
-"""
+﻿"""
 ETF 智能投资分析系统 - 晨盘增量更新
 8:15 AM 运行：加载昨日快照 + 顶层Agent增量更新 + 规则重评分 → 操盘指导
 不调LLM，纯规则评分，轻量快速。
@@ -10,11 +10,11 @@ import numpy as np
 from datetime import datetime
 from pathlib import Path
 
-from config import SNAPSHOT_DIR, ETF_POOL
-from data import DataCollectAgent
+from core.config import SNAPSHOT_DIR, ETF_POOL
+from core.data import DataCollectAgent
 from agents import MacroAnalystAgent
-from decision import ChiefDecisionAgent
-from scheduler import MainSchedulerAgent
+from core.decision import ChiefDecisionAgent
+from core.scheduler import MainSchedulerAgent
 
 
 SNAPSHOT_PATH = Path(__file__).parent / SNAPSHOT_DIR
@@ -226,3 +226,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

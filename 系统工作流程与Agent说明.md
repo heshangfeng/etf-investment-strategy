@@ -391,7 +391,8 @@ streamlit run dashboard.py
 
 | 日期 | 变更 | 涉及文件 |
 |------|------|----------|
-| 2026-06-04 | 定时分析推送（晨盘8:15 + 午盘增强） | `morning_update.py`, `run_morning.ps1`, `decision.py`, `autotrade.py`, `run_daily.ps1` |
+| 2026-06-04 | 项目结构整理：文件归入 core/trading/infra 目录 | `core/`, `trading/`, `infra/` |
+| 2026-06-04 | 定时分析推送（晨盘8:15 + 午盘增强） | `morning_update.py`, `run_morning.ps1`, `core/decision.py`, `trading/autotrade.py`, `run_daily.ps1` |
 | 2026-06-03 | WorkflowDirector 深度审查 10 维度 | `director.py` |
 | 2026-06-03 | WorkflowDirector 基础版本 | `director.py` |
 | 2026-06-02 | PolicyEventAgent 接入实时政策新闻 | `agents/macro.py` |

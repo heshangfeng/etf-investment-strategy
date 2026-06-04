@@ -8,17 +8,16 @@ import glob
 import os
 import numpy as np
 from datetime import datetime
+from pathlib import Path
 
-from config import SNAPSHOT_DIR
+from config import SNAPSHOT_DIR, ETF_POOL
 from data import DataCollectAgent
-from agents import (
-    MacroAnalystAgent, MonetaryPolicyAgent, PolicyEventAgent, CrossMarketAgent,
-)
+from agents import MacroAnalystAgent
 from decision import ChiefDecisionAgent
 from scheduler import MainSchedulerAgent
 
 
-SNAPSHOT_PATH = os.path.join(os.path.dirname(__file__), SNAPSHOT_DIR)
+SNAPSHOT_PATH = Path(__file__).parent / SNAPSHOT_DIR
 
 
 def load_latest_snapshot() -> dict | None:
@@ -35,16 +34,9 @@ def get_snapshot_date(data: dict) -> str:
 
 
 def run_top_level_agents() -> dict:
-    """运行宏观/政策/跨市场Agent，返回新的宏观context和global_max_pos"""
+    """运行宏观Agent + 检测市场状态，返回新的宏观看板和仓位上限"""
     macro_agent = MacroAnalystAgent()
-    monetary_agent = MonetaryPolicyAgent()
-    policy_agent = PolicyEventAgent()
-    cross_market_agent = CrossMarketAgent()
-
     macro_report = macro_agent.run()
-    monetary_report = monetary_agent.run()
-    policy_report = policy_agent.run()
-    cross_market_report = cross_market_agent.run("沪深300", "510300")
 
     global_max_pos = macro_report.score / 100
     market_state = MainSchedulerAgent().detect_market_state()
@@ -177,7 +169,7 @@ def format_guidance(results: list[dict], top: dict, snapshot_date: str) -> str:
     if risks:
         lines.append("⚠️ 风险信号")
         for r in risks:
-            lines.append(f"  {r['code']} {r['name']} → {r['new_operation']} (评分{r['new_score']:.0f}, 共识{r['consensus']})")
+            lines.append(f"  {r['code']} {r['name']} → {r['new_operation']} (评分{r['new_score']:.0f}, 仓位{r['position_pct']*100:.0f}%)")
         lines.append("")
 
     changes = [r for r in results if r["changed"]]
@@ -212,7 +204,7 @@ def main():
     except Exception:
         pass
 
-    print(f"\n🔄 增量更新: 宏观/政策/跨市场Agent...")
+    print(f"\n🔄 增量更新: 宏观Agent + 市场状态...")
     top = run_top_level_agents()
     print(f"  ✅ 宏观: {top['macro_score']:.0f}分 | 市场状态: {top['market_state']} | 仓位上限: {top['global_max_pos']*100:.0f}%")
 

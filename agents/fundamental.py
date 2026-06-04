@@ -9,6 +9,7 @@ from core.models import AgentReport
 from core.data import DataCollectAgent, PublicOpinionAgent
 from agents.base import BaseLLMAgent
 from core.keywords import INDUSTRY_POS
+from infra.logger import get_logger; logger = get_logger(__name__)
 
 
 # ====================== 【LLM多智能体 - 价值估值】 ======================
@@ -186,7 +187,8 @@ class FundFlowAnalystAgent(BaseLLMAgent):
             if fp is not None and len(fp) > 0:
                 fp_val = float(fp.iloc[-1]["股票仓位"])
                 fund_pos_info = f"\n公募股票仓位: {fp_val}%"
-        except Exception:
+        except Exception as e:
+            logger.warning("获取公募股票仓位失败: " + str(e), exc_info=True)
             pass
 
         data_text = (f"成交量比(近10日均值): {vol_ratio:.2f}\n"
@@ -232,7 +234,8 @@ class RiskManagerAgent(BaseLLMAgent):
             total_m = margin['szse_margin'] + margin['sse_margin']
             if total_m > 20000: score -= 10; risk_detail.append("两融余额过高，市场杠杆风险大")
             margin_note = f"两融余额: {total_m:.0f}亿"
-        except Exception:
+        except Exception as e:
+            logger.warning("获取两融数据失败: " + str(e), exc_info=True)
             pass
 
         # VIX情绪指标
@@ -296,7 +299,8 @@ A股行业轮动特征：
             bench_ret_20d = (bench_close / benchmark["close"].iloc[-20] - 1) * 100 if len(benchmark) >= 20 else 0
             relative_strength = ret_20d - bench_ret_20d
             strength_desc = f"跑赢大盘{relative_strength:.1f}%" if relative_strength > 0 else f"跑输大盘{abs(relative_strength):.1f}%"
-        except Exception:
+        except Exception as e:
+            logger.warning("获取基准指数(沪深300)失败: " + str(e), exc_info=True)
             pass
 
         # 板块资金流向
@@ -308,7 +312,8 @@ A股行业轮动特征：
                 sector_flow_info = f"板块资金净流入: {sf['流入']/1e8:.1f}亿 | 排名: {sf['流入排名']}"
             else:
                 sector_flow_info = "暂无该行业板块资金流向数据"
-        except Exception:
+        except Exception as e:
+            logger.warning("获取板块资金流向失败: " + str(e), exc_info=True)
             pass
 
         data_text = (f"所属行业: {industry}\n"

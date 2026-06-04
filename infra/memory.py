@@ -9,6 +9,8 @@ from collections import Counter
 from datetime import datetime, timedelta
 from pathlib import Path
 
+from infra.logger import get_logger; logger = get_logger(__name__)
+
 
 class SimpleBM25:
     """标准的 BM25 检索实现。"""

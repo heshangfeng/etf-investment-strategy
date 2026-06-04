@@ -14,6 +14,7 @@ from core.config import (
 from core.models import AgentReport, FinalResearchReport
 from core.data import DataCollectAgent
 from agents import BaseLLMAgent
+from infra.logger import get_logger; logger = get_logger(__name__)
 
 
 # ====================== 【首席决策智能体】 ======================
@@ -111,6 +112,7 @@ class ChiefDecisionAgent(BaseLLMAgent):
                     base = avg_win_rate
                     weights[name] = 0.3 + base * 1.4
         except Exception:
+            logger.warning("[_load_proxy_weights] EnhancedBacktestAgent 失败", exc_info=True)
             pass
 
         # 2. 尝试从 memory 加载 flip 检测降权
@@ -145,6 +147,7 @@ class ChiefDecisionAgent(BaseLLMAgent):
                     elif flip_rate > 0.6:  # 60%+ → 降权30%
                         weights[aname] *= 0.7
         except Exception:
+            logger.warning("[_load_proxy_weights] MemoryRetriever 失败", exc_info=True)
             pass
 
         return weights
@@ -166,6 +169,7 @@ class ChiefDecisionAgent(BaseLLMAgent):
                         acc = h / d
                         weights[aname] = 0.3 + acc * 1.4  # 0.3~1.7范围，0.5准确率=1.0中性
         except Exception:
+            logger.warning("[load_agent_weights] 加载权重失败", exc_info=True)
             pass
         return weights
 
@@ -340,6 +344,7 @@ class ChiefDecisionAgent(BaseLLMAgent):
                 if total_verified > 10:
                     win_rate = overall_acc
         except Exception:
+            logger.warning("[run] ReviewManager 加载历史胜率失败", exc_info=True)
             pass
 
         # Fallback: use backtest data as proxy win rate
@@ -360,6 +365,7 @@ class ChiefDecisionAgent(BaseLLMAgent):
                 if bt_pl:
                     avg_win_ratio = float(np.mean(bt_pl))
             except Exception:
+                logger.warning("[run] EnhancedBacktestAgent 回测失败", exc_info=True)
                 pass
 
         # ── 5. LLM决策（优先于规则，结果决定最终评分）──
@@ -598,6 +604,7 @@ class ChiefDecisionAgent(BaseLLMAgent):
                 if total_verified > 10:
                     win_rate = overall_acc
         except Exception:
+            logger.warning("[compute_rule_score] ReviewManager 加载历史胜率失败", exc_info=True)
             pass
 
         if win_rate == 0.55 and total_verified <= 10:
@@ -617,6 +624,7 @@ class ChiefDecisionAgent(BaseLLMAgent):
                 if bt_pl:
                     avg_win_ratio = float(np.mean(bt_pl))
             except Exception:
+                logger.warning("[compute_rule_score] EnhancedBacktestAgent 回测失败", exc_info=True)
                 pass
 
         market_pos_mult = {"强趋势牛": 1.2, "震荡偏强": 1.0, "震荡偏弱": 0.8, "强趋势熊": 0.5}

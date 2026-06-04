@@ -13,6 +13,7 @@ from core.config import ETF_POOL, RATING_ORDER, SNAPSHOT_DIR as CFG_SNAPSHOT, RE
 from core.data import DataCollectAgent
 from core.models import FinalResearchReport, AgentReport
 
+from infra.logger import get_logger; logger = get_logger(__name__)
 
 # ====================== 【复盘引擎】 ======================
 class ReviewManager:

@@ -13,6 +13,8 @@ import numpy as np
 
 from core.config import OUTPUT_DIR, REVIEW_DIR
 
+from infra.logger import get_logger; logger = get_logger(__name__)
+
 OPTIMIZATION_FILE = Path(REVIEW_DIR) / "optimization.json"
 REVIEW_STATS_FILE = Path(REVIEW_DIR) / "cumulative_stats.json"
 
@@ -376,6 +378,7 @@ class WorkflowDirector:
                                    f"部分数据源异常，建议排查",
                     })
         except ImportError:
+            logger.warning("导入核心配置失败（TREND_DAY_COUNT）", exc_info=True)
             pass
 
     @classmethod
@@ -671,6 +674,7 @@ class WorkflowDirector:
                 with open(OPTIMIZATION_FILE, "r", encoding="utf-8") as f:
                     history = json.load(f)
             except Exception:
+                logger.warning("加载优化历史失败", exc_info=True)
                 pass
         
         # 最多保留 30 天记录

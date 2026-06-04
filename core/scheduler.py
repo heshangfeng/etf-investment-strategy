@@ -31,6 +31,7 @@ from core.decision import ChiefDecisionAgent
 from core.report import ResearchReportGenerator
 from trading.review import ReviewManager
 from trading.portfolio import PortfolioOptimizer, portfolio_optimize
+from infra.logger import get_logger; logger = get_logger(__name__)
 
 
 # ====================== 【顶层主控调度 - 三段式多智能体】 ======================
@@ -46,6 +47,7 @@ class MainSchedulerAgent:
                 if len(df) >= 60:
                     price_data[code] = df["close"].pct_change().dropna().tail(60).values
             except Exception:
+                logger.warning("[_apply_correlation_constraint] 获取ETF价格失败", exc_info=True)
                 pass
         if len(price_data) < 2:
             return
@@ -125,6 +127,7 @@ class MainSchedulerAgent:
                         above_ma20 += 1
                     total_checked += 1
                 except Exception:
+                    logger.warning("[detect_market_state] 获取ETF价格失败", exc_info=True)
                     pass
             breadth = above_ma20 / max(total_checked, 1)
 

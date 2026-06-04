@@ -19,6 +19,8 @@ from pathlib import Path
 
 from core.config import ETF_POOL
 
+from infra.logger import get_logger; logger = get_logger(__name__)
+
 PORTFOLIO_FILE = Path(__file__).resolve().parent.parent / "data" / "portfolio.json"
 
 
@@ -237,6 +239,7 @@ def advise(all_reports: list) -> str:
                 cp = _price(c, h.avg_cost)
                 pnl = f"\u5f53\u524d\u76c8\u4e8f {(cp-h.avg_cost)/h.avg_cost*100:+.1f}%"
             except Exception:
+                logger.warning("计算卖出建议盈亏失败", exc_info=True)
                 pass
             lines.append(f"    {h.name}({c}): {h.shares}\u4efd \u5747\u4ef7{h.avg_cost:.4f} | {pnl} | \u5efa\u8bae{r['operation']}")
 
@@ -248,6 +251,7 @@ def advise(all_reports: list) -> str:
                 cp = _price(c, h.avg_cost)
                 pnl = f"\u76c8\u4e8f {(cp-h.avg_cost)/h.avg_cost*100:+.1f}%"
             except Exception:
+                logger.warning("计算持有建议盈亏失败", exc_info=True)
                 pass
             lines.append(f"    {h.name}({c}): {h.shares}\u4efd \u5747\u4ef7{h.avg_cost:.4f} | {pnl} | {r.get('operation','\u6301\u6709')}")
 

@@ -23,6 +23,7 @@ try:
     _md = generate_markdown()
     write_structure_file(_md)
 except Exception:
+    logger.warning("自动更新项目目录结构文档失败", exc_info=True)
     pass
 
 
@@ -120,6 +121,7 @@ def apply_portfolio_constraints(results: list[dict]) -> list[dict]:
                 if len(df) >= 60:
                     price_data[r["code"]] = df["close"].pct_change().dropna().tail(60).values
             except Exception:
+                logger.warning("获取价格数据计算相关性失败", exc_info=True)
                 pass
 
         if len(price_data) >= 2:
@@ -211,6 +213,7 @@ def main():
         if days_old > 1:
             print(f"⚠️ 警告: 快照日期为{snap_date}({days_old}天前)，数据可能陈旧")
     except Exception:
+        logger.warning("快照日期解析失败", exc_info=True)
         pass
 
     print(f"\n🔄 增量更新: 宏观Agent + 市场状态...")

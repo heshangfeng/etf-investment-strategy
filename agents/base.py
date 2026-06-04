@@ -17,6 +17,7 @@ from core.config import (
 )
 from core.models import AgentReport, LLMOutput
 from infra.memory import MemoryRetriever
+from infra.logger import get_logger; logger = get_logger(__name__)
 
 
 # ====================== 【LLM多智能体基类】 ======================
@@ -57,7 +58,8 @@ class BaseLLMAgent:
             memory = MemoryRetriever.retrieve(etf_code, days=self.MEMORY_DAYS)
             if memory:
                 return memory + "\n\n" + data_text
-        except Exception:
+        except Exception as e:
+            logger.warning(f"记忆检索失败 ({etf_code}): " + str(e), exc_info=True)
             pass
         return data_text
 

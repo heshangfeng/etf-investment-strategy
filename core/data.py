@@ -18,7 +18,7 @@ from datetime import datetime, timedelta
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from openai import OpenAI
 
-logger = logging.getLogger(__name__)
+from infra.logger import get_logger; logger = get_logger(__name__)
 
 from core.config import (
     REQUEST_DELAY, HEADERS,
@@ -353,6 +353,7 @@ class PublicOpinionAgent:
                 if items:
                     return "".join(f"{n.get('title', '')}。" for n in items)
         except Exception:
+            logger.warning("[get_professional_news] NewsNow API 失败", exc_info=True)
             pass
 
         # 2. 专业财经API
@@ -365,6 +366,7 @@ class PublicOpinionAgent:
                 if news:
                     return news
             except Exception:
+                logger.warning("[get_professional_news] 专业财经API 失败", exc_info=True)
                 pass
 
         # 3. 降级：新浪爬虫
@@ -380,6 +382,7 @@ class PublicOpinionAgent:
             if news_content:
                 return news_content
         except Exception:
+            logger.warning("[get_professional_news] 新浪爬虫 失败", exc_info=True)
             pass
 
         # 4. 兜底：akshare 财新新闻
@@ -391,6 +394,7 @@ class PublicOpinionAgent:
                 items = matched.head(5) if len(matched) > 0 else df.head(5)
                 return "".join(f"{row['summary']}。" for _, row in items.iterrows())
         except Exception:
+            logger.warning("[get_professional_news] akshare 财新新闻 失败", exc_info=True)
             pass
 
         return "暂无公开财经资讯"

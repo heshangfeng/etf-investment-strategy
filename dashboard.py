@@ -334,6 +334,7 @@ def main():
                     )
                     st.plotly_chart(fig_equity, width='stretch')
     except Exception:
+        logger.warning("加载模拟交易策略表现失败", exc_info=True)
         pass
 
     # ── 历史交易记录 ──

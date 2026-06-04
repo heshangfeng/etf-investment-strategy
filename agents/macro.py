@@ -9,6 +9,7 @@ from core.config import LLM_ENABLED
 from core.models import AgentReport
 from core.data import DataCollectAgent
 from agents.base import BaseLLMAgent
+from infra.logger import get_logger; logger = get_logger(__name__)
 
 
 # ====================== 【LLM多智能体 - 宏观分析】 ======================
@@ -35,19 +36,22 @@ class MacroAnalystAgent(BaseLLMAgent):
         try:
             val = DataCollectAgent.get_index_val("000300")
             extra.append(f"沪深300 PE百分位: {val['pe_percent']}%")
-        except Exception:
+        except Exception as e:
+            logger.warning("获取沪深300 PE百分位失败: " + str(e), exc_info=True)
             pass
         try:
             pmi_df = ak.macro_china_pmi()
             if pmi_df is not None and len(pmi_df) > 0:
                 pmi_val = float(pmi_df.tail(1).values[0][1])
                 extra.append(f"制造业PMI: {pmi_val}")
-        except Exception:
+        except Exception as e:
+            logger.warning("获取PMI数据失败: " + str(e), exc_info=True)
             pass
         try:
             vix_val = DataCollectAgent.get_ivix("510300")
             extra.append(f"VIX: {vix_val}")
-        except Exception:
+        except Exception as e:
+            logger.warning("获取VIX隐含波动率失败: " + str(e), exc_info=True)
             pass
 
         extra_text = " | ".join(extra) if extra else ""
@@ -129,7 +133,8 @@ class MonetaryPolicyAgent(BaseLLMAgent):
         try:
             bond = DataCollectAgent.get_bond_yield()
             signals.append(f"中美利差: {bond['spread']}% (中国{bond['cn_10y']}%-美国{bond['us_10y']}%)")
-        except Exception:
+        except Exception as e:
+            logger.warning("获取中美利差失败: " + str(e), exc_info=True)
             pass
 
         # 加入融资融券（两融情绪）
@@ -138,7 +143,8 @@ class MonetaryPolicyAgent(BaseLLMAgent):
             total_margin = margin['szse_margin'] + margin['sse_margin']
             signals.append(f"两融余额: {total_margin:.0f}亿 | 融券: {margin['szse_short']:.0f}亿")
             if total_margin > 15000: score += 5
-        except Exception:
+        except Exception as e:
+            logger.warning("获取两融余额失败: " + str(e), exc_info=True)
             pass
 
         # 宏观数据：M2/SHIBOR
@@ -148,14 +154,16 @@ class MonetaryPolicyAgent(BaseLLMAgent):
                 m2_val = float(m2.iloc[-1]["同比增速"])
                 signals.append(f"M2同比: {m2_val}%")
                 if m2_val > 10: score += 5
-        except Exception:
+        except Exception as e:
+            logger.warning("获取M2数据失败: " + str(e), exc_info=True)
             pass
         try:
             shibor = ak.macro_china_shibor_all()
             if shibor is not None and len(shibor) > 0:
                 on_rate = float(shibor.iloc[-1]["ON"]) if "ON" in shibor.columns else 0
                 signals.append(f"SHIBOR隔夜: {on_rate}%")
-        except Exception:
+        except Exception as e:
+            logger.warning("获取SHIBOR数据失败: " + str(e), exc_info=True)
             pass
         try:
             pmi_df = ak.macro_china_pmi()
@@ -164,7 +172,8 @@ class MonetaryPolicyAgent(BaseLLMAgent):
                 signals.append(f"制造业PMI: {pmi_val}")
                 if pmi_val > 52: score += 10
                 elif pmi_val < 48: score -= 10
-        except Exception:
+        except Exception as e:
+            logger.warning("获取PMI数据失败: " + str(e), exc_info=True)
             pass
 
         score = float(np.clip(score, 0, 100))
@@ -220,11 +229,13 @@ A股特征：两会前后春季躁动，政治局会议定调影响季度级别�
                 if cx is not None and len(cx) > 0:
                     for _, row in cx.head(3).iterrows():
                         news_parts.append(f"[财新] {row['summary'][:100]}")
-            except Exception:
+            except Exception as e:
+                logger.warning("获取财新头条失败: " + str(e), exc_info=True)
                 pass
             if news_parts:
                 policy_news = "【近期政策资讯】\n" + "\n".join(news_parts[:5]) + "\n\n"
-        except Exception:
+        except Exception as e:
+            logger.warning("获取政策资讯失败: " + str(e), exc_info=True)
             pass
 
         current_event = None

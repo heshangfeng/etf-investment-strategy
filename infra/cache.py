@@ -11,6 +11,8 @@ import threading
 import time
 from pathlib import Path
 
+from infra.logger import get_logger; logger = get_logger(__name__)
+
 
 class PersistentCache:
     """SQLite 持久缓存，dict 风格接口，支持 TTL。"""
@@ -156,6 +158,7 @@ class PersistentCache:
                 )
                 self._conn.commit()
         except Exception:
+            logger.warning("自动清理缓存过期条目失败", exc_info=True)
             pass
 
     def close(self):

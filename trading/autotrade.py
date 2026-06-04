@@ -14,10 +14,7 @@ from typing import Optional
 from core.config import ETF_POOL, FEE_RATE
 from trading.portfolio import Portfolio, Holding, Transaction, load, save, _price, PORTFOLIO_FILE
 
-TRADE_LOG = Path(__file__).resolve().parent.parent / "data" / "trade_log.json"
-PERF_LOG = Path(__file__).resolve().parent.parent / "data" / "performance.json"
-SNAPSHOT_DIR = Path(__file__).resolve().parent.parent / "data" / "snapshots"
-
+from infra.logger import get_logger; logger = get_logger(__name__)
 
 # ====================== 【信号可信度过滤器】 ======================
 class SignalCaliberFilter:
@@ -460,6 +457,7 @@ def _log_snapshot(pf: Portfolio, date: str, trades: dict):
             with open(TRADE_LOG, "r", encoding="utf-8") as f:
                 snapshots = json.load(f)
         except Exception:
+            logger.warning("读取交易日志快照失败", exc_info=True)
             pass
 
     market_value = sum(h.shares * _price(h.code, h.avg_cost) for h in pf.holdings)
@@ -487,6 +485,7 @@ def _log_performance(pf: Portfolio, date: str):
             with open(PERF_LOG, "r", encoding="utf-8") as f:
                 perf = json.load(f)
         except Exception:
+            logger.warning("读取表现日志失败", exc_info=True)
             pass
 
     # 更新
@@ -517,6 +516,7 @@ def _log_performance(pf: Portfolio, date: str):
                     std_ret = np.std(returns) * np.sqrt(252)
                     perf["sharpe_ratio"] = round(avg_ret / max(std_ret, 1e-10), 3)
         except Exception:
+            logger.warning("计算夏普比率失败", exc_info=True)
             pass
 
     # ── 日盈亏计算 ──
@@ -537,6 +537,7 @@ def _log_performance(pf: Portfolio, date: str):
         cumulative_pnl = total - perf.get("initial_capital", total)
         perf["cumulative_pnl"] = round(cumulative_pnl, 2)
     except Exception:
+        logger.warning("计算日盈亏失败", exc_info=True)
         pass
 
     perf["last_updated"] = date
@@ -577,6 +578,7 @@ def show_performance():
                     bar = "█" * max(1, int(abs(ret) / 2))
                     print(f"    {d}: {v:>8.2f}  ({ret:>+6.2f}%) {bar}")
         except Exception:
+            logger.warning("显示资产曲线失败", exc_info=True)
             pass
 
     print(f"{'='*50}\n")

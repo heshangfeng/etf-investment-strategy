@@ -8,6 +8,8 @@ import os
 import logging
 from typing import Optional
 
+from infra.logger import get_logger; logger = get_logger(__name__)
+
 FINBERT_MODEL = os.getenv("FINBERT_MODEL", "uer/roberta-base-finetuned-chinanews-chinese")
 
 

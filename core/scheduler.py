@@ -251,7 +251,7 @@ class MainSchedulerAgent:
             hv = float(dr["volatility"].rolling(20).mean().iloc[-1])
             vf = max(hv * 100, 1.0)
             sl, tp = round(-max(vf * 2.0, 3.0), 1), round(max(vf * 4.0, 6.0), 1)
-        except:
+        except Exception:
             sl, tp = -5.0, 15.0
         return FinalResearchReport(
             etf_info={"code": code, "name": name, "type": typ, "index_code": idx},

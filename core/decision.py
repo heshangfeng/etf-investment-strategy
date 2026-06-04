@@ -165,7 +165,7 @@ class ChiefDecisionAgent(BaseLLMAgent):
                     if d > 2:  # 至少2次即可（降冷启动门槛）
                         acc = h / d
                         weights[aname] = 0.3 + acc * 1.4  # 0.3~1.7范围，0.5准确率=1.0中性
-        except:
+        except Exception:
             pass
         return weights
 
@@ -339,7 +339,7 @@ class ChiefDecisionAgent(BaseLLMAgent):
                 overall_acc = stats.get("overall_accuracy_pct", 55) / 100
                 if total_verified > 10:
                     win_rate = overall_acc
-        except:
+        except Exception:
             pass
 
         # Fallback: use backtest data as proxy win rate
@@ -450,7 +450,7 @@ class ChiefDecisionAgent(BaseLLMAgent):
             vol_factor = max(hist_vol * 100, 1.0)
             stop_loss_pct = round(-max(vol_factor * 2.0, 3.0), 1)
             take_profit_pct = round(max(vol_factor * 4.0, 6.0), 1)
-        except:
+        except Exception:
             stop_loss_pct = -5.0
             take_profit_pct = 15.0
 
@@ -635,7 +635,7 @@ class ChiefDecisionAgent(BaseLLMAgent):
             vol_factor = max(hist_vol * 100, 1.0)
             stop_loss_pct = round(-max(vol_factor * 2.0, 3.0), 1)
             take_profit_pct = round(max(vol_factor * 4.0, 6.0), 1)
-        except:
+        except Exception:
             stop_loss_pct = -5.0
             take_profit_pct = 15.0
 

@@ -186,7 +186,7 @@ class FundFlowAnalystAgent(BaseLLMAgent):
             if fp is not None and len(fp) > 0:
                 fp_val = float(fp.iloc[-1]["股票仓位"])
                 fund_pos_info = f"\n公募股票仓位: {fp_val}%"
-        except:
+        except Exception:
             pass
 
         data_text = (f"成交量比(近10日均值): {vol_ratio:.2f}\n"
@@ -232,7 +232,7 @@ class RiskManagerAgent(BaseLLMAgent):
             total_m = margin['szse_margin'] + margin['sse_margin']
             if total_m > 20000: score -= 10; risk_detail.append("两融余额过高，市场杠杆风险大")
             margin_note = f"两融余额: {total_m:.0f}亿"
-        except:
+        except Exception:
             pass
 
         # VIX情绪指标
@@ -308,7 +308,7 @@ A股行业轮动特征：
                 sector_flow_info = f"板块资金净流入: {sf['流入']/1e8:.1f}亿 | 排名: {sf['流入排名']}"
             else:
                 sector_flow_info = "暂无该行业板块资金流向数据"
-        except:
+        except Exception:
             pass
 
         data_text = (f"所属行业: {industry}\n"

@@ -35,19 +35,19 @@ class MacroAnalystAgent(BaseLLMAgent):
         try:
             val = DataCollectAgent.get_index_val("000300")
             extra.append(f"沪深300 PE百分位: {val['pe_percent']}%")
-        except:
+        except Exception:
             pass
         try:
             pmi_df = ak.macro_china_pmi()
             if pmi_df is not None and len(pmi_df) > 0:
                 pmi_val = float(pmi_df.tail(1).values[0][1])
                 extra.append(f"制造业PMI: {pmi_val}")
-        except:
+        except Exception:
             pass
         try:
             vix_val = DataCollectAgent.get_ivix("510300")
             extra.append(f"VIX: {vix_val}")
-        except:
+        except Exception:
             pass
 
         extra_text = " | ".join(extra) if extra else ""
@@ -129,7 +129,7 @@ class MonetaryPolicyAgent(BaseLLMAgent):
         try:
             bond = DataCollectAgent.get_bond_yield()
             signals.append(f"中美利差: {bond['spread']}% (中国{bond['cn_10y']}%-美国{bond['us_10y']}%)")
-        except:
+        except Exception:
             pass
 
         # 加入融资融券（两融情绪）
@@ -138,7 +138,7 @@ class MonetaryPolicyAgent(BaseLLMAgent):
             total_margin = margin['szse_margin'] + margin['sse_margin']
             signals.append(f"两融余额: {total_margin:.0f}亿 | 融券: {margin['szse_short']:.0f}亿")
             if total_margin > 15000: score += 5
-        except:
+        except Exception:
             pass
 
         # 宏观数据：M2/SHIBOR
@@ -148,14 +148,14 @@ class MonetaryPolicyAgent(BaseLLMAgent):
                 m2_val = float(m2.iloc[-1]["同比增速"])
                 signals.append(f"M2同比: {m2_val}%")
                 if m2_val > 10: score += 5
-        except:
+        except Exception:
             pass
         try:
             shibor = ak.macro_china_shibor_all()
             if shibor is not None and len(shibor) > 0:
                 on_rate = float(shibor.iloc[-1]["ON"]) if "ON" in shibor.columns else 0
                 signals.append(f"SHIBOR隔夜: {on_rate}%")
-        except:
+        except Exception:
             pass
         try:
             pmi_df = ak.macro_china_pmi()
@@ -164,7 +164,7 @@ class MonetaryPolicyAgent(BaseLLMAgent):
                 signals.append(f"制造业PMI: {pmi_val}")
                 if pmi_val > 52: score += 10
                 elif pmi_val < 48: score -= 10
-        except:
+        except Exception:
             pass
 
         score = float(np.clip(score, 0, 100))

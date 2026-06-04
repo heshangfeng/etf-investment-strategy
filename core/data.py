@@ -101,7 +101,7 @@ class DataCollectAgent:
             pe = df["PE(TTM)"].iloc[-1]
             pb = df["PB"].iloc[-1]
             pe_pct = df["PE分位"].iloc[-1]
-        except:
+        except Exception:
             if index_code in CACHE_INDEX_VAL:
                 return CACHE_INDEX_VAL[index_code]
             pe, pb, pe_pct = 25, 2, 50
@@ -122,7 +122,7 @@ class DataCollectAgent:
             else:
                 logger.warning("get_etf_premium(%s): code not found in premium data", etf_code)
                 premium = 0.0
-        except:
+        except Exception:
             if etf_code in CACHE_ETF_PREMIUM:
                 return CACHE_ETF_PREMIUM[etf_code]
             premium = 0.0

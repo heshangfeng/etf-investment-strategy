@@ -236,7 +236,7 @@ def advise(all_reports: list) -> str:
             try:
                 cp = _price(c, h.avg_cost)
                 pnl = f"\u5f53\u524d\u76c8\u4e8f {(cp-h.avg_cost)/h.avg_cost*100:+.1f}%"
-            except:
+            except Exception:
                 pass
             lines.append(f"    {h.name}({c}): {h.shares}\u4efd \u5747\u4ef7{h.avg_cost:.4f} | {pnl} | \u5efa\u8bae{r['operation']}")
 
@@ -247,7 +247,7 @@ def advise(all_reports: list) -> str:
             try:
                 cp = _price(c, h.avg_cost)
                 pnl = f"\u76c8\u4e8f {(cp-h.avg_cost)/h.avg_cost*100:+.1f}%"
-            except:
+            except Exception:
                 pass
             lines.append(f"    {h.name}({c}): {h.shares}\u4efd \u5747\u4ef7{h.avg_cost:.4f} | {pnl} | {r.get('operation','\u6301\u6709')}")
 

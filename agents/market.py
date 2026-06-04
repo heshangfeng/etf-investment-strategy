@@ -65,7 +65,7 @@ class RetailSentimentAgent(BaseLLMAgent):
             margin = DataCollectAgent.get_margin_balance()
             total_m = margin['szse_margin'] + margin['sse_margin']
             margin_info = f"两融余额: {total_m:.0f}亿"
-        except:
+        except Exception:
             pass
 
         # 市场活跃度数据
@@ -75,7 +75,7 @@ class RetailSentimentAgent(BaseLLMAgent):
             if act is not None and "换手率" in act.columns:
                 turnover_rate = float(act["换手率"].iloc[-1])
                 activity_info = f"\n全市场换手率: {turnover_rate}%"
-        except:
+        except Exception:
             pass
 
         # 布林带位置(%B) - 辅助判断超买/超卖情绪
@@ -166,7 +166,7 @@ class CrossMarketAgent(BaseLLMAgent):
         try:
             bond = DataCollectAgent.get_bond_yield()
             signals.append(f"中国10Y国债: {bond['cn_10y']}% | 美国10Y国债: {bond['us_10y']}% | 中美利差: {bond['spread']}%")
-        except:
+        except Exception:
             pass
 
         score = 50.0
@@ -217,7 +217,7 @@ class CrossMarketAgent(BaseLLMAgent):
                 signals.append(f"巴菲特指数: {b_val:.0f}%")
                 if b_val > 100: score -= 10
                 elif b_val < 60: score += 10
-        except:
+        except Exception:
             pass
 
         # 股指期货基差
@@ -233,7 +233,7 @@ class CrossMarketAgent(BaseLLMAgent):
                 else:
                     score -= 5
                     signals.append(f"平均基差{avg_basis:+.2f}%, 贴水(backwardation)偏空")
-        except:
+        except Exception:
             pass
 
         score = float(np.clip(score, 0, 100))
@@ -393,7 +393,7 @@ class UnlockPressureAgent(BaseLLMAgent):
                             count += 1
                             dkey = dt_str[:10]
                             upcoming_dates[dkey] = upcoming_dates.get(dkey, 0) + 1
-                    except:
+                    except Exception:
                         pass
                 result["total_value"] = total_val
                 result["count"] = count

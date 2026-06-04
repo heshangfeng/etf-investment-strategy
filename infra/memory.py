@@ -124,8 +124,8 @@ class MemoryRetriever:
                     dt = datetime.strptime(snap_date, "%Y%m%d")
                     if dt >= cutoff:
                         snaps.append(snap)
-                except:
+                except Exception:
                     snaps.append(snap)
-            except:
+            except Exception:
                 continue
         return snaps

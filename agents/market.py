@@ -29,38 +29,16 @@ class RetailSentimentAgent(BaseLLMAgent):
 
 综合以上信号给出基于行为金融学的情绪判断。"""
 
-    def run(self, etf_code: str) -> AgentReport:
+    def _collect_market_data(self, etf_code: str) -> dict:
         df = DataCollectAgent.get_etf_price(etf_code)
-
         vol_20_mean = df["volume"].tail(20).mean()
         vol_today = df["volume"].iloc[-1]
         turnover_ratio = vol_today / vol_20_mean if vol_20_mean > 0 else 1.0
-
         close = df["close"].iloc[-1]
         high_52w = df["close"].tail(250).max() if len(df) >= 250 else df["close"].max()
         low_52w = df["close"].tail(250).min() if len(df) >= 250 else df["close"].min()
         pos_from_low = (close - low_52w) / (high_52w - low_52w) * 100 if high_52w > low_52w else 50
 
-        score = 50.0
-        signals = []
-
-        if turnover_ratio > 2.0:
-            signals.append(f"放量异常(量比{turnover_ratio:.2f})"); score -= 6
-        elif turnover_ratio > 1.5:
-            signals.append(f"放量(量比{turnover_ratio:.2f})"); score += 5
-        elif turnover_ratio < 0.5:
-            signals.append(f"缩量(量比{turnover_ratio:.2f})"); score -= 3
-        else:
-            signals.append(f"量能正常(量比{turnover_ratio:.2f})")
-
-        if pos_from_low > 90:
-            signals.append("接近年内高点"); score -= 5
-        elif pos_from_low < 10:
-            signals.append("接近年内低点"); score += 5
-        elif 40 <= pos_from_low <= 60:
-            signals.append("价格中位区间"); score += 3
-
-        # 加入两融数据
         margin_info = ""
         try:
             margin = DataCollectAgent.get_margin_balance()
@@ -68,9 +46,7 @@ class RetailSentimentAgent(BaseLLMAgent):
             margin_info = f"两融余额: {total_m:.0f}亿"
         except Exception as e:
             logger.warning("获取两融数据失败: " + str(e), exc_info=True)
-            pass
 
-        # 市场活跃度数据
         activity_info = ""
         try:
             act = ak.stock_market_activity_legu()
@@ -79,9 +55,7 @@ class RetailSentimentAgent(BaseLLMAgent):
                 activity_info = f"\n全市场换手率: {turnover_rate}%"
         except Exception as e:
             logger.warning("获取全市场活跃度失败: " + str(e), exc_info=True)
-            pass
 
-        # 布林带位置(%B) - 辅助判断超买/超卖情绪
         bollinger_pct_b = None
         try:
             if len(df) >= 20:
@@ -92,36 +66,67 @@ class RetailSentimentAgent(BaseLLMAgent):
                 pct_b_val = (close - lower.iloc[-1]) / (upper.iloc[-1] - lower.iloc[-1])
                 if not np.isnan(pct_b_val):
                     bollinger_pct_b = float(pct_b_val)
-                    if bollinger_pct_b > 1.0:
-                        signals.append(f"布林带超买(%B={bollinger_pct_b:.2f})")
-                        score -= 4
-                    elif bollinger_pct_b > 0.8:
-                        signals.append(f"布林带上轨附近(%B={bollinger_pct_b:.2f})")
-                        score -= 2
-                    elif bollinger_pct_b < 0:
-                        signals.append(f"布林带超卖(%B={bollinger_pct_b:.2f})")
-                        score += 4
-                    elif bollinger_pct_b < 0.2:
-                        signals.append(f"布林带下轨附近(%B={bollinger_pct_b:.2f})")
-                        score += 2
         except Exception as e:
             logger.warning("计算布林带失败: " + str(e), exc_info=True)
-            pass
 
-        score = float(np.clip(score, 0, 100))
-        bollinger_str = f"\n布林带%B: {bollinger_pct_b:.2f}" if bollinger_pct_b is not None else ""
-        data_text = (f"量比(20日均值): {turnover_ratio:.2f}\n"
-                     f"52周价格位置: {pos_from_low:.1f}%\n"
-                     f"{bollinger_str}\n"
+        return {
+            "df": df, "turnover_ratio": turnover_ratio, "pos_from_low": pos_from_low,
+            "close": close, "margin_info": margin_info, "activity_info": activity_info,
+            "bollinger_pct_b": bollinger_pct_b,
+        }
+
+    def _compute_retail_score(self, data: dict) -> tuple:
+        score = 50.0
+        signals = []
+        tr = data["turnover_ratio"]
+        pfl = data["pos_from_low"]
+        boll = data["bollinger_pct_b"]
+
+        if tr > 2.0:
+            signals.append(f"放量异常(量比{tr:.2f})"); score -= 6
+        elif tr > 1.5:
+            signals.append(f"放量(量比{tr:.2f})"); score += 5
+        elif tr < 0.5:
+            signals.append(f"缩量(量比{tr:.2f})"); score -= 3
+        else:
+            signals.append(f"量能正常(量比{tr:.2f})")
+
+        if pfl > 90:
+            signals.append("接近年内高点"); score -= 5
+        elif pfl < 10:
+            signals.append("接近年内低点"); score += 5
+        elif 40 <= pfl <= 60:
+            signals.append("价格中位区间"); score += 3
+
+        if boll is not None:
+            if boll > 1.0:
+                signals.append(f"布林带超买(%B={boll:.2f})"); score -= 4
+            elif boll > 0.8:
+                signals.append(f"布林带上轨附近(%B={boll:.2f})"); score -= 2
+            elif boll < 0:
+                signals.append(f"布林带超卖(%B={boll:.2f})"); score += 4
+            elif boll < 0.2:
+                signals.append(f"布林带下轨附近(%B={boll:.2f})"); score += 2
+
+        return float(np.clip(score, 0, 100)), signals
+
+    def _build_llm_prompt(self, etf_code: str, data: dict, score: float, signals: list) -> str:
+        boll_str = f"\n布林带%B: {data['bollinger_pct_b']:.2f}" if data['bollinger_pct_b'] is not None else ""
+        data_text = (f"量比(20日均值): {data['turnover_ratio']:.2f}\n"
+                     f"52周价格位置: {data['pos_from_low']:.1f}%\n"
+                     f"{boll_str}\n"
                      f"情绪信号: {'; '.join(signals)}\n"
-                     f"{margin_info}"
-                     f"{activity_info}")
+                     f"{data['margin_info']}{data['activity_info']}")
+        return self._enrich_with_memory(etf_code, data_text)
 
-        enriched_text = self._enrich_with_memory(etf_code, data_text)
+    def run(self, etf_code: str) -> AgentReport:
+        data = self._collect_market_data(etf_code)
+        score, signals = self._compute_retail_score(data)
+        enriched_text = self._build_llm_prompt(etf_code, data, score, signals)
         llm_out = self._call_llm(self.SYSTEM_PROMPT, self._build_user_prompt("市场情绪", etf_code, enriched_text))
         rating = "强烈看多" if score >= 80 else "看多" if score >= 65 else "中性" if score >= 45 else "看空" if score >= 30 else "强烈看空"
         report = self._parse_to_report(etf_code, "市场情绪", llm_out, score, rating)
-        report.data_summary = {"turnover_ratio": turnover_ratio, "pos_from_low": pos_from_low}
+        report.data_summary = {"turnover_ratio": data["turnover_ratio"], "pos_from_low": data["pos_from_low"]}
         return report
 
 
@@ -148,56 +153,57 @@ class CrossMarketAgent(BaseLLMAgent):
 传导逻辑：美债利率+美元同时走强=新兴市场承压；人民币升值+美元弱=利好A股。
 注意不同信号之间的传导有时滞，警惕冲突信号的市场含义。"""
 
-    def run(self, etf_name: str, etf_code: str) -> AgentReport:
-        signals = []
+    def _get_usdcny_signal(self) -> tuple:
         usdcny = None
-        # spot_quote() 有时不稳定，使用缓存fallback
+        signal_text = ""
+        score_adj = 0
         try:
             fx = ak.spot_quote()
             cny_row = fx[fx["名称"].str.contains("美元", na=False)]
             if len(cny_row) > 0:
                 usdcny = float(cny_row["现价"].iloc[0])
                 CrossMarketAgent._spot_cache["usdcny"] = usdcny
-                signals.append(f"USDCNY: {usdcny}")
+                signal_text = f"USDCNY: {usdcny}"
         except Exception:
             if "usdcny" in CrossMarketAgent._spot_cache:
                 usdcny = CrossMarketAgent._spot_cache["usdcny"]
-                signals.append(f"USDCNY: {usdcny}(缓存)")
+                signal_text = f"USDCNY: {usdcny}(缓存)"
             else:
-                signals.append("USDCNY: 暂无数据")
+                signal_text = "USDCNY: 暂无数据"
 
-        # 加入中美利差数据
+        if usdcny is not None:
+            if usdcny > 7.3:
+                score_adj -= 15
+            elif usdcny < 6.9:
+                score_adj += 10
+
         try:
             bond = DataCollectAgent.get_bond_yield()
-            signals.append(f"中国10Y国债: {bond['cn_10y']}% | 美国10Y国债: {bond['us_10y']}% | 中美利差: {bond['spread']}%")
+            signal_text += f" | 中国10Y国债: {bond['cn_10y']}% | 美国10Y国债: {bond['us_10y']}% | 中美利差: {bond['spread']}%"
         except Exception as e:
             logger.warning("获取中美利差失败: " + str(e), exc_info=True)
-            pass
+        return signal_text, score_adj
 
-        score = 50.0
-        if usdcny is not None:
-            if usdcny > 7.3: score -= 15
-            elif usdcny < 6.9: score += 10
-
-        # A股恐慌指数(IVIX) - 类似VIX的隐含波动率指标
+    def _get_ivix_signal(self, etf_code: str) -> tuple:
+        score_adj = 0
         try:
             ivix = DataCollectAgent.get_ivix(etf_code)
             if ivix is not None:
-                signals.append(f"IVIX隐含波动率: {ivix:.1f}")
+                signal_text = f"IVIX隐含波动率: {ivix:.1f}"
                 if ivix > 30:
-                    score -= 8
-                    signals.append("IVIX高位=市场恐慌")
+                    score_adj -= 8
+                    signal_text += " (IVIX高位=市场恐慌)"
                 elif ivix > 25:
-                    score -= 3
+                    score_adj -= 3
                 elif ivix < 18:
-                    score += 3
-                    signals.append("IVIX低位=市场平稳")
+                    score_adj += 3
+                    signal_text += " (IVIX低位=市场平稳)"
+                return signal_text, score_adj
         except Exception as e:
             logger.warning("获取IVIX隐含波动率失败: " + str(e), exc_info=True)
-            pass
+        return "", 0
 
-        # 黄金价格代理信号（避险情绪）
-        gold_price = None
+    def _get_gold_signal(self) -> tuple:
         try:
             gold_df = ak.futures_zh_realtime()
             sym_col = "symbol" if "symbol" in gold_df.columns else "代码"
@@ -206,47 +212,82 @@ class CrossMarketAgent(BaseLLMAgent):
             if len(au_rows) > 0:
                 gold_price = float(au_rows[price_col].iloc[0])
                 CrossMarketAgent._spot_cache["gold"] = gold_price
-                signals.append(f"黄金(AU): {gold_price:.0f}")
-                if gold_price > 600:
-                    score -= 5
-                    signals.append("金价高位=避险升温")
+                text = f"黄金(AU): {gold_price:.0f}"
+                score_adj = -5 if gold_price > 600 else 0
+                if score_adj:
+                    text += " (金价高位=避险升温)"
+                return text, score_adj
         except Exception:
-            if "gold" in CrossMarketAgent._spot_cache:
-                gold_price = CrossMarketAgent._spot_cache["gold"]
-                signals.append(f"黄金(AU): {gold_price:.0f}(缓存)")
+            pass
+        if "gold" in CrossMarketAgent._spot_cache:
+            gold_price = CrossMarketAgent._spot_cache["gold"]
+            return f"黄金(AU): {gold_price:.0f}(缓存)", 0
+        return "", 0
 
-        # 巴菲特指数（全市场市值/GDP，估值温度计）
+    def _get_buffett_signal(self) -> tuple:
         try:
             buffett = ak.stock_buffett_index_lg()
             if buffett is not None and len(buffett) > 0:
                 b_val = float(buffett["value"].iloc[-1])
-                signals.append(f"巴菲特指数: {b_val:.0f}%")
-                if b_val > 100: score -= 10
-                elif b_val < 60: score += 10
+                text = f"巴菲特指数: {b_val:.0f}%"
+                score_adj = 0
+                if b_val > 100:
+                    score_adj -= 10
+                elif b_val < 60:
+                    score_adj += 10
+                return text, score_adj
         except Exception as e:
             logger.warning("获取巴菲特指数失败: " + str(e), exc_info=True)
-            pass
+        return "", 0
 
-        # 股指期货基差
+    def _get_futures_basis_signal(self) -> tuple:
         try:
             basis_data = DataCollectAgent.get_futures_basis()
             if basis_data:
                 basis_parts = [f"{k}基差: {v:+.2f}%" for k, v in basis_data.items()]
-                signals.append(" | ".join(basis_parts))
+                text = " | ".join(basis_parts)
                 avg_basis = sum(basis_data.values()) / len(basis_data)
                 if avg_basis > 0:
-                    score += 5
-                    signals.append(f"平均基差{avg_basis:+.2f}%, 升水(contango)偏多")
+                    score_adj = 5
+                    text += f"\n平均基差{avg_basis:+.2f}%, 升水(contango)偏多"
                 else:
-                    score -= 5
-                    signals.append(f"平均基差{avg_basis:+.2f}%, 贴水(backwardation)偏空")
+                    score_adj = -5
+                    text += f"\n平均基差{avg_basis:+.2f}%, 贴水(backwardation)偏空"
+                return text, score_adj
         except Exception as e:
             logger.warning("获取股指期货基差失败: " + str(e), exc_info=True)
-            pass
+        return "", 0
+
+    def run(self, etf_name: str, etf_code: str) -> AgentReport:
+        score = 50.0
+        signals = []
+
+        txt, adj = self._get_usdcny_signal()
+        signals.append(txt)
+        score += adj
+
+        txt, adj = self._get_ivix_signal(etf_code)
+        if txt:
+            signals.append(txt)
+            score += adj
+
+        txt, adj = self._get_gold_signal()
+        if txt:
+            signals.append(txt)
+            score += adj
+
+        txt, adj = self._get_buffett_signal()
+        if txt:
+            signals.append(txt)
+            score += adj
+
+        txt, adj = self._get_futures_basis_signal()
+        if txt:
+            signals.append(txt)
+            score += adj
 
         score = float(np.clip(score, 0, 100))
         data_text = "\n".join(signals) if signals else "暂无实时跨市场数据"
-
         enriched_text = self._enrich_with_memory(etf_code, data_text)
         llm_out = self._call_llm(self.SYSTEM_PROMPT, self._build_user_prompt(etf_name, etf_code, enriched_text))
         rating = "强烈看多" if score >= 80 else "看多" if score >= 65 else "中性" if score >= 45 else "看空" if score >= 30 else "强烈看空"
@@ -480,6 +521,148 @@ class PatternRecognitionAgent(BaseLLMAgent):
 先识别当前最可能的技术形态，再给出基于形态的目标位和止损位。
 每次输出需包含对信号可信度的评估（低/中/高），低于中等可信度时应标注为参考信号。"""
 
+    def _detect_trend_lines(self, code: str, price_data: dict) -> tuple:
+        close = price_data["close"]
+        n = price_data["n"]
+        x = np.arange(n)
+        A = np.vstack([x, np.ones(n)]).T
+        try:
+            slope, intercept = np.linalg.lstsq(A, close, rcond=None)[0]
+            y_pred = slope * x + intercept
+            ss_res = np.sum((close - y_pred) ** 2)
+            ss_tot = np.sum((close - np.mean(close)) ** 2)
+            r2 = ss_res / max(ss_tot, 1e-10)
+            trend_strength = 1 - r2
+            if slope > 0:
+                pattern = f"上升趋势(斜率{slope:.4f}, R²={1-r2:.2f})"
+                score_delta = 10 * trend_strength
+            else:
+                pattern = f"下降趋势(斜率{slope:.4f}, R²={1-r2:.2f})"
+                score_delta = -10 * trend_strength
+            return score_delta, [pattern]
+        except Exception as e:
+            logger.warning("线性回归计算趋势失败: " + str(e), exc_info=True)
+        return 0, []
+
+    def _compute_adx_strength(self, code: str, price_data: dict) -> tuple:
+        high = price_data["high"]
+        low = price_data["low"]
+        close = price_data["close"]
+        n = price_data["n"]
+        try:
+            if n >= 16:
+                tr = np.zeros(n)
+                for i in range(1, n):
+                    hl = high[i] - low[i]
+                    hc = abs(high[i] - close[i - 1])
+                    lc = abs(low[i] - close[i - 1])
+                    tr[i] = max(hl, hc, lc)
+                plus_dm = np.zeros(n)
+                minus_dm = np.zeros(n)
+                for i in range(1, n):
+                    up_move = high[i] - high[i - 1]
+                    down_move = low[i - 1] - low[i]
+                    if up_move > down_move and up_move > 0:
+                        plus_dm[i] = up_move
+                    if down_move > up_move and down_move > 0:
+                        minus_dm[i] = down_move
+                period = 14
+                atr = np.mean(tr[1:period + 1])
+                plus_smooth = np.mean(plus_dm[1:period + 1])
+                minus_smooth = np.mean(minus_dm[1:period + 1])
+                for i in range(period + 1, n):
+                    atr = (atr * (period - 1) + tr[i]) / period
+                    plus_smooth = (plus_smooth * (period - 1) + plus_dm[i]) / period
+                    minus_smooth = (minus_smooth * (period - 1) + minus_dm[i]) / period
+                if atr > 0:
+                    plus_di = 100 * plus_smooth / atr
+                    minus_di = 100 * minus_smooth / atr
+                    dx = 100 * abs(plus_di - minus_di) / (plus_di + minus_di) if (plus_di + minus_di) > 0 else 0
+                    desc = "强趋势" if dx > 40 else "中等趋势" if dx > 20 else "弱趋势"
+                    return 0, [f"ADX趋势强度={dx:.1f}({desc})"]
+        except Exception as e:
+            logger.warning("ADX趋势强度计算失败: " + str(e), exc_info=True)
+        return 0, []
+
+    def _detect_support_resistance(self, code: str, price_data: dict) -> tuple:
+        low = price_data["low"]
+        high = price_data["high"]
+        patterns = []
+        support_levels = []
+        resistance_levels = []
+        for level_pct in [10, 20, 30, 40]:
+            threshold = np.percentile(low, level_pct)
+            touches = np.sum(np.abs(low - threshold) / threshold < 0.02)
+            if touches >= 3:
+                support_levels.append((threshold, int(touches)))
+        for level_pct in [60, 70, 80, 90]:
+            threshold = np.percentile(high, level_pct)
+            touches = np.sum(np.abs(high - threshold) / threshold < 0.02)
+            if touches >= 3:
+                resistance_levels.append((threshold, int(touches)))
+        if support_levels:
+            best_support = min(support_levels, key=lambda x: x[0])
+            patterns.append(f"支撑位: {best_support[0]:.3f}(测试{best_support[1]}次)")
+        if resistance_levels:
+            best_res = max(resistance_levels, key=lambda x: x[0])
+            patterns.append(f"阻力位: {best_res[0]:.3f}(测试{best_res[1]}次)")
+        return 0, patterns
+
+    def _detect_double_top_bottom(self, code: str, price_data: dict) -> tuple:
+        high = price_data["high"]
+        low = price_data["low"]
+        close = price_data["close"]
+        vol = price_data["volume"]
+        n = price_data["n"]
+        mid = n // 2
+        score_delta = 0
+        patterns = []
+        left_max = np.max(high[:mid])
+        right_max = np.max(high[mid:])
+        left_min = np.min(low[:mid])
+        right_min = np.min(low[mid:])
+        vol_confirm_high = vol_confirm_low = ""
+        if vol is not None:
+            vol_left_mean = np.mean(vol[:mid])
+            vol_right_mean = np.mean(vol[mid:])
+        else:
+            vol_left_mean = vol_right_mean = 0
+        if abs(left_max - right_max) / max(left_max, right_max) < 0.03 and left_max > np.median(close):
+            if vol is not None and vol_right_mean < vol_left_mean * 0.9:
+                vol_confirm_high = " (右顶缩量确认)"
+            patterns.append(f"疑似双顶形态(L:{left_max:.3f}, R:{right_max:.3f}){vol_confirm_high}")
+            score_delta -= 5
+        if abs(left_min - right_min) / max(left_min, right_min) < 0.03 and left_min < np.median(close):
+            if vol is not None and vol_right_mean > vol_left_mean * 1.1:
+                vol_confirm_low = " (右底放量确认)"
+            patterns.append(f"疑似双底形态(L:{left_min:.3f}, R:{right_min:.3f}){vol_confirm_low}")
+            score_delta += 5
+        return score_delta, patterns
+
+    def _detect_candlestick_patterns(self, code: str, price_data: dict) -> tuple:
+        close = price_data["close"]
+        n = price_data["n"]
+        score_delta = 0
+        patterns = []
+        if n >= 3:
+            c1, c2, c3 = close[-3], close[-2], close[-1]
+            o1, o2, o3 = close[-4] if n >= 4 else c1, c1, c2
+            if c1 < o1 * 0.97 and abs(c2 - o2) / o2 < 0.01 and c3 > o3 * 1.03:
+                patterns.append("启明星形态(看涨)")
+                score_delta += 5
+            elif c1 > o1 * 1.03 and abs(c2 - o2) / o2 < 0.01 and c3 < o3 * 0.97:
+                patterns.append("黄昏星形态(看跌)")
+                score_delta -= 5
+            ret_3 = (close[-1] / close[-3] - 1) * 100
+            ret_2 = (close[-1] / close[-2] - 1) * 100
+            if ret_3 > 3 and ret_2 > 0:
+                patterns.append("近3日连续上涨")
+                score_delta += 5
+            elif ret_3 < -3 and ret_2 < 0:
+                patterns.append("近3日连续下跌")
+                score_delta -= 5
+        return score_delta, patterns
+
     def run(self, etf_code: str) -> AgentReport:
         df = DataCollectAgent.get_etf_price(etf_code)
         if len(df) < 30:
@@ -495,161 +678,43 @@ class PatternRecognitionAgent(BaseLLMAgent):
         low = df["low"].values if "low" in df.columns else df["close"].values
         volume = df["volume"].values if "volume" in df.columns else np.zeros(len(df))
 
-        # 取最近60根K线
         n = min(60, len(close))
-        close_60 = close[-n:]
-        high_60 = high[-n:]
-        low_60 = low[-n:]
-        vol_60 = volume[-n:] if volume is not None else None
+        price_data = {
+            "close": close[-n:], "high": high[-n:], "low": low[-n:],
+            "volume": volume[-n:], "n": n,
+        }
 
         score = 50.0
         patterns_found = []
-        support_levels = []
-        resistance_levels = []
 
-        # ── 1. 趋势强度分析（线性回归） ──
-        x = np.arange(n)
-        A = np.vstack([x, np.ones(n)]).T
-        try:
-            slope, intercept = np.linalg.lstsq(A, close_60, rcond=None)[0]
-            y_pred = slope * x + intercept
-            ss_res = np.sum((close_60 - y_pred) ** 2)
-            ss_tot = np.sum((close_60 - np.mean(close_60)) ** 2)
-            r2 = ss_res / max(ss_tot, 1e-10)
-            trend_strength = 1 - r2  # 1=完美趋势, 0=无趋势
-            if slope > 0:
-                patterns_found.append(f"上升趋势(斜率{slope:.4f}, R²={1-r2:.2f})")
-                score += 10 * trend_strength
-            else:
-                patterns_found.append(f"下降趋势(斜率{slope:.4f}, R²={1-r2:.2f})")
-                score -= 10 * trend_strength
-        except Exception as e:
-            logger.warning("线性回归计算趋势失败: " + str(e), exc_info=True)
-            pass
+        delta, pats = self._detect_trend_lines(etf_code, price_data)
+        score += delta
+        patterns_found.extend(pats)
 
-        # ── 1b. ADX（平均趋向指数）趋势强度 ──
-        try:
-            if n >= 16:
-                tr = np.zeros(n)
-                for i in range(1, n):
-                    hl = high_60[i] - low_60[i]
-                    hc = abs(high_60[i] - close_60[i - 1])
-                    lc = abs(low_60[i] - close_60[i - 1])
-                    tr[i] = max(hl, hc, lc)
-                plus_dm = np.zeros(n)
-                minus_dm = np.zeros(n)
-                for i in range(1, n):
-                    up_move = high_60[i] - high_60[i - 1]
-                    down_move = low_60[i - 1] - low_60[i]
-                    if up_move > down_move and up_move > 0:
-                        plus_dm[i] = up_move
-                    if down_move > up_move and down_move > 0:
-                        minus_dm[i] = down_move
-                # Wilder平滑
-                period = 14
-                atr = np.mean(tr[1:period + 1])
-                plus_smooth = np.mean(plus_dm[1:period + 1])
-                minus_smooth = np.mean(minus_dm[1:period + 1])
-                for i in range(period + 1, n):
-                    atr = (atr * (period - 1) + tr[i]) / period
-                    plus_smooth = (plus_smooth * (period - 1) + plus_dm[i]) / period
-                    minus_smooth = (minus_smooth * (period - 1) + minus_dm[i]) / period
-                if atr > 0:
-                    plus_di = 100 * plus_smooth / atr
-                    minus_di = 100 * minus_smooth / atr
-                    dx = 100 * abs(plus_di - minus_di) / (plus_di + minus_di) if (plus_di + minus_di) > 0 else 0
-                    patterns_found.append(f"ADX趋势强度={dx:.1f}({'强趋势' if dx > 40 else '中等趋势' if dx > 20 else '弱趋势'})")
-        except Exception as e:
-            logger.warning("ADX趋势强度计算失败: " + str(e), exc_info=True)
-            pass
+        delta, pats = self._compute_adx_strength(etf_code, price_data)
+        score += delta
+        patterns_found.extend(pats)
 
-        # ── 2. 局部极值检测（寻找支撑/阻力） ──
-        half = n // 2
-        left_half = close_60[:half]
-        right_half = close_60[half:]
+        delta, pats = self._detect_support_resistance(etf_code, price_data)
+        score += delta
+        patterns_found.extend(pats)
 
-        # 支撑：左半最低价附近反复测试
-        for level_pct in [10, 20, 30, 40]:
-            threshold = np.percentile(low_60, level_pct)
-            touches = np.sum(np.abs(low_60 - threshold) / threshold < 0.02)
-            if touches >= 3:
-                support_levels.append((threshold, int(touches)))
+        delta, pats = self._detect_double_top_bottom(etf_code, price_data)
+        score += delta
+        patterns_found.extend(pats)
 
-        # 阻力：右半最高价附近反复测试
-        for level_pct in [60, 70, 80, 90]:
-            threshold = np.percentile(high_60, level_pct)
-            touches = np.sum(np.abs(high_60 - threshold) / threshold < 0.02)
-            if touches >= 3:
-                resistance_levels.append((threshold, int(touches)))
-
-        if support_levels:
-            best_support = min(support_levels, key=lambda x: x[0])
-            patterns_found.append(f"支撑位: {best_support[0]:.3f}(测试{best_support[1]}次)")
-
-        if resistance_levels:
-            best_res = max(resistance_levels, key=lambda x: x[0])
-            patterns_found.append(f"阻力位: {best_res[0]:.3f}(测试{best_res[1]}次)")
-
-        # ── 3. 双顶/双底检测（需成交量确认） ──
-        # 寻找两个相近的高点（双顶）或低点（双底）
-        mid = n // 2
-        left_max = np.max(high_60[:mid])
-        right_max = np.max(high_60[mid:])
-        left_min = np.min(low_60[:mid])
-        right_min = np.min(low_60[mid:])
-
-        # 成交量确认
-        vol_confirm_high = vol_confirm_low = ""
-        if vol_60 is not None:
-            vol_left_mean = np.mean(vol_60[:mid])
-            vol_right_mean = np.mean(vol_60[mid:])
-        else:
-            vol_left_mean = vol_right_mean = 0
-
-        # 双顶：左右高点接近且都在高位，右顶缩量确认
-        if abs(left_max - right_max) / max(left_max, right_max) < 0.03 and left_max > np.median(close_60):
-            if vol_60 is not None and vol_right_mean < vol_left_mean * 0.9:
-                vol_confirm_high = " (右顶缩量确认)"
-            patterns_found.append(f"疑似双顶形态(L:{left_max:.3f}, R:{right_max:.3f}){vol_confirm_high}")
-            score -= 5
-
-        # 双底：左右低点接近且都在低位，右底放量确认
-        if abs(left_min - right_min) / max(left_min, right_min) < 0.03 and left_min < np.median(close_60):
-            if vol_60 is not None and vol_right_mean > vol_left_mean * 1.1:
-                vol_confirm_low = " (右底放量确认)"
-            patterns_found.append(f"疑似双底形态(L:{left_min:.3f}, R:{right_min:.3f}){vol_confirm_low}")
-            score += 5
-
-        # ── 4. 近期K线组合判断（最近3根） ──
-        if n >= 3:
-            c1, c2, c3 = close_60[-3], close_60[-2], close_60[-1]
-            o1, o2, o3 = close_60[-4] if n >= 4 else c1, c1, c2  # approximate opens
-            # 启明星（看涨反转）：大阴线+小实体+大阳线
-            if (c1 < o1 * 0.97 and abs(c2 - o2) / o2 < 0.01 and c3 > o3 * 1.03):
-                patterns_found.append("启明星形态(看涨)")
-                score += 5
-            # 黄昏星（看跌反转）：大阳线+小实体+大阴线
-            elif (c1 > o1 * 1.03 and abs(c2 - o2) / o2 < 0.01 and c3 < o3 * 0.97):
-                patterns_found.append("黄昏星形态(看跌)")
-                score -= 5
-            # 三连阳/三连阴
-            ret_3 = (close_60[-1] / close_60[-3] - 1) * 100
-            ret_2 = (close_60[-1] / close_60[-2] - 1) * 100
-            if ret_3 > 3 and ret_2 > 0:
-                patterns_found.append("近3日连续上涨")
-                score += 5
-            elif ret_3 < -3 and ret_2 < 0:
-                patterns_found.append("近3日连续下跌")
-                score -= 5
+        delta, pats = self._detect_candlestick_patterns(etf_code, price_data)
+        score += delta
+        patterns_found.extend(pats)
 
         score = float(np.clip(score, 0, 100))
 
-        # 构建带图表的data_text
+        close_60 = price_data["close"]
         chart_lines = []
         for i in range(n):
             bar = "↑" if close_60[i] > close_60[i - 1] else "↓" if i > 0 else "─"
             chart_lines.append(f"  [{i+1:2d}] 收{close_60[i]:.4f} {bar}")
-        chart_str = "\n".join(chart_lines[-20:])  # 最近20根K线
+        chart_str = "\n".join(chart_lines[-20:])
 
         data_text = (f"【最近{n}个交易日价格序列】\n{chart_str}\n\n"
                      f"【技术形态识别】\n")

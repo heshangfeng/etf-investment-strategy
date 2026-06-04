@@ -10,7 +10,6 @@ from core.config import RATING_ORDER
 from core.models import FinalResearchReport
 
 
-# ====================== 【完整投研报告输出】 ======================
 class ResearchReportGenerator:
     """生成完整的ETF多智能体投研报告——不止表格，含每Agent分析原文+辩论+首席决策"""
 
@@ -22,7 +21,29 @@ class ResearchReportGenerator:
         print("  LLM多角色专家分析 + 矛盾检测 + 选择性辩论 + 首席综合决策")
         print("█"*160)
 
-        # 1. 摘要看板
+        df_summary = ResearchReportGenerator._print_summary_board(all_reports)
+        ResearchReportGenerator._print_operation_tiers(all_reports)
+        ResearchReportGenerator._print_detailed_reports(all_reports)
+        ResearchReportGenerator._print_sector_rotation(all_reports)
+        ResearchReportGenerator._print_portfolio_summary(all_reports)
+        ResearchReportGenerator._print_risk_sections(all_reports)
+
+        from core.config import OUTPUT_DIR
+        os.makedirs(OUTPUT_DIR, exist_ok=True)
+        save_path = f"{OUTPUT_DIR}/ETF_多智能体投研报告_{datetime.now().strftime('%Y%m%d')}.xlsx"
+        df_summary.to_excel(save_path, index=False)
+        print(f"\n✅ 投研摘要已保存：{save_path}")
+
+        txt_path = f"{OUTPUT_DIR}/ETF_多智能体投研报告_{datetime.now().strftime('%Y%m%d')}.txt"
+        full_text = ResearchReportGenerator._build_full_report_text(all_reports)
+        with open(txt_path, "w", encoding="utf-8") as f:
+            f.write(full_text)
+        print(f"✅ 完整投研报告已保存：{txt_path}")
+
+        ResearchReportGenerator._cleanup_old_reports()
+
+    @staticmethod
+    def _print_summary_board(all_reports: list[FinalResearchReport]) -> pd.DataFrame:
         print("\n" + "="*160)
         print("【📊 投研摘要看板】")
         print("="*160)
@@ -41,8 +62,10 @@ class ResearchReportGenerator:
 
         df_summary = pd.DataFrame(summary_rows)
         print(df_summary.to_string(index=False))
+        return df_summary
 
-        # 2. 操作建议分层
+    @staticmethod
+    def _print_operation_tiers(all_reports: list[FinalResearchReport]):
         strong_buy = [fr for fr in all_reports if fr.operation == "强烈买入"]
         buy = [fr for fr in all_reports if fr.operation == "买入"]
         long_hold = [fr for fr in all_reports if fr.operation == "长期持有"]
@@ -80,7 +103,8 @@ class ResearchReportGenerator:
             for fr in sell:
                 print(f"  {fr.etf_info['code']} {fr.etf_info['name']} | {fr.risk_summary[:80]}")
 
-        # 3. 各标的详细报告
+    @staticmethod
+    def _print_detailed_reports(all_reports: list[FinalResearchReport]):
         print("\n" + "="*160)
         print("【📋 各标的多智能体详细报告】")
         print("="*160)
@@ -88,7 +112,8 @@ class ResearchReportGenerator:
         for fr in all_reports:
             ResearchReportGenerator._print_detailed_report(fr)
 
-        # 4. 板块平均
+    @staticmethod
+    def _print_sector_rotation(all_reports: list[FinalResearchReport]):
         print("\n" + "="*160)
         print("【📈 板块综合评级】")
         print("="*160)
@@ -102,7 +127,6 @@ class ResearchReportGenerator:
             avg_rating = RATING_ORDER[int(round(avg_idx))]
             print(f"  {sector}: {avg_rating}（{len(ratings_list)}只标的）")
 
-        # 5. ETF轮动信号
         print("\n" + "="*160)
         print("【📊 ETF轮动信号】")
         print("="*160)
@@ -116,7 +140,8 @@ class ResearchReportGenerator:
             op_icon = "🟢" if fr.operation in ("强烈买入", "买入") else "🟡" if fr.operation == "长期持有" else "🔴"
             print(f"    {i}. {fr.etf_info['code']} {fr.etf_info['name']} | 评分:{fr.final_score:.1f} | {op_icon} {fr.operation}")
 
-        # 6. 大类资产配置
+    @staticmethod
+    def _print_portfolio_summary(all_reports: list[FinalResearchReport]):
         print("\n" + "="*160)
         print("【🏛 大类资产配置】")
         print("="*160)
@@ -131,7 +156,6 @@ class ResearchReportGenerator:
             for fr in group:
                 print(f"    {fr.etf_info['code']} {fr.etf_info['name']} | {fr.operation} | 仓位:{fr.suggested_position_pct*100:.0f}%")
 
-        # 7. 行业集中度热力图
         print("\n" + "="*160)
         print("【🔥 行业集中度热力图】")
         print("="*160)
@@ -156,7 +180,8 @@ class ResearchReportGenerator:
         if sell_ratio > 40:
             print(f"  ⚠️ 集中度预警: 超过{40}%标的集中在空头方向，市场情绪过度悲观")
 
-        # 8. 尾部风险预警
+    @staticmethod
+    def _print_risk_sections(all_reports: list[FinalResearchReport]):
         print("\n" + "="*160)
         print("【⚠️ 尾部风险预警】")
         print("="*160)
@@ -180,7 +205,6 @@ class ResearchReportGenerator:
         if not extreme_risk_found:
             print(f"  ✅ 未检测到尾部风险信号")
 
-        # 9. 止损止盈参考
         print("\n" + "="*160)
         print("【🎯 止损止盈参考】")
         print("="*160)
@@ -192,24 +216,6 @@ class ResearchReportGenerator:
             else:
                 print(f"  {fr.etf_info['code']} {fr.etf_info['name']} | 止损: 未设置 | 止盈: 未设置")
 
-        # 10. 保存台账
-        from core.config import OUTPUT_DIR
-        os.makedirs(OUTPUT_DIR, exist_ok=True)
-
-        save_path = f"{OUTPUT_DIR}/ETF_多智能体投研报告_{datetime.now().strftime('%Y%m%d')}.xlsx"
-        df_summary.to_excel(save_path, index=False)
-        print(f"\n✅ 投研摘要已保存：{save_path}")
-
-        # 11. 保存完整详细报告到文本文件
-        txt_path = f"{OUTPUT_DIR}/ETF_多智能体投研报告_{datetime.now().strftime('%Y%m%d')}.txt"
-        full_text = ResearchReportGenerator._build_full_report_text(all_reports)
-        with open(txt_path, "w", encoding="utf-8") as f:
-            f.write(full_text)
-        print(f"✅ 完整投研报告已保存：{txt_path}")
-
-        # 12. 自动清理30天前的旧报告
-        ResearchReportGenerator._cleanup_old_reports()
-
     @staticmethod
     def _cleanup_old_reports():
         """保留当天最新报告，删除同一日期的旧版本（带时间戳的旧格式）。"""
@@ -219,7 +225,6 @@ class ResearchReportGenerator:
         for fname in list(os.listdir(OUTPUT_DIR)):
             if "ETF_多智能体投研报告_" not in fname:
                 continue
-            # 旧格式文件名包含时间戳（如 _20260602_1750.txt），删除
             if today in fname and fname.count("_") >= 3:
                 os.remove(os.path.join(OUTPUT_DIR, fname))
                 removed += 1
@@ -237,94 +242,114 @@ class ResearchReportGenerator:
         lines.append("  LLM多角色专家分析 + 矛盾检测 + 选择性辩论 + 首席综合决策")
         lines.append(sep)
 
-        # 摘要看板
         lines.append("\n【投研摘要看板】")
         lines.append(sep)
         for fr in all_reports:
             lines.append(f"  {fr.etf_info['code']} {fr.etf_info['name']} ({fr.etf_info['type']}) | {fr.operation} | 仓位:{fr.suggested_position_pct*100:.0f}% | 周期:{fr.holding_period} | 共识:{fr.consensus_level}")
 
-        # 推荐分层
-        strong_buy_text = [fr for fr in all_reports if fr.operation == "强烈买入"]
-        buy_text = [fr for fr in all_reports if fr.operation == "买入"]
-        long_hold_text = [fr for fr in all_reports if fr.operation == "长期持有"]
-        hold_text = [fr for fr in all_reports if fr.operation == "持有"]
-        reduce_text = [fr for fr in all_reports if fr.operation == "减持"]
-        sell_text = [fr for fr in all_reports if fr.operation in ("卖出", "强烈卖出")]
-        if strong_buy_text:
-            lines.append(f"\n【强烈买入（{len(strong_buy_text)}只）】")
-            for fr in strong_buy_text:
-                lines.append(f"  {fr.etf_info['code']} {fr.etf_info['name']} | 仓位:{fr.suggested_position_pct*100:.0f}% | {fr.core_logic[:100]}")
-        if buy_text:
-            lines.append(f"\n【买入（{len(buy_text)}只）】")
-            for fr in buy_text:
-                lines.append(f"  {fr.etf_info['code']} {fr.etf_info['name']} | 仓位:{fr.suggested_position_pct*100:.0f}% | {fr.core_logic[:100]}")
-        if long_hold_text:
-            lines.append(f"\n【长期持有（{len(long_hold_text)}只）】")
-            for fr in long_hold_text:
-                lines.append(f"  {fr.etf_info['code']} {fr.etf_info['name']} | 周期:{fr.holding_period} | {fr.core_logic[:80]}")
-        if hold_text:
-            lines.append(f"\n【持有（{len(hold_text)}只）】")
-            for fr in hold_text:
-                lines.append(f"  {fr.etf_info['code']} {fr.etf_info['name']} | 共识:{fr.consensus_level}")
-        if reduce_text:
-            lines.append(f"\n【减持（{len(reduce_text)}只）】")
-            for fr in reduce_text:
-                lines.append(f"  {fr.etf_info['code']} {fr.etf_info['name']} | {fr.risk_summary[:80]}")
-        if sell_text:
-            lines.append(f"\n【卖出/强烈卖出（{len(sell_text)}只）】")
-            for fr in sell_text:
-                lines.append(f"  {fr.etf_info['code']} {fr.etf_info['name']} | {fr.risk_summary[:80]}")
+        lines.append(ResearchReportGenerator._build_tier_summary(all_reports))
 
-        # 各标的详细报告
         lines.append(f"\n{sep}")
         lines.append("【各标的多智能体详细报告】")
         lines.append(sep)
 
         for fr in all_reports:
-            lines.append(f"\n{'─' * 160}")
-            lines.append(f"  {fr.etf_info['code']} {fr.etf_info['name']}（{fr.etf_info['type']}）")
-            lines.append(f"  🎯 操作建议: {fr.operation} | 持有周期: {fr.holding_period}")
-            lines.append(f"  仓位: {fr.suggested_position_pct*100:.0f}% | 共识: {fr.consensus_level}")
-            lines.append(f"{'─' * 160}")
+            lines.append(ResearchReportGenerator._build_single_etf_report(fr))
 
-            for report in fr.agent_reports:
-                src_tag = "[LLM]" if report.source == "llm" else "[规则]"
-                lines.append(f"\n  {src_tag} {report.agent_name}")
-                lines.append(f"  评级: {report.rating} ({report.score}分) | 置信度: {report.confidence:.2f}")
-                lines.append(f"  {report.analysis[:300]}")
-                if report.key_factors:
-                    lines.append(f"  关键因子: {'; '.join(report.key_factors)}")
-                if report.risk_warnings:
-                    lines.append(f"  风险: {'; '.join(report.risk_warnings)}")
+        lines.append(ResearchReportGenerator._build_sector_rotation_text(all_reports))
+        lines.append(ResearchReportGenerator._build_portfolio_summary_text(all_reports))
+        lines.append(ResearchReportGenerator._build_risk_section_text(all_reports))
 
-            if fr.debates:
-                lines.append(f"\n  【辩论记录】")
-                for d in fr.debates:
-                    lines.append(f"  {d.get('topic', d.get('focus', '分歧'))}")
-                    if 'winner' in d:
-                        lines.append(f"  胜方: {d.get('winner', '折中')} | 裁决: {d.get('reasoning', '')[:200]}")
-                    elif 'rounds' in d:
-                        for rd in d['rounds']:
-                            for k, v in rd.items():
-                                if k != 'round':
-                                    lines.append(f"  {v[:200]}")
+        return "\n".join(lines)
 
-            lines.append(f"\n  【首席决策】")
-            lines.append(f"  最终评级: {fr.final_rating}")
-            lines.append(f"  核心逻辑: {fr.core_logic[:200]}")
-            lines.append(f"  综合风险: {fr.risk_summary[:200]}")
-            if fr.factor_contributions:
-                sorted_factors = sorted(fr.factor_contributions.items(), key=lambda x: abs(x[1]), reverse=True)
-                contrib_str = " | ".join([f"{name}: {val:+.1f}" for name, val in sorted_factors])
-                lines.append(f"  因子贡献: {contrib_str}")
-            sl = fr.stop_loss_pct
-            tp = fr.take_profit_pct
-            if sl != 0 or tp != 0:
-                lines.append(f"  止损 {sl:+.1f}% / 止盈 {tp:+.1f}%")
-            else:
-                lines.append(f"  止损 未设置 / 止盈 未设置")
+    @staticmethod
+    def _build_tier_summary(all_reports: list[FinalResearchReport]) -> str:
+        lines = []
+        strong_buy = [fr for fr in all_reports if fr.operation == "强烈买入"]
+        buy = [fr for fr in all_reports if fr.operation == "买入"]
+        long_hold = [fr for fr in all_reports if fr.operation == "长期持有"]
+        hold = [fr for fr in all_reports if fr.operation == "持有"]
+        reduce = [fr for fr in all_reports if fr.operation == "减持"]
+        sell = [fr for fr in all_reports if fr.operation in ("卖出", "强烈卖出")]
+        if strong_buy:
+            lines.append(f"\n【强烈买入（{len(strong_buy)}只）】")
+            for fr in strong_buy:
+                lines.append(f"  {fr.etf_info['code']} {fr.etf_info['name']} | 仓位:{fr.suggested_position_pct*100:.0f}% | {fr.core_logic[:100]}")
+        if buy:
+            lines.append(f"\n【买入（{len(buy)}只）】")
+            for fr in buy:
+                lines.append(f"  {fr.etf_info['code']} {fr.etf_info['name']} | 仓位:{fr.suggested_position_pct*100:.0f}% | {fr.core_logic[:100]}")
+        if long_hold:
+            lines.append(f"\n【长期持有（{len(long_hold)}只）】")
+            for fr in long_hold:
+                lines.append(f"  {fr.etf_info['code']} {fr.etf_info['name']} | 周期:{fr.holding_period} | {fr.core_logic[:80]}")
+        if hold:
+            lines.append(f"\n【持有（{len(hold)}只）】")
+            for fr in hold:
+                lines.append(f"  {fr.etf_info['code']} {fr.etf_info['name']} | 共识:{fr.consensus_level}")
+        if reduce:
+            lines.append(f"\n【减持（{len(reduce)}只）】")
+            for fr in reduce:
+                lines.append(f"  {fr.etf_info['code']} {fr.etf_info['name']} | {fr.risk_summary[:80]}")
+        if sell:
+            lines.append(f"\n【卖出/强烈卖出（{len(sell)}只）】")
+            for fr in sell:
+                lines.append(f"  {fr.etf_info['code']} {fr.etf_info['name']} | {fr.risk_summary[:80]}")
+        return "\n".join(lines)
 
-        # 板块评级
+    @staticmethod
+    def _build_single_etf_report(fr: FinalResearchReport) -> str:
+        lines = []
+        lines.append(f"\n{'─' * 160}")
+        lines.append(f"  {fr.etf_info['code']} {fr.etf_info['name']}（{fr.etf_info['type']}）")
+        lines.append(f"  🎯 操作建议: {fr.operation} | 持有周期: {fr.holding_period}")
+        lines.append(f"  仓位: {fr.suggested_position_pct*100:.0f}% | 共识: {fr.consensus_level}")
+        lines.append(f"{'─' * 160}")
+
+        for report in fr.agent_reports:
+            src_tag = "[LLM]" if report.source == "llm" else "[规则]"
+            lines.append(f"\n  {src_tag} {report.agent_name}")
+            lines.append(f"  评级: {report.rating} ({report.score}分) | 置信度: {report.confidence:.2f}")
+            lines.append(f"  {report.analysis[:300]}")
+            if report.key_factors:
+                lines.append(f"  关键因子: {'; '.join(report.key_factors)}")
+            if report.risk_warnings:
+                lines.append(f"  风险: {'; '.join(report.risk_warnings)}")
+
+        if fr.debates:
+            lines.append(f"\n  【辩论记录】")
+            for d in fr.debates:
+                lines.append(f"  {d.get('topic', d.get('focus', '分歧'))}")
+                if 'winner' in d:
+                    lines.append(f"  胜方: {d.get('winner', '折中')} | 裁决: {d.get('reasoning', '')[:200]}")
+                elif 'rounds' in d:
+                    for rd in d['rounds']:
+                        for k, v in rd.items():
+                            if k != 'round':
+                                lines.append(f"  {v[:200]}")
+
+        lines.append(f"\n  【首席决策】")
+        lines.append(f"  最终评级: {fr.final_rating}")
+        lines.append(f"  核心逻辑: {fr.core_logic[:200]}")
+        lines.append(f"  综合风险: {fr.risk_summary[:200]}")
+        if fr.factor_contributions:
+            sorted_factors = sorted(fr.factor_contributions.items(), key=lambda x: abs(x[1]), reverse=True)
+            contrib_str = " | ".join([f"{name}: {val:+.1f}" for name, val in sorted_factors])
+            lines.append(f"  因子贡献: {contrib_str}")
+        sl = fr.stop_loss_pct
+        tp = fr.take_profit_pct
+        if sl != 0 or tp != 0:
+            lines.append(f"  止损 {sl:+.1f}% / 止盈 {tp:+.1f}%")
+        else:
+            lines.append(f"  止损 未设置 / 止盈 未设置")
+
+        return "\n".join(lines)
+
+    @staticmethod
+    def _build_sector_rotation_text(all_reports: list[FinalResearchReport]) -> str:
+        lines = []
+        sep = "=" * 160
+
         lines.append(f"\n{sep}")
         lines.append("【板块综合评级】")
         lines.append(sep)
@@ -338,7 +363,6 @@ class ResearchReportGenerator:
             avg_rating = RATING_ORDER[int(round(avg_idx))]
             lines.append(f"  {sector}: {avg_rating}（{len(ratings_list)}只标的）")
 
-        # ETF轮动信号
         lines.append(f"\n{sep}")
         lines.append("【ETF轮动信号】")
         lines.append(sep)
@@ -350,7 +374,13 @@ class ResearchReportGenerator:
         for i, fr in enumerate(sorted_by_score[-5:], 1):
             lines.append(f"    {i}. {fr.etf_info['code']} {fr.etf_info['name']} | 评分:{fr.final_score:.1f} | {fr.operation}")
 
-        # 大类资产配置
+        return "\n".join(lines)
+
+    @staticmethod
+    def _build_portfolio_summary_text(all_reports: list[FinalResearchReport]) -> str:
+        lines = []
+        sep = "=" * 160
+
         lines.append(f"\n{sep}")
         lines.append("【大类资产配置】")
         lines.append(sep)
@@ -365,7 +395,6 @@ class ResearchReportGenerator:
             for fr in group:
                 lines.append(f"    {fr.etf_info['code']} {fr.etf_info['name']} | {fr.operation} | 仓位:{fr.suggested_position_pct*100:.0f}%")
 
-        # 行业集中度热力图
         lines.append(f"\n{sep}")
         lines.append("【行业集中度热力图】")
         lines.append(sep)
@@ -389,7 +418,13 @@ class ResearchReportGenerator:
         if sell_ratio > 40:
             lines.append(f"  ⚠️ 集中度预警: 超过{40}%标的集中在空头方向，市场情绪过度悲观")
 
-        # 尾部风险预警
+        return "\n".join(lines)
+
+    @staticmethod
+    def _build_risk_section_text(all_reports: list[FinalResearchReport]) -> str:
+        lines = []
+        sep = "=" * 160
+
         lines.append(f"\n{sep}")
         lines.append("【尾部风险预警】")
         lines.append(sep)
@@ -413,7 +448,6 @@ class ResearchReportGenerator:
         if not extreme_risk_found:
             lines.append("  未检测到尾部风险信号")
 
-        # 止损止盈参考
         lines.append(f"\n{sep}")
         lines.append("【止损止盈参考】")
         lines.append(sep)
@@ -451,13 +485,11 @@ class ResearchReportGenerator:
             print(f"\n  ⚔️ 【辩论记录】")
             for d in fr.debates:
                 print(f"    🎯 {d.get('topic', d.get('focus', '分歧'))}")
-                # 新版辩论结构（DebateEngine.hold_debate 输出）
                 if 'winner' in d:
                     print(f"      胜方: {d.get('winner', '折中')}")
                     print(f"      裁决: {d.get('reasoning', '')[:200]}")
                     if d.get('score_adjustment'):
                         print(f"      调整: {d['score_adjustment']:+.0f}分")
-                # 旧版辩论结构（rounds）
                 elif 'rounds' in d:
                     for rd in d['rounds']:
                         for k, v in rd.items():
@@ -478,4 +510,3 @@ class ResearchReportGenerator:
             print(f"  止损 {sl:+.1f}% / 止盈 {tp:+.1f}%")
         else:
             print(f"  止损 未设置 / 止盈 未设置")
-

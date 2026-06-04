@@ -167,76 +167,97 @@ class WorkflowDirector:
 
     @classmethod
     def _generate_suggestions(cls, findings: dict):
-        """根据发现的问题生成优化建议。"""
         suggestions = []
-        
-        # Agent 缺失 → 检查是代码问题还是 LLM 调用失败
+        suggestions.extend(cls._suggest_agent_missing(findings))
+        suggestions.extend(cls._suggest_generic_analysis(findings))
+        suggestions.extend(cls._suggest_data_missing(findings))
+        suggestions.extend(cls._suggest_rating_bias(findings))
+        suggestions.extend(cls._suggest_agent_underperforming(findings))
+        suggestions.extend(cls._suggest_calibration(findings))
+        suggestions.extend(cls._suggest_agent_redundancy(findings))
+        suggestions.extend(cls._suggest_llm_override(findings))
+        suggestions.extend(cls._suggest_position_concentration(findings))
+        suggestions.extend(cls._suggest_total_position(findings))
+        suggestions.extend(cls._suggest_debate_low_impact(findings))
+        suggestions.extend(cls._suggest_accuracy_declining(findings))
+        suggestions.extend(cls._suggest_data_pipeline(findings))
+        findings["suggestions"] = suggestions
+
+    @classmethod
+    def _suggest_agent_missing(cls, findings: dict) -> list[dict]:
         agent_missing = [i for i in findings.get("issues", []) if i["type"] == "agent_missing"]
-        if agent_missing:
-            suggestions.append({
-                "target": "scheduler.py",
-                "action": "检查 Agent 并行执行是否有超时或异常退出",
-                "priority": "high",
-                "reason": f"发现 {len(agent_missing)} 只 ETF 的 Agent 数量不足",
-            })
+        if not agent_missing:
+            return []
+        return [{
+            "target": "scheduler.py",
+            "action": "检查 Agent 并行执行是否有超时或异常退出",
+            "priority": "high",
+            "reason": f"发现 {len(agent_missing)} 只 ETF 的 Agent 数量不足",
+        }]
 
-        # 空泛分析 → 可能需要优化 prompt
+    @classmethod
+    def _suggest_generic_analysis(cls, findings: dict) -> list[dict]:
         generic = [i for i in findings.get("issues", []) if i["type"] == "generic_analysis"]
-        if generic:
-            # 按 Agent 分组
-            by_agent = {}
-            for i in generic:
-                a = i["agent"]
-                by_agent.setdefault(a, []).append(i)
-            for agent, issues in by_agent.items():
-                suggestions.append({
-                    "target": f"agents 中的 {agent}",
-                    "action": f"增强 {agent} 的 SYSTEM_PROMPT，要求输出更详细的分析（至少 100 字）",
-                    "priority": "medium",
-                    "reason": f"发现 {len(issues)} 次空泛分析",
-                })
+        if not generic:
+            return []
+        by_agent = {}
+        for i in generic:
+            a = i["agent"]
+            by_agent.setdefault(a, []).append(i)
+        return [{
+            "target": f"agents 中的 {agent}",
+            "action": f"增强 {agent} 的 SYSTEM_PROMPT，要求输出更详细的分析（至少 100 字）",
+            "priority": "medium",
+            "reason": f"发现 {len(issues)} 次空泛分析",
+        } for agent, issues in by_agent.items()]
 
-        # 数据缺失 → 检查数据源
+    @classmethod
+    def _suggest_data_missing(cls, findings: dict) -> list[dict]:
         data_missing = [i for i in findings.get("issues", []) if i["type"] == "data_missing"]
-        if data_missing:
-            by_agent = {}
-            for i in data_missing:
-                a = i["agent"]
-                by_agent.setdefault(a, []).append(i)
-            for agent, issues in by_agent.items():
-                suggestions.append({
-                    "target": f"data.py 中 {agent} 使用的数据源",
-                    "action": f"为 {agent} 添加备用数据源或缓存机制",
-                    "priority": "medium",
-                    "reason": f"发现 {len(issues)} 次数据缺失",
-                })
+        if not data_missing:
+            return []
+        by_agent = {}
+        for i in data_missing:
+            a = i["agent"]
+            by_agent.setdefault(a, []).append(i)
+        return [{
+            "target": f"data.py 中 {agent} 使用的数据源",
+            "action": f"为 {agent} 添加备用数据源或缓存机制",
+            "priority": "medium",
+            "reason": f"发现 {len(issues)} 次数据缺失",
+        } for agent, issues in by_agent.items()]
 
-        # 评级偏斜
+    @classmethod
+    def _suggest_rating_bias(cls, findings: dict) -> list[dict]:
         rating_bias = [i for i in findings.get("issues", []) if i["type"] == "rating_bias"]
-        if rating_bias:
-            suggestions.append({
-                "target": "decision.py 决策树阈值",
-                "action": "检查评分分布是否合理，考虑调整 z-score 缩放因子",
-                "priority": "high",
-                "reason": rating_bias[0]["detail"],
-            })
+        if not rating_bias:
+            return []
+        return [{
+            "target": "decision.py 决策树阈值",
+            "action": "检查评分分布是否合理，考虑调整 z-score 缩放因子",
+            "priority": "high",
+            "reason": rating_bias[0]["detail"],
+        }]
 
-        # ── 新维度：Agent 历史准确率不足 ──
+    @classmethod
+    def _suggest_agent_underperforming(cls, findings: dict) -> list[dict]:
         underperformers = [i for i in findings.get("issues", []) if i["type"] == "agent_underperforming"]
-        if underperformers:
-            by_agent = {}
-            for i in underperformers:
-                a = i.get("agent", "")
-                by_agent.setdefault(a, []).append(i)
-            for agent_name in by_agent:
-                suggestions.append({
-                    "target": f"agents/{agent_name}",
-                    "action": f"审查 {agent_name} 的 prompt 和数据输入，准确率低于随机水平可能意味特征失效",
-                    "priority": "high",
-                    "reason": f"Agent {agent_name} 方向准确率 < 45%",
-                })
+        if not underperformers:
+            return []
+        by_agent = {}
+        for i in underperformers:
+            a = i.get("agent", "")
+            by_agent.setdefault(a, []).append(i)
+        return [{
+            "target": f"agents/{agent_name}",
+            "action": f"审查 {agent_name} 的 prompt 和数据输入，准确率低于随机水平可能意味特征失效",
+            "priority": "high",
+            "reason": f"Agent {agent_name} 方向准确率 < 45%",
+        } for agent_name in by_agent]
 
-        # ── 新维度：评分校准偏移 ──
+    @classmethod
+    def _suggest_calibration(cls, findings: dict) -> list[dict]:
+        suggestions = []
         calibration_conservative = [i for i in findings.get("issues", []) if i["type"] == "calibration_conservative"]
         if calibration_conservative:
             suggestions.append({
@@ -253,71 +274,84 @@ class WorkflowDirector:
                 "priority": "medium",
                 "reason": calibration_aggressive[0]["detail"],
             })
+        return suggestions
 
-        # ── 新维度：Agent 冗余（取 top 5，避免建议噪音） ──
+    @classmethod
+    def _suggest_agent_redundancy(cls, findings: dict) -> list[dict]:
         redundancies = findings.get("deep_analysis", {}).get("redundancy", [])
-        if redundancies:
-            sorted_red = sorted(redundancies, key=lambda x: x.get("avg_diff", 0))
-            for r in sorted_red[:5]:
-                suggestions.append({
-                    "target": "agents 配置",
-                    "action": f"考虑合并或移除{r['agent_a']}与{r['agent_b']}中的一个（平均分差仅{r['avg_diff']}）",
-                    "priority": "low",
-                    "reason": f"两 Agent 评分高度相关",
-                })
+        if not redundancies:
+            return []
+        sorted_red = sorted(redundancies, key=lambda x: x.get("avg_diff", 0))
+        return [{
+            "target": "agents 配置",
+            "action": f"考虑合并或移除{r['agent_a']}与{r['agent_b']}中的一个（平均分差仅{r['avg_diff']}）",
+            "priority": "low",
+            "reason": "两 Agent 评分高度相关",
+        } for r in sorted_red[:5]]
 
-        # ── 新维度：LLM 过度覆盖规则 ──
+    @classmethod
+    def _suggest_llm_override(cls, findings: dict) -> list[dict]:
         llm_excessive = [i for i in findings.get("issues", []) if i["type"] == "llm_override_excessive"]
-        if llm_excessive:
-            suggestions.append({
-                "target": "决策引擎",
-                "action": "增强规则评分系统的特征覆盖，减少对 LLM 判断的依赖",
-                "priority": "medium",
-                "reason": llm_excessive[0]["detail"],
-            })
+        if not llm_excessive:
+            return []
+        return [{
+            "target": "决策引擎",
+            "action": "增强规则评分系统的特征覆盖，减少对 LLM 判断的依赖",
+            "priority": "medium",
+            "reason": llm_excessive[0]["detail"],
+        }]
 
-        # ── 新维度：仓位集中度风险 ──
+    @classmethod
+    def _suggest_position_concentration(cls, findings: dict) -> list[dict]:
         concentrated = [i for i in findings.get("issues", []) if i["type"] == "position_too_concentrated"]
-        if concentrated:
-            for c in concentrated:
-                suggestions.append({
-                    "target": "decision.py 凯利公式",
-                    "action": "检查 Kelly 公式是否未正确限制最大仓位，当前上限应为 25%",
-                    "priority": "high",
-                    "reason": c["detail"],
-                })
+        if not concentrated:
+            return []
+        return [{
+            "target": "decision.py 凯利公式",
+            "action": "检查 Kelly 公式是否未正确限制最大仓位，当前上限应为 25%",
+            "priority": "high",
+            "reason": c["detail"],
+        } for c in concentrated]
 
-        # ── 新维度：总仓位超 100% ──
+    @classmethod
+    def _suggest_total_position(cls, findings: dict) -> list[dict]:
         total_exceed = [i for i in findings.get("issues", []) if i["type"] == "total_position_exceed_100"]
-        if total_exceed:
-            suggestions.append({
-                "target": "scheduler.py 组合约束",
-                "action": "增强 Phase 2.5 归一化逻辑，防止总仓位超过 100%",
-                "priority": "high",
-                "reason": total_exceed[0]["detail"],
-            })
+        if not total_exceed:
+            return []
+        return [{
+            "target": "scheduler.py 组合约束",
+            "action": "增强 Phase 2.5 归一化逻辑，防止总仓位超过 100%",
+            "priority": "high",
+            "reason": total_exceed[0]["detail"],
+        }]
 
-        # ── 新维度：辩论低价值 ──
+    @classmethod
+    def _suggest_debate_low_impact(cls, findings: dict) -> list[dict]:
         low_debate = [i for i in findings.get("issues", []) if i["type"] == "debate_low_impact"]
-        if low_debate:
-            suggestions.append({
-                "target": "debate.py",
-                "action": "审查辩论流程是否流于形式，考虑引入对抗式辩论或预设分歧议题",
-                "priority": "low",
-                "reason": low_debate[0]["detail"],
-            })
+        if not low_debate:
+            return []
+        return [{
+            "target": "debate.py",
+            "action": "审查辩论流程是否流于形式，考虑引入对抗式辩论或预设分歧议题",
+            "priority": "low",
+            "reason": low_debate[0]["detail"],
+        }]
 
-        # ── 新维度：准确率趋势下降 ──
+    @classmethod
+    def _suggest_accuracy_declining(cls, findings: dict) -> list[dict]:
         declining = [i for i in findings.get("issues", []) if i["type"] == "accuracy_declining"]
-        if declining:
-            suggestions.append({
-                "target": "全局系统",
-                "action": "系统准确率持续下降，建议全面审查数据源、LLM 模型和特征有效性",
-                "priority": "high",
-                "reason": declining[0]["detail"],
-            })
+        if not declining:
+            return []
+        return [{
+            "target": "全局系统",
+            "action": "系统准确率持续下降，建议全面审查数据源、LLM 模型和特征有效性",
+            "priority": "high",
+            "reason": declining[0]["detail"],
+        }]
 
-        # ── 新维度：数据管道配置问题 ──
+    @classmethod
+    def _suggest_data_pipeline(cls, findings: dict) -> list[dict]:
+        suggestions = []
         trend_issue = [i for i in findings.get("issues", []) if i["type"] == "config_trend_days_too_short"]
         if trend_issue:
             suggestions.append({
@@ -334,8 +368,7 @@ class WorkflowDirector:
                 "priority": "high" if fb_issues[0]["type"] == "high_rule_fallback_rate" else "medium",
                 "reason": fb_issues[0]["detail"],
             })
-
-        findings["suggestions"] = suggestions
+        return suggestions
 
     # ── 新增深度审查维度 ──────────────────────────────────────
 

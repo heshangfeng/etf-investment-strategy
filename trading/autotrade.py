@@ -16,6 +16,10 @@ from trading.portfolio import Portfolio, Holding, Transaction, load, save, _pric
 
 from infra.logger import get_logger; logger = get_logger(__name__)
 
+TRADE_LOG = Path(__file__).resolve().parent.parent / "data" / "trade_log.json"
+PERF_LOG = Path(__file__).resolve().parent.parent / "data" / "performance.json"
+SNAPSHOT_DIR = Path(__file__).resolve().parent.parent / "data" / "snapshots"
+
 # ====================== 【信号可信度过滤器】 ======================
 class SignalCaliberFilter:
     """
@@ -72,6 +76,71 @@ class SignalCaliberFilter:
         return float(np.mean(scores)) if scores else 50.0
 
     @classmethod
+    def _score_extremity(cls, new_score: float) -> int:
+        extremity = abs(new_score - 50)
+        if extremity >= 25:
+            return 25
+        if extremity >= 15:
+            return 15
+        if extremity >= 8:
+            return 5
+        return 0
+
+    @classmethod
+    def _score_change(cls, new_score: float, prev_score: float | None, is_sell: bool) -> int:
+        if prev_score is None:
+            return 0
+        delta = new_score - prev_score
+        effective_delta = -delta if is_sell else delta
+        if effective_delta >= 15:
+            return 25
+        if effective_delta >= 10:
+            return 18
+        if effective_delta >= 5:
+            return 10
+        if effective_delta >= 2:
+            return 5
+        return 0
+
+    @classmethod
+    def _score_consensus(cls, consensus_level: str) -> int:
+        return {"高度一致": 15, "基本一致": 8, "存在分歧": 0, "严重分歧": -10}.get(consensus_level, 0)
+
+    @classmethod
+    def _score_alignment(cls, agent_reports: list, operation: str) -> int:
+        alignment = cls._calc_agent_alignment(agent_reports, operation)
+        if alignment >= 0.8:
+            return 20
+        if alignment >= 0.65:
+            return 12
+        if alignment >= 0.5:
+            return 5
+        return -10
+
+    @classmethod
+    def _score_holding_days(cls, is_sell: bool, days_held: int) -> int:
+        if not is_sell:
+            return 0
+        if days_held <= 1:
+            return -15
+        if days_held <= 3:
+            return -8
+        if days_held <= 10:
+            return -3
+        return 0
+
+    @classmethod
+    def _score_market_sentiment(cls, all_reports: list) -> tuple[float, int]:
+        mkt_sentiment = cls._infer_market_sentiment(all_reports)
+        if mkt_sentiment < 42:
+            return (0.80, 55)
+        if mkt_sentiment < 47:
+            return (0.90, 50)
+        if mkt_sentiment > 58:
+            return (1.10, 40)
+        return (1.0, 45)
+
+    @classmethod
     def evaluate(
         cls,
         code: str,
@@ -92,87 +161,16 @@ class SignalCaliberFilter:
         new_score = fr.final_score
         is_sell = operation in ("卖出", "强烈卖出", "减持")
 
-        # ── 维度1: 评分极端程度 (0-25分) ──
-        extremity = abs(new_score - 50)
-        if extremity >= 25:
-            ex_score = 25
-        elif extremity >= 15:
-            ex_score = 15
-        elif extremity >= 8:
-            ex_score = 5
-        else:
-            ex_score = 0
+        ex_score = cls._score_extremity(new_score)
+        delta_score = cls._score_change(new_score, prev_score, is_sell)
+        cons_score = cls._score_consensus(fr.consensus_level)
+        align_score = cls._score_alignment(fr.agent_reports, operation)
+        days_penalty = cls._score_holding_days(is_sell, days_held)
+        market_mult, threshold = cls._score_market_sentiment(all_reports)
 
-        # ── 维度2: 评分变化幅度 (0-25分) ──
-        delta_score = 0
-        if prev_score is not None:
-            delta = new_score - prev_score
-            if is_sell:
-                # 卖出操作：评分下降才是好信号
-                effective_delta = -delta
-            else:
-                effective_delta = delta
-            if effective_delta >= 15:
-                delta_score = 25
-            elif effective_delta >= 10:
-                delta_score = 18
-            elif effective_delta >= 5:
-                delta_score = 10
-            elif effective_delta >= 2:
-                delta_score = 5
-            # 变化<2: 噪音，不给分
-
-        # ── 维度3: 共识度 (0-15分) ──
-        cons_map = {"高度一致": 15, "基本一致": 8, "存在分歧": 0, "严重分歧": -10}
-        cons_score = cons_map.get(fr.consensus_level, 0)
-
-        # ── 维度4: Agent方向一致性 (0-20分) ──
-        alignment = cls._calc_agent_alignment(fr.agent_reports, operation)
-        if alignment >= 0.8:
-            align_score = 20
-        elif alignment >= 0.65:
-            align_score = 12
-        elif alignment >= 0.5:
-            align_score = 5
-        else:
-            align_score = -10
-
-        # ── 维度5: 持有天数惩罚 (仅卖出, -15-0分) ──
-        days_penalty = 0
-        if is_sell:
-            if days_held <= 1:
-                days_penalty = -15
-            elif days_held <= 3:
-                days_penalty = -8
-            elif days_held <= 10:
-                days_penalty = -3
-
-        # ── 维度6: 全市场情绪调节 (乘数) ──
-        mkt_sentiment = cls._infer_market_sentiment(all_reports)
-        # 市场弱时更保守：平均评分<45时降阈值效力
-        if mkt_sentiment < 42:
-            market_mult = 0.80
-        elif mkt_sentiment < 47:
-            market_mult = 0.90
-        elif mkt_sentiment > 58:
-            market_mult = 1.10
-        else:
-            market_mult = 1.0
-
-        # ── 合成可信度 ──
         raw = ex_score + delta_score + cons_score + align_score + days_penalty
         conviction = float(np.clip(raw * market_mult, 0, 100))
 
-        # ── 动态阈值 ──
-        threshold = cls.THRESHOLD_BASE
-        if mkt_sentiment < 42:
-            threshold = 55  # 弱市更严格
-        elif mkt_sentiment < 47:
-            threshold = 50
-        elif mkt_sentiment > 58:
-            threshold = 40   # 强市可略宽松
-
-        # 绝对否决：Agent严重分歧且评分变化极小
         if fr.consensus_level == "严重分歧" and (prev_score is None or abs(new_score - prev_score) < 3):
             return (False, f"严重分歧+评分不变, 可信度{conviction:.0f}", conviction)
 
@@ -185,31 +183,7 @@ class SignalCaliberFilter:
         return (should, reason, conviction)
 
 
-def auto_trade(all_reports: list, date_str: str = "") -> dict:
-    """
-    根据分析报告自动调仓。
-    
-    逻辑:
-      强烈买入/买入/长期持有 → 按建议仓位买入（如未持有）
-      持有                  → 不动（维持现有）
-      减持/卖出/强烈卖出     → 全仓卖出
-    
-    Args:
-        all_reports: FinalResearchReport 列表
-        date_str: 交易日期（默认当天）
-    
-    Returns:
-        调仓摘要 dict
-    """
-    pf = load()
-    today = date_str or datetime.now().strftime("%Y-%m-%d")
-    holding_codes = {h.code for h in pf.holdings}
-
-    # 加载昨日评分供可信度过滤
-    prev_scores = SignalCaliberFilter.load_prev_scores()
-    report_map = {fr.etf_info.get("code", ""): fr for fr in all_reports}
-
-    # 解析建议
+def _calculate_target_positions(all_reports: list, pf, total_asset) -> dict:
     recs = {}
     for fr in all_reports:
         code = fr.etf_info.get("code", "")
@@ -220,21 +194,17 @@ def auto_trade(all_reports: list, date_str: str = "") -> dict:
             "rating": fr.final_rating,
             "score": fr.final_score,
         }
+    return recs
 
-    trades = {"buys": [], "sells": [], "holds": [], "date": today}
-    total_sell_proceeds = 0.0
-    total_buy_cost = 0.0
 
-    # ── 1. 先卖（释放现金） ──
+def _execute_sells(pf, recs: dict, report_map: dict, prev_scores: dict, all_reports: list, today: str, trades: dict):
     for h in list(pf.holdings):
         r = recs.get(h.code)
         if not r:
             continue
-        # T+1 约束：当日买入的不可卖出
         if h.added == today:
             print(f"  ⏳ T+1限制: {h.name}({h.code}) 今日买入，跳过卖出")
             continue
-        # 信号可信度过滤
         fr = report_map.get(h.code)
         if fr:
             days_held = (datetime.now() - datetime.strptime(h.added, "%Y-%m-%d")).days if h.added else 999
@@ -244,13 +214,10 @@ def auto_trade(all_reports: list, date_str: str = "") -> dict:
                 print(f"  🚫 跳过卖出 {h.name}({h.code}): {reason}")
                 continue
         if r["operation"] in ("卖出", "强烈卖出"):
-            # 全仓卖出
             price = _price(h.code, h.avg_cost)
             proceeds = h.shares * price
             fee_val = proceeds * FEE_RATE
             pf.cash += (proceeds - fee_val)
-            total_sell_proceeds += proceeds
-
             pf.transactions.append(Transaction(
                 date=today, code=h.code, name=h.name,
                 type="sell", shares=h.shares, price=price, fee=round(fee_val, 2),
@@ -263,13 +230,10 @@ def auto_trade(all_reports: list, date_str: str = "") -> dict:
             pf.holdings.remove(h)
         elif r["operation"] == "减持":
             if r["position"] == 0:
-                # 全仓卖出
                 price = _price(h.code, h.avg_cost)
                 proceeds = h.shares * price
                 fee_val = proceeds * FEE_RATE
                 pf.cash += (proceeds - fee_val)
-                total_sell_proceeds += proceeds
-
                 pf.transactions.append(Transaction(
                     date=today, code=h.code, name=h.name,
                     type="sell", shares=h.shares, price=price, fee=round(fee_val, 2),
@@ -281,7 +245,6 @@ def auto_trade(all_reports: list, date_str: str = "") -> dict:
                 })
                 pf.holdings.remove(h)
             else:
-                # 减持到目标仓位
                 price = _price(h.code, h.avg_cost)
                 current_value = h.shares * price
                 mkt_val = sum(hh.shares * _price(hh.code, hh.avg_cost) for hh in pf.holdings)
@@ -289,14 +252,11 @@ def auto_trade(all_reports: list, date_str: str = "") -> dict:
                 target_value = target_total * r["position"]
                 target_shares = int(target_value / price / 100) * 100
                 sell_shares = h.shares - target_shares
-
                 if sell_shares >= 100:
                     proceeds = sell_shares * price
                     fee_val = proceeds * FEE_RATE
                     pf.cash += (proceeds - fee_val)
-                    total_sell_proceeds += proceeds
                     h.shares = target_shares
-
                     pf.transactions.append(Transaction(
                         date=today, code=h.code, name=h.name,
                         type="sell", shares=sell_shares, price=price, fee=round(fee_val, 2),
@@ -307,35 +267,29 @@ def auto_trade(all_reports: list, date_str: str = "") -> dict:
                         "reason": "减持",
                     })
 
-    # ── 1.5 再平衡（偏差 > 20% 的持仓调整） ──
     mkt_val = sum(hh.shares * _price(hh.code, hh.avg_cost) for hh in pf.holdings)
     for h in list(pf.holdings):
         r = recs.get(h.code)
         if not r or r["position"] <= 0:
             continue
-        # T+1 约束：当日买入的不可再平衡卖出
         if h.added == today:
             continue
         price = _price(h.code, h.avg_cost)
         current_value = h.shares * price
         current_pct = current_value / max(pf.cash + mkt_val, 1)
-
         target_pct = r["position"]
         if target_pct > 0 and abs(current_pct - target_pct) / target_pct > 0.2:
             target_value = (pf.cash + mkt_val) * target_pct
             delta_value = target_value - current_value
-
             if abs(delta_value) > 1000:
                 shares_delta = int(abs(delta_value) / price / 100) * 100
                 if shares_delta >= 100:
                     if delta_value > 0:
-                        # 买入补仓
                         cost = shares_delta * price
                         fee_val = cost * FEE_RATE
                         total_cost = cost + fee_val
                         if total_cost <= pf.cash:
                             pf.cash -= total_cost
-                            total_buy_cost += cost
                             h.shares += shares_delta
                             h.avg_cost = round((h.cost_total + cost) / h.shares, 4)
                             pf.transactions.append(Transaction(
@@ -345,15 +299,12 @@ def auto_trade(all_reports: list, date_str: str = "") -> dict:
                             trades["buys"].append({
                                 "code": h.code, "name": h.name, "shares": shares_delta,
                                 "price": round(price, 4), "cost": round(cost, 2),
-                                "position_target": target_pct,
-                                "reason": "再平衡",
+                                "position_target": target_pct, "reason": "再平衡",
                             })
                     else:
-                        # 卖出减仓
                         proceeds = shares_delta * price
                         fee_val = proceeds * FEE_RATE
                         pf.cash += (proceeds - fee_val)
-                        total_sell_proceeds += proceeds
                         h.shares -= shares_delta
                         pf.transactions.append(Transaction(
                             date=today, code=h.code, name=h.name,
@@ -365,16 +316,14 @@ def auto_trade(all_reports: list, date_str: str = "") -> dict:
                             "reason": "再平衡",
                         })
 
-    # ── 2. 再买（分配现金）──
+
+def _execute_buys(pf, recs: dict, report_map: dict, prev_scores: dict, all_reports: list, today: str, trades: dict):
     buys = {c: r for c, r in recs.items()
             if r["position"] > 0 and c not in {h.code for h in pf.holdings}}
-
     if buys and pf.cash > 0:
         total_rec_pos = sum(r["position"] for r in buys.values())
-        # Step 1: 计算理论分配（基于 pf.cash，order-independent）
-        allocations = []  # (code, r, shares, cost, fee_val, total_cost, price)
+        allocations = []
         for code, r in buys.items():
-            # 信号可信度过滤（买入）
             fr = report_map.get(code)
             if fr:
                 should_trade, reason, conv = SignalCaliberFilter.evaluate(
@@ -382,23 +331,19 @@ def auto_trade(all_reports: list, date_str: str = "") -> dict:
                 if not should_trade:
                     print(f"  🚫 跳过买入 {r['name']}({code}): {reason}")
                     continue
-
             alloc_ratio = r["position"] / max(total_rec_pos, 0.01)
             alloc_cash = pf.cash * alloc_ratio
-
             price = _price(code, 0)
             if price <= 0:
                 continue
             shares = int(alloc_cash / price / 100) * 100
             if shares < 100:
                 continue
-
             cost = shares * price
             fee_val = cost * FEE_RATE
             total_cost = cost + fee_val
             allocations.append((code, r, shares, cost, fee_val, total_cost, price))
 
-        # Step 2: 按比例缩放（若总需求超出现金）
         total_needed = sum(a[5] for a in allocations)
         if total_needed > pf.cash:
             scale = pf.cash / total_needed
@@ -412,10 +357,8 @@ def auto_trade(all_reports: list, date_str: str = "") -> dict:
                     scaled.append((code, r, new_shares, new_cost, new_fee, new_total, price))
             allocations = scaled
 
-        # Step 3: 执行买入
         for code, r, shares, cost, fee_val, total_cost, price in allocations:
             pf.cash -= total_cost
-            total_buy_cost += cost
             nm = r["name"]
             pf.holdings.append(Holding(
                 code=code, name=nm, shares=shares,
@@ -428,11 +371,38 @@ def auto_trade(all_reports: list, date_str: str = "") -> dict:
             trades["buys"].append({
                 "code": code, "name": nm, "shares": shares,
                 "price": round(price, 4), "cost": round(cost, 2),
-                "position_target": r["position"],
-                "reason": r["operation"],
+                "position_target": r["position"], "reason": r["operation"],
             })
 
-    # ── 3. 继续持有的 ──
+
+def auto_trade(all_reports: list, date_str: str = "") -> dict:
+    """
+    根据分析报告自动调仓。
+    
+    逻辑:
+       强烈买入/买入/长期持有 → 按建议仓位买入（如未持有）
+       持有                  → 不动（维持现有）
+       减持/卖出/强烈卖出     → 全仓卖出
+     
+    Args:
+        all_reports: FinalResearchReport 列表
+        date_str: 交易日期（默认当天）
+     
+    Returns:
+        调仓摘要 dict
+    """
+    pf = load()
+    today = date_str or datetime.now().strftime("%Y-%m-%d")
+
+    prev_scores = SignalCaliberFilter.load_prev_scores()
+    report_map = {fr.etf_info.get("code", ""): fr for fr in all_reports}
+
+    trades = {"buys": [], "sells": [], "holds": [], "date": today}
+
+    recs = _calculate_target_positions(all_reports, pf, None)
+    _execute_sells(pf, recs, report_map, prev_scores, all_reports, today, trades)
+    _execute_buys(pf, recs, report_map, prev_scores, all_reports, today, trades)
+
     for h in pf.holdings:
         r = recs.get(h.code, {})
         trades["holds"].append({
@@ -441,8 +411,6 @@ def auto_trade(all_reports: list, date_str: str = "") -> dict:
         })
 
     save(pf)
-
-    # ── 4. 记录每日资产快照 ──
     _log_snapshot(pf, today, trades)
     _log_performance(pf, today)
 

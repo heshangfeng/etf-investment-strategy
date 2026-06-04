@@ -18,9 +18,9 @@ from core.scheduler import MainSchedulerAgent
 
 # 自动更新项目目录结构文档（静默，失败不影响分析）
 try:
-    from scripts.generate_structure import generate_markdown, update_run_command_md
+    from scripts.generate_structure import generate_markdown, write_structure_file
     _md = generate_markdown()
-    update_run_command_md(_md)
+    write_structure_file(_md)
 except Exception:
     pass
 

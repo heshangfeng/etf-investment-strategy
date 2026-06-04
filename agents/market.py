@@ -24,6 +24,7 @@ class RetailSentimentAgent(BaseLLMAgent):
 4. 市场换手率——全市场换手率异常高=情绪极端
 5. 散户情绪是典型的反向指标——极度乐观时见顶，极度悲观时见底
 6. 量价背离——放量滞涨=出货信号，缩量下跌=杀跌动能衰竭
+7. 散户情绪反向指标的权重不应超过整体判断的30%，需结合价格趋势验证
 
 综合以上信号给出基于行为金融学的情绪判断。"""
 
@@ -43,18 +44,18 @@ class RetailSentimentAgent(BaseLLMAgent):
         signals = []
 
         if turnover_ratio > 2.0:
-            signals.append(f"放量异常(量比{turnover_ratio:.2f})"); score -= 10
+            signals.append(f"放量异常(量比{turnover_ratio:.2f})"); score -= 6
         elif turnover_ratio > 1.5:
             signals.append(f"放量(量比{turnover_ratio:.2f})"); score += 5
         elif turnover_ratio < 0.5:
-            signals.append(f"缩量(量比{turnover_ratio:.2f})"); score -= 5
+            signals.append(f"缩量(量比{turnover_ratio:.2f})"); score -= 3
         else:
             signals.append(f"量能正常(量比{turnover_ratio:.2f})")
 
         if pos_from_low > 90:
-            signals.append("接近年内高点"); score -= 8
+            signals.append("接近年内高点"); score -= 5
         elif pos_from_low < 10:
-            signals.append("接近年内低点"); score += 8
+            signals.append("接近年内低点"); score += 5
         elif 40 <= pos_from_low <= 60:
             signals.append("价格中位区间"); score += 3
 
@@ -77,9 +78,37 @@ class RetailSentimentAgent(BaseLLMAgent):
         except:
             pass
 
+        # 布林带位置(%B) - 辅助判断超买/超卖情绪
+        bollinger_pct_b = None
+        try:
+            if len(df) >= 20:
+                ma20_boll = df["close"].rolling(20).mean()
+                std20 = df["close"].rolling(20).std()
+                upper = ma20_boll + 2 * std20
+                lower = ma20_boll - 2 * std20
+                pct_b_val = (close - lower.iloc[-1]) / (upper.iloc[-1] - lower.iloc[-1])
+                if not np.isnan(pct_b_val):
+                    bollinger_pct_b = float(pct_b_val)
+                    if bollinger_pct_b > 1.0:
+                        signals.append(f"布林带超买(%B={bollinger_pct_b:.2f})")
+                        score -= 4
+                    elif bollinger_pct_b > 0.8:
+                        signals.append(f"布林带上轨附近(%B={bollinger_pct_b:.2f})")
+                        score -= 2
+                    elif bollinger_pct_b < 0:
+                        signals.append(f"布林带超卖(%B={bollinger_pct_b:.2f})")
+                        score += 4
+                    elif bollinger_pct_b < 0.2:
+                        signals.append(f"布林带下轨附近(%B={bollinger_pct_b:.2f})")
+                        score += 2
+        except Exception:
+            pass
+
         score = float(np.clip(score, 0, 100))
+        bollinger_str = f"\n布林带%B: {bollinger_pct_b:.2f}" if bollinger_pct_b is not None else ""
         data_text = (f"量比(20日均值): {turnover_ratio:.2f}\n"
                      f"52周价格位置: {pos_from_low:.1f}%\n"
+                     f"{bollinger_str}\n"
                      f"情绪信号: {'; '.join(signals)}\n"
                      f"{margin_info}"
                      f"{activity_info}")
@@ -97,30 +126,41 @@ class CrossMarketAgent(BaseLLMAgent):
     ROLE_NAME = "跨市场联动智能体"
     AGENT_TEMPERATURE = 0.6
     AGENT_USE_QUICK_MODEL = True
+
+    _spot_cache = {}  # 类级别缓存，spot_quote API不稳定时使用
+
     SYSTEM_PROMPT = """你是全球宏观策略分析师，专注跨市场信号传导。
 
 分析框架：
-1. 人民币汇率(USDCNY)——升值利好A股（外资流入），贬值承压（外资流出）
-2. 美债收益率(10Y)——全球资产定价锚，快速上行=风险资产承压
+1. 人民币汇率(USDCNY)——升值利好A股（外资流入），贬值承压（外资流出）（重点关注）
+2. 美债收益率(10Y)——全球资产定价锚，快速上行=风险资产承压（重点关注）
 3. 美元指数——美元强弱影响全球资金流向新兴市场
 4. 黄金价格——避险情绪指标，金价大涨=避险模式
 5. 中美利差——利差倒挂时外资流出压力大
-6. 原油价格——影响PPI和通胀预期，进而影响货币政策
+6. IVIX隐含波动率——A股恐慌指数，快速上升=市场恐慌
+7. 巴菲特指数——全市场估值温度计
 
+信号优先级：USDCNY > 美债收益率 > 中美利差 > IVIX > 黄金 > 美元指数
 传导逻辑：美债利率+美元同时走强=新兴市场承压；人民币升值+美元弱=利好A股。
 注意不同信号之间的传导有时滞，警惕冲突信号的市场含义。"""
 
     def run(self, etf_name: str, etf_code: str) -> AgentReport:
         signals = []
         usdcny = None
+        # spot_quote() 有时不稳定，使用缓存fallback
         try:
             fx = ak.spot_quote()
             cny_row = fx[fx["名称"].str.contains("美元", na=False)]
             if len(cny_row) > 0:
                 usdcny = float(cny_row["现价"].iloc[0])
+                CrossMarketAgent._spot_cache["usdcny"] = usdcny
                 signals.append(f"USDCNY: {usdcny}")
         except Exception:
-            pass
+            if "usdcny" in CrossMarketAgent._spot_cache:
+                usdcny = CrossMarketAgent._spot_cache["usdcny"]
+                signals.append(f"USDCNY: {usdcny}(缓存)")
+            else:
+                signals.append("USDCNY: 暂无数据")
 
         # 加入中美利差数据
         try:
@@ -133,6 +173,41 @@ class CrossMarketAgent(BaseLLMAgent):
         if usdcny is not None:
             if usdcny > 7.3: score -= 15
             elif usdcny < 6.9: score += 10
+
+        # A股恐慌指数(IVIX) - 类似VIX的隐含波动率指标
+        try:
+            ivix = DataCollectAgent.get_ivix(etf_code)
+            if ivix is not None:
+                signals.append(f"IVIX隐含波动率: {ivix:.1f}")
+                if ivix > 30:
+                    score -= 8
+                    signals.append("IVIX高位=市场恐慌")
+                elif ivix > 25:
+                    score -= 3
+                elif ivix < 18:
+                    score += 3
+                    signals.append("IVIX低位=市场平稳")
+        except Exception:
+            pass
+
+        # 黄金价格代理信号（避险情绪）
+        gold_price = None
+        try:
+            gold_df = ak.futures_zh_realtime()
+            sym_col = "symbol" if "symbol" in gold_df.columns else "代码"
+            price_col = "current_price" if "current_price" in gold_df.columns else "最新价"
+            au_rows = gold_df[gold_df[sym_col].astype(str).str.contains("AU", na=False)]
+            if len(au_rows) > 0:
+                gold_price = float(au_rows[price_col].iloc[0])
+                CrossMarketAgent._spot_cache["gold"] = gold_price
+                signals.append(f"黄金(AU): {gold_price:.0f}")
+                if gold_price > 600:
+                    score -= 5
+                    signals.append("金价高位=避险升温")
+        except Exception:
+            if "gold" in CrossMarketAgent._spot_cache:
+                gold_price = CrossMarketAgent._spot_cache["gold"]
+                signals.append(f"黄金(AU): {gold_price:.0f}(缓存)")
 
         # 巴菲特指数（全市场市值/GDP，估值温度计）
         try:
@@ -185,12 +260,18 @@ class HotMoneyAnalystAgent(BaseLLMAgent):
 给出基于游资情绪的独立判断。"""
 
     _zt_cache = None  # 类级别缓存，避免重复请求
+    _zt_cache_time = None  # 缓存时间戳
+    _zt_last_success = None  # 最近一次成功获取的数据（API失败时使用）
 
     @classmethod
     def _get_zt_data(cls) -> dict:
-        """获取涨停数据（带类级别缓存）。"""
-        if cls._zt_cache is not None:
-            return cls._zt_cache
+        """获取涨停数据（带类级别缓存 + 过期刷新 + 失败保留旧数据）。"""
+        now = datetime.now()
+        # 如果有缓存且未超过1小时，直接返回
+        if cls._zt_cache is not None and cls._zt_cache_time is not None:
+            elapsed = (now - cls._zt_cache_time).total_seconds()
+            if elapsed < 3600:
+                return cls._zt_cache
         result = {"limit_up": -1, "max_consecutive": 0, "industries": ""}
         try:
             zt_df = ak.stock_zt_pool_em()
@@ -204,9 +285,17 @@ class HotMoneyAnalystAgent(BaseLLMAgent):
                 if "行业" in zt_df.columns:
                     ind_count = zt_df["行业"].value_counts().head(5)
                     result["industries"] = ", ".join(f"{k}({v}家)" for k, v in ind_count.items())
+                cls._zt_last_success = dict(result)
         except Exception:
-            pass
+            # API失败时，使用上次成功的数据（即便已过期）
+            if cls._zt_last_success is not None:
+                result = cls._zt_last_success
+                result["from_cache"] = True
+                cls._zt_cache = result
+                cls._zt_cache_time = now
+                return result
         cls._zt_cache = result
+        cls._zt_cache_time = now
         return result
 
     def run(self, etf_code: str) -> AgentReport:
@@ -273,16 +362,18 @@ class UnlockPressureAgent(BaseLLMAgent):
 3. 解禁日期临近程度——距离越近，市场提前反应的概率越大
 4. 首发原股东限售股解禁影响最大，定向增发次之
 5. 大规模解禁前后1-2周市场往往承压，但有时提前消化后反而是机会
+6. 当解禁数据不可获取时，默认保持中性立场（50分），不以暂无数据作为看多依据
 给出基于解禁压力的风险评估，高分=解禁压力小（安全），低分=解禁压力大（风险）。"""
 
     _unlock_cache = None  # 类级别缓存
+    _last_result = None   # 最近一次成功获取的结果
 
     @classmethod
     def _get_unlock_data(cls) -> dict:
-        """获取解禁数据（带缓存）。"""
+        """获取解禁数据（带缓存）。失败时保留上次有效结果。"""
         if cls._unlock_cache is not None:
             return cls._unlock_cache
-        result = {"total_value": 0, "count": 0, "upcoming": ""}
+        result = {"total_value": 0, "count": 0, "upcoming": "", "data_ok": False}
         try:
             restricted = ak.stock_restricted_release_queue_sina()
             if restricted is not None and len(restricted) > 0:
@@ -306,11 +397,14 @@ class UnlockPressureAgent(BaseLLMAgent):
                         pass
                 result["total_value"] = total_val
                 result["count"] = count
+                result["data_ok"] = True
                 date_summary = "; ".join(f"{d}({n}只)" for d, n in sorted(upcoming_dates.items())[:5])
                 result["upcoming"] = date_summary
         except Exception:
             pass
         cls._unlock_cache = result
+        if result["data_ok"]:
+            cls._last_result = dict(result)
         return result
 
     def run(self, etf_code: str, etf_name: str) -> AgentReport:
@@ -320,7 +414,7 @@ class UnlockPressureAgent(BaseLLMAgent):
         upcoming = unlock["upcoming"]
 
         score = 50.0
-        if total_val > 0:
+        if unlock.get("data_ok") and total_val > 0:
             total_val_yi = total_val / 1e8  # 转亿元
             if total_val_yi > 1000:
                 score = 20
@@ -341,9 +435,12 @@ class UnlockPressureAgent(BaseLLMAgent):
                          f"解禁股票数量: {unlock_count}只\n"
                          f"解禁日期分布: {upcoming or '未知'}\n"
                          f"压力评估: {pressure}")
-        else:
+        elif unlock.get("data_ok"):
             data_text = "暂无近期解禁数据或解禁压力较小"
             score = 65
+        else:
+            data_text = "数据获取失败，中性评估"
+            score = 50
 
         score = float(np.clip(score, 0, 100))
         enriched_text = self._enrich_with_memory(etf_code, data_text)
@@ -359,15 +456,19 @@ class PatternRecognitionAgent(BaseLLMAgent):
     AGENT_TEMPERATURE = 0.4
     SYSTEM_PROMPT = """你是拥有20年经验的技术形态识别专家，擅长从K线图中识别经典形态。
 
+重要声明：技术形态识别本质上是概率性的，单一形态不应作为独立交易依据。形态信号需要成交量确认和趋势强度验证。
+
 分析框架：
 1. 经典反转形态：头肩顶/底、双顶/底、圆弧顶/底、V型反转
 2. 经典持续形态：旗形、三角旗形、楔形、矩形
 3. 关键支撑/阻力位：前期高低点、密集成交区、整数关口
-4. 趋势强度：通过线性回归判断趋势方向，R²衡量趋势可信度
+4. 趋势强度：通过ADX衡量趋势强度（<20=弱趋势, 20-40=中等趋势, >40=强趋势）
 5. K线组合：启明星/黄昏星、吞没形态、十字星、锤子线/上吊线
 6. 突破确认：形态突破需要成交量配合，假突破是常见陷阱
+7. 趋势确认：ADX+成交量双重确认信号才有高可信度
 
-先识别当前最可能的技术形态，再给出基于形态的目标位和止损位。"""
+先识别当前最可能的技术形态，再给出基于形态的目标位和止损位。
+每次输出需包含对信号可信度的评估（低/中/高），低于中等可信度时应标注为参考信号。"""
 
     def run(self, etf_code: str) -> AgentReport:
         df = DataCollectAgent.get_etf_price(etf_code)
@@ -380,14 +481,16 @@ class PatternRecognitionAgent(BaseLLMAgent):
             )
 
         close = df["close"].values
-        high = df["high"].values if "high" in df.columns else close
-        low = df["low"].values if "low" in df.columns else close
+        high = df["high"].values if "high" in df.columns else df["close"].values
+        low = df["low"].values if "low" in df.columns else df["close"].values
+        volume = df["volume"].values if "volume" in df.columns else np.zeros(len(df))
 
         # 取最近60根K线
         n = min(60, len(close))
         close_60 = close[-n:]
         high_60 = high[-n:]
         low_60 = low[-n:]
+        vol_60 = volume[-n:] if volume is not None else None
 
         score = 50.0
         patterns_found = []
@@ -410,6 +513,41 @@ class PatternRecognitionAgent(BaseLLMAgent):
             else:
                 patterns_found.append(f"下降趋势(斜率{slope:.4f}, R²={1-r2:.2f})")
                 score -= 10 * trend_strength
+        except Exception:
+            pass
+
+        # ── 1b. ADX（平均趋向指数）趋势强度 ──
+        try:
+            if n >= 16:
+                tr = np.zeros(n)
+                for i in range(1, n):
+                    hl = high_60[i] - low_60[i]
+                    hc = abs(high_60[i] - close_60[i - 1])
+                    lc = abs(low_60[i] - close_60[i - 1])
+                    tr[i] = max(hl, hc, lc)
+                plus_dm = np.zeros(n)
+                minus_dm = np.zeros(n)
+                for i in range(1, n):
+                    up_move = high_60[i] - high_60[i - 1]
+                    down_move = low_60[i - 1] - low_60[i]
+                    if up_move > down_move and up_move > 0:
+                        plus_dm[i] = up_move
+                    if down_move > up_move and down_move > 0:
+                        minus_dm[i] = down_move
+                # Wilder平滑
+                period = 14
+                atr = np.mean(tr[1:period + 1])
+                plus_smooth = np.mean(plus_dm[1:period + 1])
+                minus_smooth = np.mean(minus_dm[1:period + 1])
+                for i in range(period + 1, n):
+                    atr = (atr * (period - 1) + tr[i]) / period
+                    plus_smooth = (plus_smooth * (period - 1) + plus_dm[i]) / period
+                    minus_smooth = (minus_smooth * (period - 1) + minus_dm[i]) / period
+                if atr > 0:
+                    plus_di = 100 * plus_smooth / atr
+                    minus_di = 100 * minus_smooth / atr
+                    dx = 100 * abs(plus_di - minus_di) / (plus_di + minus_di) if (plus_di + minus_di) > 0 else 0
+                    patterns_found.append(f"ADX趋势强度={dx:.1f}({'强趋势' if dx > 40 else '中等趋势' if dx > 20 else '弱趋势'})")
         except Exception:
             pass
 
@@ -440,7 +578,7 @@ class PatternRecognitionAgent(BaseLLMAgent):
             best_res = max(resistance_levels, key=lambda x: x[0])
             patterns_found.append(f"阻力位: {best_res[0]:.3f}(测试{best_res[1]}次)")
 
-        # ── 3. 双顶/双底检测 ──
+        # ── 3. 双顶/双底检测（需成交量确认） ──
         # 寻找两个相近的高点（双顶）或低点（双底）
         mid = n // 2
         left_max = np.max(high_60[:mid])
@@ -448,15 +586,27 @@ class PatternRecognitionAgent(BaseLLMAgent):
         left_min = np.min(low_60[:mid])
         right_min = np.min(low_60[mid:])
 
-        # 双顶：左右高点接近且都在高位
-        if abs(left_max - right_max) / max(left_max, right_max) < 0.03 and left_max > np.median(close_60):
-            patterns_found.append(f"疑似双顶形态(L:{left_max:.3f}, R:{right_max:.3f})")
-            score -= 15
+        # 成交量确认
+        vol_confirm_high = vol_confirm_low = ""
+        if vol_60 is not None:
+            vol_left_mean = np.mean(vol_60[:mid])
+            vol_right_mean = np.mean(vol_60[mid:])
+        else:
+            vol_left_mean = vol_right_mean = 0
 
-        # 双底：左右低点接近且都在低位
+        # 双顶：左右高点接近且都在高位，右顶缩量确认
+        if abs(left_max - right_max) / max(left_max, right_max) < 0.03 and left_max > np.median(close_60):
+            if vol_60 is not None and vol_right_mean < vol_left_mean * 0.9:
+                vol_confirm_high = " (右顶缩量确认)"
+            patterns_found.append(f"疑似双顶形态(L:{left_max:.3f}, R:{right_max:.3f}){vol_confirm_high}")
+            score -= 5
+
+        # 双底：左右低点接近且都在低位，右底放量确认
         if abs(left_min - right_min) / max(left_min, right_min) < 0.03 and left_min < np.median(close_60):
-            patterns_found.append(f"疑似双底形态(L:{left_min:.3f}, R:{right_min:.3f})")
-            score += 15
+            if vol_60 is not None and vol_right_mean > vol_left_mean * 1.1:
+                vol_confirm_low = " (右底放量确认)"
+            patterns_found.append(f"疑似双底形态(L:{left_min:.3f}, R:{right_min:.3f}){vol_confirm_low}")
+            score += 5
 
         # ── 4. 近期K线组合判断（最近3根） ──
         if n >= 3:
@@ -465,11 +615,11 @@ class PatternRecognitionAgent(BaseLLMAgent):
             # 启明星（看涨反转）：大阴线+小实体+大阳线
             if (c1 < o1 * 0.97 and abs(c2 - o2) / o2 < 0.01 and c3 > o3 * 1.03):
                 patterns_found.append("启明星形态(看涨)")
-                score += 10
+                score += 5
             # 黄昏星（看跌反转）：大阳线+小实体+大阴线
             elif (c1 > o1 * 1.03 and abs(c2 - o2) / o2 < 0.01 and c3 < o3 * 0.97):
                 patterns_found.append("黄昏星形态(看跌)")
-                score -= 10
+                score -= 5
             # 三连阳/三连阴
             ret_3 = (close_60[-1] / close_60[-3] - 1) * 100
             ret_2 = (close_60[-1] / close_60[-2] - 1) * 100
@@ -505,20 +655,24 @@ class PatternRecognitionAgent(BaseLLMAgent):
 
 # ====================== 【LLM多智能体 - 趋势预测】 ======================
 class TrendPredictorAgent(BaseLLMAgent):
-    """基于 LLM 的趋势预测智能体（替代 Kronos，轻量级）。"""
+    """基于 LLM 的趋势预测智能体（替代 Kronos，轻量级）。专注短期价格动量。"""
     ROLE_NAME = "趋势预测智能体"
     AGENT_TEMPERATURE = 0.3
     AGENT_USE_QUICK_MODEL = True
-    SYSTEM_PROMPT = """你是拥有15年经验的量化趋势预测分析师。你的专长是从价格序列中识别未来趋势信号。
+    SYSTEM_PROMPT = """你是专注短期动量交易的量化趋势预测分析师。
 
-分析框架：
-1. 短期趋势（5日）：基于最近价格动量、成交量变化、均线位置
-2. 中期趋势（20日）：基于趋势线斜率、均线排列、波动率变化
-3. 支撑/阻力突破：识别关键价位是否被突破或测试
-4. 动量衰减：识别上涨/下跌动能是否减弱（背离信号）
-5. 概率评估：给出未来5日和20日的方向概率
+本智能体专注短期(5-20日)价格趋势预测，不分析行业基本面。
 
-请仔细分析价格数据，给出基于统计规律的预测，而非主观臆断。"""
+分析框架（权重由高到低）：
+1. 短期动量（5日）：基于最近价格涨跌幅、加速度变化——核心信号
+2. 均线系统：MA5/MA20排列关系，金叉/死叉的短期指引
+3. 成交量验证：放量上涨/下跌的持续性评估，缩量反转信号
+4. 波动率分析：高波动=趋势不稳，低波动=趋势延续
+5. 动量衰减/背离：价格创新高但涨幅收窄=动能衰竭（反转信号）
+6. 概率评估：给出未来5日和20日的方向概率及置信度
+
+与行业分析不同，本智能体完全基于价格和成交量的统计规律，不做基本面归因。
+请仔细分析价格数据，给出基于短期动量规律的预测。"""
 
     def run(self, etf_code: str, etf_name: str) -> AgentReport:
         df = DataCollectAgent.get_etf_price(etf_code)

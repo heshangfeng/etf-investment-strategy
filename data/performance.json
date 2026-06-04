@@ -1,8 +1,9 @@
 {
-  "initial_capital": 100000.0,
-  "current_value": 100000.0,
-  "high_water_mark": 100000.0,
-  "total_return_pct": 0.0,
-  "max_drawdown_pct": 0,
-  "last_updated": "2026-06-02"
+  "initial_capital": 670000.0,
+  "current_value": 671268.37,
+  "high_water_mark": 671191.87,
+  "total_return_pct": 0.19,
+  "max_drawdown_pct": 0.0,
+  "last_updated": "2026-06-03",
+  "sharpe_ratio": 0.0
 }

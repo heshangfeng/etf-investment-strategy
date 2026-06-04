@@ -206,14 +206,24 @@ A股特征：两会前后春季躁动，政治局会议定调影响季度级别�
         policy_news = ""
         try:
             from data import PublicOpinionAgent
-            kw_list = ["宏观经济 政策", "政治局会议", "国务院 政策", "金融监管"]
+            kw_list = ["宏观经济 政策", "政治局会议", "国务院 政策", "金融监管",
+                       "货币政策", "房地产 政策", "资本市场 改革"]
             news_parts = []
-            for kw in kw_list[:2]:  # 只取前2个关键词，避免耗时太长
+            for kw in kw_list:
                 n = PublicOpinionAgent.get_professional_news(kw)
-                if n and "暂无" not in n:
-                    news_parts.append(n[:200])
+                if n and "暂无" not in n and "公开财经资讯" not in n:
+                    news_parts.append(f"[{kw}] {n[:150]}")
+            # 补充akshare财新头条（不依赖关键词匹配）
+            try:
+                import akshare as ak
+                cx = ak.stock_news_main_cx()
+                if cx is not None and len(cx) > 0:
+                    for _, row in cx.head(3).iterrows():
+                        news_parts.append(f"[财新] {row['summary'][:100]}")
+            except Exception:
+                pass
             if news_parts:
-                policy_news = "【近期政策资讯】\n" + "\n".join(news_parts) + "\n\n"
+                policy_news = "【近期政策资讯】\n" + "\n".join(news_parts[:5]) + "\n\n"
         except Exception:
             pass
 
@@ -246,7 +256,7 @@ A股特征：两会前后春季躁动，政治局会议定调影响季度级别�
                      f"会议窗口: {current_event or '无重要会议窗口'}\n"
                      f"月份特征: {month}月")
 
-        score = 55.0
+        score = 50.0
         if current_event: score += 10
         if month in (3, 7, 12): score += 8
         if month in (1, 2): score += 5

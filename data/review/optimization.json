@@ -7432,5 +7432,1397 @@
         "override_pct": 80.0
       }
     }
+  },
+  {
+    "date": "2026-06-03 17:09",
+    "total_etfs": 40,
+    "issues": [
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "游资情绪智能体",
+        "etf": "沪深300ETF(510300)",
+        "detail": "包含'缺失'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "解禁压力智能体",
+        "etf": "沪深300ETF(510300)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "解禁压力智能体",
+        "etf": "中证1000ETF(512100)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "解禁压力智能体",
+        "etf": "中证500ETF(510500)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "游资情绪智能体",
+        "etf": "中证2000ETF(563300)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "解禁压力智能体",
+        "etf": "中证2000ETF(563300)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "解禁压力智能体",
+        "etf": "中证A500ETF(159338)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "游资情绪智能体",
+        "etf": "上证50ETF(510050)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "解禁压力智能体",
+        "etf": "上证50ETF(510050)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "解禁压力智能体",
+        "etf": "创业板ETF(159915)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "行业纵析智能体",
+        "etf": "科创50ETF(588000)",
+        "detail": "包含'缺失'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "零售情绪智能体",
+        "etf": "科创50ETF(588000)",
+        "detail": "包含'缺失'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "解禁压力智能体",
+        "etf": "科创50ETF(588000)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "解禁压力智能体",
+        "etf": "券商ETF(512000)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "资金流向智能体",
+        "etf": "有色金属ETF(512400)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "零售情绪智能体",
+        "etf": "有色金属ETF(512400)",
+        "detail": "包含'缺失'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "解禁压力智能体",
+        "etf": "有色金属ETF(512400)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "游资情绪智能体",
+        "etf": "煤炭ETF(515220)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "解禁压力智能体",
+        "etf": "煤炭ETF(515220)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "游资情绪智能体",
+        "etf": "银行ETF(512800)",
+        "detail": "包含'缺失'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "解禁压力智能体",
+        "etf": "银行ETF(512800)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "解禁压力智能体",
+        "etf": "房地产ETF(512200)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "解禁压力智能体",
+        "etf": "基建ETF(515080)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "游资情绪智能体",
+        "etf": "电力ETF(159611)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "解禁压力智能体",
+        "etf": "电力ETF(159611)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "游资情绪智能体",
+        "etf": "半导体ETF(512760)",
+        "detail": "包含'缺失'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "解禁压力智能体",
+        "etf": "半导体ETF(512760)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "解禁压力智能体",
+        "etf": "酒ETF(512690)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "解禁压力智能体",
+        "etf": "半导体设备ETF(512480)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "游资情绪智能体",
+        "etf": "消费ETF(159928)",
+        "detail": "包含'缺失'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "解禁压力智能体",
+        "etf": "消费ETF(159928)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "行业纵析智能体",
+        "etf": "生物医药ETF(512290)",
+        "detail": "包含'缺失'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "解禁压力智能体",
+        "etf": "生物医药ETF(512290)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "解禁压力智能体",
+        "etf": "光伏ETF(515790)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "解禁压力智能体",
+        "etf": "医药ETF(159858)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "技术趋势智能体",
+        "etf": "风电ETF(159806)",
+        "detail": "包含'缺失'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "解禁压力智能体",
+        "etf": "风电ETF(159806)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "趋势预测智能体",
+        "etf": "风电ETF(159806)",
+        "detail": "包含'缺失'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "游资情绪智能体",
+        "etf": "新能源车ETF(159875)",
+        "detail": "包含'缺失'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "解禁压力智能体",
+        "etf": "新能源车ETF(159875)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "趋势预测智能体",
+        "etf": "新能源车ETF(159875)",
+        "detail": "包含'缺失'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "解禁压力智能体",
+        "etf": "汽车ETF(516150)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "行业纵析智能体",
+        "etf": "稀土ETF(516670)",
+        "detail": "包含'缺失'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "零售情绪智能体",
+        "etf": "稀土ETF(516670)",
+        "detail": "包含'缺失'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "游资情绪智能体",
+        "etf": "稀土ETF(516670)",
+        "detail": "包含'缺失'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "解禁压力智能体",
+        "etf": "稀土ETF(516670)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "解禁压力智能体",
+        "etf": "军工ETF(512660)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "解禁压力智能体",
+        "etf": "人工智能ETF(159819)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "跨市场联动智能体",
+        "etf": "机器人ETF(516950)",
+        "detail": "包含'缺失'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "解禁压力智能体",
+        "etf": "机器人ETF(516950)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "行业纵析智能体",
+        "etf": "大数据ETF(515070)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "游资情绪智能体",
+        "etf": "大数据ETF(515070)",
+        "detail": "包含'缺失'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "解禁压力智能体",
+        "etf": "大数据ETF(515070)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "解禁压力智能体",
+        "etf": "传媒ETF(512980)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "解禁压力智能体",
+        "etf": "农业ETF(159825)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "解禁压力智能体",
+        "etf": "恒生科技ETF(513090)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "资金流向智能体",
+        "etf": "港股互联网ETF(513130)",
+        "detail": "包含'缺失'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "解禁压力智能体",
+        "etf": "港股互联网ETF(513130)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "资金流向智能体",
+        "etf": "黄金ETF(518880)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "解禁压力智能体",
+        "etf": "黄金ETF(518880)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "游资情绪智能体",
+        "etf": "红利ETF(510880)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "游资情绪智能体",
+        "etf": "纳指ETF(513100)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "解禁压力智能体",
+        "etf": "纳指ETF(513100)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "解禁压力智能体",
+        "etf": "中概互联ETF(513050)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "游资情绪智能体",
+        "etf": "元宇宙ETF(516220)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "解禁压力智能体",
+        "etf": "元宇宙ETF(516220)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "解禁压力智能体",
+        "etf": "数字货币ETF(515680)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "agent_underperforming",
+        "severity": "high",
+        "agent": "技术趋势智能体",
+        "detail": "技术趋势智能体历史方向准确率仅33.3%（样本6次），显著低于随机"
+      },
+      {
+        "type": "agent_underperforming",
+        "severity": "high",
+        "agent": "零售情绪智能体",
+        "detail": "零售情绪智能体历史方向准确率仅12.5%（样本8次），显著低于随机"
+      },
+      {
+        "type": "agent_underperforming",
+        "severity": "high",
+        "agent": "跨市场联动智能体",
+        "detail": "跨市场联动智能体历史方向准确率仅40.0%（样本5次），显著低于随机"
+      },
+      {
+        "type": "agent_underperforming",
+        "severity": "high",
+        "agent": "解禁压力智能体",
+        "detail": "解禁压力智能体历史方向准确率仅20.0%（样本5次），显著低于随机"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "价值估值智能体与舆情情绪智能体平均分差仅7.4，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "价值估值智能体与游资情绪智能体平均分差仅7.0，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "技术趋势智能体与趋势预测智能体平均分差仅5.2，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "资金流向智能体与行业纵析智能体平均分差仅7.6，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "资金流向智能体与游资情绪智能体平均分差仅5.1，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "行业纵析智能体与跨市场联动智能体平均分差仅5.5，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "跨市场联动智能体与游资情绪智能体平均分差仅6.8，高度冗余"
+      },
+      {
+        "type": "debate_low_impact",
+        "severity": "low",
+        "detail": "仅0%的辩论涉及实质性评分调整（0/40），辩论可能流于形式"
+      }
+    ],
+    "suggestions": [
+      {
+        "target": "data.py 中 游资情绪智能体 使用的数据源",
+        "action": "为 游资情绪智能体 添加备用数据源或缓存机制",
+        "priority": "medium",
+        "reason": "发现 14 次数据缺失"
+      },
+      {
+        "target": "data.py 中 解禁压力智能体 使用的数据源",
+        "action": "为 解禁压力智能体 添加备用数据源或缓存机制",
+        "priority": "medium",
+        "reason": "发现 39 次数据缺失"
+      },
+      {
+        "target": "data.py 中 行业纵析智能体 使用的数据源",
+        "action": "为 行业纵析智能体 添加备用数据源或缓存机制",
+        "priority": "medium",
+        "reason": "发现 4 次数据缺失"
+      },
+      {
+        "target": "data.py 中 零售情绪智能体 使用的数据源",
+        "action": "为 零售情绪智能体 添加备用数据源或缓存机制",
+        "priority": "medium",
+        "reason": "发现 3 次数据缺失"
+      },
+      {
+        "target": "data.py 中 资金流向智能体 使用的数据源",
+        "action": "为 资金流向智能体 添加备用数据源或缓存机制",
+        "priority": "medium",
+        "reason": "发现 3 次数据缺失"
+      },
+      {
+        "target": "data.py 中 技术趋势智能体 使用的数据源",
+        "action": "为 技术趋势智能体 添加备用数据源或缓存机制",
+        "priority": "medium",
+        "reason": "发现 1 次数据缺失"
+      },
+      {
+        "target": "data.py 中 趋势预测智能体 使用的数据源",
+        "action": "为 趋势预测智能体 添加备用数据源或缓存机制",
+        "priority": "medium",
+        "reason": "发现 2 次数据缺失"
+      },
+      {
+        "target": "data.py 中 跨市场联动智能体 使用的数据源",
+        "action": "为 跨市场联动智能体 添加备用数据源或缓存机制",
+        "priority": "medium",
+        "reason": "发现 1 次数据缺失"
+      },
+      {
+        "target": "agents/技术趋势智能体",
+        "action": "审查 技术趋势智能体 的 prompt 和数据输入，准确率低于随机水平可能意味特征失效",
+        "priority": "high",
+        "reason": "Agent 技术趋势智能体 方向准确率 < 45%"
+      },
+      {
+        "target": "agents/零售情绪智能体",
+        "action": "审查 零售情绪智能体 的 prompt 和数据输入，准确率低于随机水平可能意味特征失效",
+        "priority": "high",
+        "reason": "Agent 零售情绪智能体 方向准确率 < 45%"
+      },
+      {
+        "target": "agents/跨市场联动智能体",
+        "action": "审查 跨市场联动智能体 的 prompt 和数据输入，准确率低于随机水平可能意味特征失效",
+        "priority": "high",
+        "reason": "Agent 跨市场联动智能体 方向准确率 < 45%"
+      },
+      {
+        "target": "agents/解禁压力智能体",
+        "action": "审查 解禁压力智能体 的 prompt 和数据输入，准确率低于随机水平可能意味特征失效",
+        "priority": "high",
+        "reason": "Agent 解禁压力智能体 方向准确率 < 45%"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除资金流向智能体与游资情绪智能体中的一个（平均分差仅5.1）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除技术趋势智能体与趋势预测智能体中的一个（平均分差仅5.2）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除行业纵析智能体与跨市场联动智能体中的一个（平均分差仅5.5）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除跨市场联动智能体与游资情绪智能体中的一个（平均分差仅6.8）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除价值估值智能体与游资情绪智能体中的一个（平均分差仅7.0）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "debate.py",
+        "action": "审查辩论流程是否流于形式，考虑引入对抗式辩论或预设分歧议题",
+        "priority": "low",
+        "reason": "仅0%的辩论涉及实质性评分调整（0/40），辩论可能流于形式"
+      }
+    ],
+    "data_quality": {},
+    "deep_analysis": {
+      "historical_accuracy": {
+        "used": true,
+        "underperformers": [
+          "技术趋势智能体",
+          "零售情绪智能体",
+          "跨市场联动智能体",
+          "解禁压力智能体"
+        ],
+        "agent_count": 11
+      },
+      "calibration": {
+        "buckets": {
+          "30": {
+            "count": 16,
+            "buys": 0,
+            "sells": 16,
+            "holds": 0
+          },
+          "40": {
+            "count": 15,
+            "buys": 0,
+            "sells": 15,
+            "holds": 0
+          },
+          "50": {
+            "count": 3,
+            "buys": 1,
+            "sells": 0,
+            "holds": 2
+          },
+          "60": {
+            "count": 6,
+            "buys": 4,
+            "sells": 0,
+            "holds": 2
+          }
+        },
+        "issues": []
+      },
+      "redundancy": [
+        {
+          "agent_a": "价值估值智能体",
+          "agent_b": "舆情情绪智能体",
+          "avg_diff": 7.4
+        },
+        {
+          "agent_a": "价值估值智能体",
+          "agent_b": "游资情绪智能体",
+          "avg_diff": 7.0
+        },
+        {
+          "agent_a": "技术趋势智能体",
+          "agent_b": "趋势预测智能体",
+          "avg_diff": 5.2
+        },
+        {
+          "agent_a": "资金流向智能体",
+          "agent_b": "行业纵析智能体",
+          "avg_diff": 7.6
+        },
+        {
+          "agent_a": "资金流向智能体",
+          "agent_b": "游资情绪智能体",
+          "avg_diff": 5.1
+        },
+        {
+          "agent_a": "行业纵析智能体",
+          "agent_b": "跨市场联动智能体",
+          "avg_diff": 5.5
+        },
+        {
+          "agent_a": "跨市场联动智能体",
+          "agent_b": "游资情绪智能体",
+          "avg_diff": 6.8
+        }
+      ],
+      "debate_impact": {
+        "total_with_debates": 40,
+        "meaningful_debates": 0,
+        "impact_pct": 0.0
+      },
+      "llm_override": {
+        "llm_count": 17,
+        "rule_count": 23,
+        "override_pct": 42.5
+      }
+    }
+  },
+  {
+    "date": "2026-06-03 17:14",
+    "total_etfs": 40,
+    "issues": [
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "游资情绪智能体",
+        "etf": "上证50ETF(510050)",
+        "detail": "包含'缺失'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "解禁压力智能体",
+        "etf": "上证50ETF(510050)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "解禁压力智能体",
+        "etf": "中证A500ETF(159338)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "解禁压力智能体",
+        "etf": "中证1000ETF(512100)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "行业纵析智能体",
+        "etf": "中证500ETF(510500)",
+        "detail": "包含'缺失'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "解禁压力智能体",
+        "etf": "中证500ETF(510500)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "解禁压力智能体",
+        "etf": "沪深300ETF(510300)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "解禁压力智能体",
+        "etf": "中证2000ETF(563300)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "解禁压力智能体",
+        "etf": "有色金属ETF(512400)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "游资情绪智能体",
+        "etf": "创业板ETF(159915)",
+        "detail": "包含'缺失'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "解禁压力智能体",
+        "etf": "创业板ETF(159915)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "零售情绪智能体",
+        "etf": "科创50ETF(588000)",
+        "detail": "包含'缺失'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "解禁压力智能体",
+        "etf": "科创50ETF(588000)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "解禁压力智能体",
+        "etf": "银行ETF(512800)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "解禁压力智能体",
+        "etf": "煤炭ETF(515220)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "行业纵析智能体",
+        "etf": "券商ETF(512000)",
+        "detail": "包含'缺失'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "解禁压力智能体",
+        "etf": "券商ETF(512000)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "行业纵析智能体",
+        "etf": "房地产ETF(512200)",
+        "detail": "包含'缺失'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "游资情绪智能体",
+        "etf": "房地产ETF(512200)",
+        "detail": "包含'缺失'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "解禁压力智能体",
+        "etf": "房地产ETF(512200)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "解禁压力智能体",
+        "etf": "电力ETF(159611)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "游资情绪智能体",
+        "etf": "基建ETF(515080)",
+        "detail": "包含'缺失'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "解禁压力智能体",
+        "etf": "基建ETF(515080)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "解禁压力智能体",
+        "etf": "半导体ETF(512760)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "行业纵析智能体",
+        "etf": "半导体设备ETF(512480)",
+        "detail": "包含'缺失'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "解禁压力智能体",
+        "etf": "半导体设备ETF(512480)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "解禁压力智能体",
+        "etf": "酒ETF(512690)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "行业纵析智能体",
+        "etf": "消费ETF(159928)",
+        "detail": "包含'缺失'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "解禁压力智能体",
+        "etf": "消费ETF(159928)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "行业纵析智能体",
+        "etf": "医药ETF(159858)",
+        "detail": "包含'缺失'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "解禁压力智能体",
+        "etf": "医药ETF(159858)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "行业纵析智能体",
+        "etf": "生物医药ETF(512290)",
+        "detail": "包含'缺失'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "解禁压力智能体",
+        "etf": "生物医药ETF(512290)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "解禁压力智能体",
+        "etf": "风电ETF(159806)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "解禁压力智能体",
+        "etf": "光伏ETF(515790)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "解禁压力智能体",
+        "etf": "新能源车ETF(159875)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "解禁压力智能体",
+        "etf": "汽车ETF(516150)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "解禁压力智能体",
+        "etf": "稀土ETF(516670)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "游资情绪智能体",
+        "etf": "大数据ETF(515070)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "解禁压力智能体",
+        "etf": "大数据ETF(515070)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "行业纵析智能体",
+        "etf": "军工ETF(512660)",
+        "detail": "包含'缺失'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "游资情绪智能体",
+        "etf": "军工ETF(512660)",
+        "detail": "包含'缺失'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "解禁压力智能体",
+        "etf": "军工ETF(512660)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "解禁压力智能体",
+        "etf": "人工智能ETF(159819)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "舆情情绪智能体",
+        "etf": "机器人ETF(516950)",
+        "detail": "包含'缺失'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "解禁压力智能体",
+        "etf": "机器人ETF(516950)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "解禁压力智能体",
+        "etf": "传媒ETF(512980)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "解禁压力智能体",
+        "etf": "恒生科技ETF(513090)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "解禁压力智能体",
+        "etf": "港股互联网ETF(513130)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "解禁压力智能体",
+        "etf": "农业ETF(159825)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "游资情绪智能体",
+        "etf": "红利ETF(510880)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "解禁压力智能体",
+        "etf": "红利ETF(510880)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "游资情绪智能体",
+        "etf": "黄金ETF(518880)",
+        "detail": "包含'缺失'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "解禁压力智能体",
+        "etf": "黄金ETF(518880)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "行业纵析智能体",
+        "etf": "纳指ETF(513100)",
+        "detail": "包含'缺失'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "解禁压力智能体",
+        "etf": "纳指ETF(513100)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "解禁压力智能体",
+        "etf": "中概互联ETF(513050)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "解禁压力智能体",
+        "etf": "元宇宙ETF(516220)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "技术形态智能体",
+        "etf": "元宇宙ETF(516220)",
+        "detail": "包含'缺失'，可能数据源不可用"
+      },
+      {
+        "type": "data_missing",
+        "severity": "medium",
+        "agent": "解禁压力智能体",
+        "etf": "数字货币ETF(515680)",
+        "detail": "包含'暂无'，可能数据源不可用"
+      },
+      {
+        "type": "agent_underperforming",
+        "severity": "high",
+        "agent": "技术趋势智能体",
+        "detail": "技术趋势智能体历史方向准确率仅33.3%（样本12次），显著低于随机"
+      },
+      {
+        "type": "agent_underperforming",
+        "severity": "high",
+        "agent": "零售情绪智能体",
+        "detail": "零售情绪智能体历史方向准确率仅12.5%（样本16次），显著低于随机"
+      },
+      {
+        "type": "agent_underperforming",
+        "severity": "high",
+        "agent": "跨市场联动智能体",
+        "detail": "跨市场联动智能体历史方向准确率仅40.0%（样本10次），显著低于随机"
+      },
+      {
+        "type": "agent_underperforming",
+        "severity": "high",
+        "agent": "解禁压力智能体",
+        "detail": "解禁压力智能体历史方向准确率仅20.0%（样本10次），显著低于随机"
+      },
+      {
+        "type": "agent_underperforming",
+        "severity": "high",
+        "agent": "技术形态智能体",
+        "detail": "技术形态智能体历史方向准确率仅33.3%（样本6次），显著低于随机"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "价值估值智能体与游资情绪智能体平均分差仅4.6，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "技术趋势智能体与技术形态智能体平均分差仅5.5，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "技术趋势智能体与趋势预测智能体平均分差仅6.9，高度冗余"
+      },
+      {
+        "type": "agent_redundant",
+        "severity": "low",
+        "detail": "行业纵析智能体与趋势预测智能体平均分差仅5.6，高度冗余"
+      },
+      {
+        "type": "debate_low_impact",
+        "severity": "low",
+        "detail": "仅10%的辩论涉及实质性评分调整（4/39），辩论可能流于形式"
+      }
+    ],
+    "suggestions": [
+      {
+        "target": "data.py 中 游资情绪智能体 使用的数据源",
+        "action": "为 游资情绪智能体 添加备用数据源或缓存机制",
+        "priority": "medium",
+        "reason": "发现 8 次数据缺失"
+      },
+      {
+        "target": "data.py 中 解禁压力智能体 使用的数据源",
+        "action": "为 解禁压力智能体 添加备用数据源或缓存机制",
+        "priority": "medium",
+        "reason": "发现 40 次数据缺失"
+      },
+      {
+        "target": "data.py 中 行业纵析智能体 使用的数据源",
+        "action": "为 行业纵析智能体 添加备用数据源或缓存机制",
+        "priority": "medium",
+        "reason": "发现 9 次数据缺失"
+      },
+      {
+        "target": "data.py 中 零售情绪智能体 使用的数据源",
+        "action": "为 零售情绪智能体 添加备用数据源或缓存机制",
+        "priority": "medium",
+        "reason": "发现 1 次数据缺失"
+      },
+      {
+        "target": "data.py 中 舆情情绪智能体 使用的数据源",
+        "action": "为 舆情情绪智能体 添加备用数据源或缓存机制",
+        "priority": "medium",
+        "reason": "发现 1 次数据缺失"
+      },
+      {
+        "target": "data.py 中 技术形态智能体 使用的数据源",
+        "action": "为 技术形态智能体 添加备用数据源或缓存机制",
+        "priority": "medium",
+        "reason": "发现 1 次数据缺失"
+      },
+      {
+        "target": "agents/技术趋势智能体",
+        "action": "审查 技术趋势智能体 的 prompt 和数据输入，准确率低于随机水平可能意味特征失效",
+        "priority": "high",
+        "reason": "Agent 技术趋势智能体 方向准确率 < 45%"
+      },
+      {
+        "target": "agents/零售情绪智能体",
+        "action": "审查 零售情绪智能体 的 prompt 和数据输入，准确率低于随机水平可能意味特征失效",
+        "priority": "high",
+        "reason": "Agent 零售情绪智能体 方向准确率 < 45%"
+      },
+      {
+        "target": "agents/跨市场联动智能体",
+        "action": "审查 跨市场联动智能体 的 prompt 和数据输入，准确率低于随机水平可能意味特征失效",
+        "priority": "high",
+        "reason": "Agent 跨市场联动智能体 方向准确率 < 45%"
+      },
+      {
+        "target": "agents/解禁压力智能体",
+        "action": "审查 解禁压力智能体 的 prompt 和数据输入，准确率低于随机水平可能意味特征失效",
+        "priority": "high",
+        "reason": "Agent 解禁压力智能体 方向准确率 < 45%"
+      },
+      {
+        "target": "agents/技术形态智能体",
+        "action": "审查 技术形态智能体 的 prompt 和数据输入，准确率低于随机水平可能意味特征失效",
+        "priority": "high",
+        "reason": "Agent 技术形态智能体 方向准确率 < 45%"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除价值估值智能体与游资情绪智能体中的一个（平均分差仅4.6）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除技术趋势智能体与技术形态智能体中的一个（平均分差仅5.5）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除行业纵析智能体与趋势预测智能体中的一个（平均分差仅5.6）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "agents 配置",
+        "action": "考虑合并或移除技术趋势智能体与趋势预测智能体中的一个（平均分差仅6.9）",
+        "priority": "low",
+        "reason": "两 Agent 评分高度相关"
+      },
+      {
+        "target": "debate.py",
+        "action": "审查辩论流程是否流于形式，考虑引入对抗式辩论或预设分歧议题",
+        "priority": "low",
+        "reason": "仅10%的辩论涉及实质性评分调整（4/39），辩论可能流于形式"
+      }
+    ],
+    "data_quality": {},
+    "deep_analysis": {
+      "historical_accuracy": {
+        "used": true,
+        "underperformers": [
+          "技术趋势智能体",
+          "零售情绪智能体",
+          "跨市场联动智能体",
+          "解禁压力智能体",
+          "技术形态智能体"
+        ],
+        "agent_count": 11
+      },
+      "calibration": {
+        "buckets": {
+          "30": {
+            "count": 25,
+            "buys": 0,
+            "sells": 25,
+            "holds": 0
+          },
+          "40": {
+            "count": 9,
+            "buys": 0,
+            "sells": 9,
+            "holds": 0
+          },
+          "50": {
+            "count": 4,
+            "buys": 1,
+            "sells": 0,
+            "holds": 3
+          },
+          "60": {
+            "count": 2,
+            "buys": 1,
+            "sells": 0,
+            "holds": 1
+          }
+        },
+        "issues": []
+      },
+      "redundancy": [
+        {
+          "agent_a": "价值估值智能体",
+          "agent_b": "游资情绪智能体",
+          "avg_diff": 4.6
+        },
+        {
+          "agent_a": "技术趋势智能体",
+          "agent_b": "技术形态智能体",
+          "avg_diff": 5.5
+        },
+        {
+          "agent_a": "技术趋势智能体",
+          "agent_b": "趋势预测智能体",
+          "avg_diff": 6.9
+        },
+        {
+          "agent_a": "行业纵析智能体",
+          "agent_b": "趋势预测智能体",
+          "avg_diff": 5.6
+        }
+      ],
+      "debate_impact": {
+        "total_with_debates": 39,
+        "meaningful_debates": 4,
+        "impact_pct": 10.3
+      },
+      "llm_override": {
+        "llm_count": 23,
+        "rule_count": 17,
+        "override_pct": 57.5
+      }
+    }
   }
 ]

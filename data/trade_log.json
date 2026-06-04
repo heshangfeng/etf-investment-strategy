@@ -1,9 +1,9 @@
 [
   {
     "date": "2026-06-02",
-    "cash": 2626.45,
+    "cash": 572597.24,
     "market_value": 97373.55,
-    "total": 100000.0,
+    "total": 669970.79,
     "trades": {
       "buys": [
         {
@@ -12,8 +12,8 @@
           "shares": 11982,
           "price": 3.964,
           "cost": 47496.65,
-          "position_target": 0.17,
-          "reason": "长期持有"
+          "position_target": 0.0,
+          "reason": "买入"
         },
         {
           "code": "588000",
@@ -21,8 +21,8 @@
           "shares": 28005,
           "price": 1.781,
           "cost": 49876.9,
-          "position_target": 0.17,
-          "reason": "长期持有"
+          "position_target": 0.0,
+          "reason": "买入"
         }
       ],
       "sells": [],
@@ -31,16 +31,124 @@
           "code": "159915",
           "name": "创业板ETF",
           "shares": 11982,
-          "reason": "长期持有"
+          "reason": "持有"
         },
         {
           "code": "588000",
           "name": "科创50ETF",
           "shares": 28005,
-          "reason": "长期持有"
+          "reason": "持有"
         }
       ],
       "date": "2026-06-02"
+    }
+  },
+  {
+    "date": "2026-06-03",
+    "cash": 570200.77,
+    "market_value": 101067.6,
+    "total": 671268.37,
+    "trades": {
+      "buys": [
+        {
+          "code": "510300",
+          "name": "沪深300ETF",
+          "shares": 3100,
+          "price": 4.936,
+          "cost": 15301.6,
+          "position_target": 0.0,
+          "reason": "买入"
+        },
+        {
+          "code": "513130",
+          "name": "港股互联网ETF",
+          "shares": 17400,
+          "price": 0.64,
+          "cost": 11136.0,
+          "position_target": 0.0,
+          "reason": "买入"
+        },
+        {
+          "code": "513100",
+          "name": "纳指ETF",
+          "shares": 3300,
+          "price": 2.343,
+          "cost": 7731.9,
+          "position_target": 0.0,
+          "reason": "买入"
+        },
+        {
+          "code": "512800",
+          "name": "银行ETF",
+          "shares": 2300,
+          "price": 0.79,
+          "cost": 1817.0,
+          "position_target": 0.0,
+          "reason": "买入"
+        },
+        {
+          "code": "510880",
+          "name": "红利ETF",
+          "shares": 20200,
+          "price": 3.308,
+          "cost": 66821.6,
+          "position_target": 0.0,
+          "reason": "买入"
+        }
+      ],
+      "sells": [
+        {
+          "code": "588000",
+          "name": "科创50ETF",
+          "shares": 28005,
+          "price": 1.781,
+          "proceeds": 49876.9,
+          "reason": "卖出"
+        },
+        {
+          "code": "159915",
+          "name": "创业板ETF",
+          "shares": 11982,
+          "price": 4.071,
+          "proceeds": 48778.72,
+          "reason": "卖出"
+        },
+        {
+          "code": "512800",
+          "name": "银行ETF",
+          "shares": 2300,
+          "price": 0.79,
+          "proceeds": 1817.0,
+          "reason": "卖出"
+        }
+      ],
+      "holds": [
+        {
+          "code": "510300",
+          "name": "沪深300ETF",
+          "shares": 3100,
+          "reason": "持有"
+        },
+        {
+          "code": "513130",
+          "name": "港股互联网ETF",
+          "shares": 17400,
+          "reason": "持有"
+        },
+        {
+          "code": "513100",
+          "name": "纳指ETF",
+          "shares": 3300,
+          "reason": "持有"
+        },
+        {
+          "code": "510880",
+          "name": "红利ETF",
+          "shares": 20200,
+          "reason": "持有"
+        }
+      ],
+      "date": "2026-06-03"
     }
   }
 ]

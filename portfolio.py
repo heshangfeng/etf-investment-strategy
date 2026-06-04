@@ -12,6 +12,7 @@ ETF 智能投资分析系统 - 实盘投资组合管理
 import json
 import os
 import sys
+import numpy as np
 from dataclasses import dataclass, field, asdict
 from datetime import datetime
 from pathlib import Path
@@ -47,7 +48,7 @@ class Transaction:
 
 @dataclass
 class Portfolio:
-    cash: float = 100000.0
+    cash: float = 670000.0
     holdings: list[Holding] = field(default_factory=list)
     transactions: list[Transaction] = field(default_factory=list)
 
@@ -59,7 +60,7 @@ def load() -> Portfolio:
         with open(PORTFOLIO_FILE, "r", encoding="utf-8") as f:
             data = json.load(f)
         return Portfolio(
-            cash=data.get("cash", 100000.0),
+            cash=data.get("cash", 670000.0),
             holdings=[Holding(**h) for h in data.get("holdings", [])],
             transactions=[Transaction(**t) for t in data.get("transactions", [])],
         )

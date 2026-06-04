@@ -25,7 +25,7 @@ PREMIUM_RISK_THRESHOLD = 0.015
 VOL_RISK_THRESHOLD = 0.03
 LIQ_THRESHOLD = 5000
 OPINION_WARN_THRESHOLD = 30    # 利空告警线
-TREND_DAY_COUNT = 3           # 舆情趋势统计天数
+TREND_DAY_COUNT = 7           # 舆情趋势统计天数
 
 # 3. 并行 & 网络配置
 MAIN_WORKERS = 6
@@ -113,6 +113,10 @@ ETF_POOL = [
     {"code": "516220", "name": "元宇宙ETF",     "type": "主题", "index_code": "BK0992"},
     {"code": "515680", "name": "数字货币ETF",   "type": "主题", "index_code": "BK0887"},
 ]
+
+# 5. 外部财经新闻API
+FIN_API_KEY = os.getenv("FIN_API_KEY", "")
+FIN_API_URL = os.getenv("FIN_API_URL", "")
 
 # ====================== 【全局缓存 - 带TTL】 ======================
 CACHE_ETF_PRICE = PersistentCache("etf_price", default_ttl=3600)

@@ -63,39 +63,31 @@ try {
 
     Write-Log "Python script completed successfully"
 
-    # ---- find latest txt report ----
-$OutputDir = Join-Path $ProjectDir "output"
-$reportFile = Get-ChildItem -Path $OutputDir -Filter "ETF_多智能体投研报告_${DateStr}_*.txt" -ErrorAction SilentlyContinue `
-        | Sort-Object LastWriteTime -Descending | Select-Object -First 1
+    # ---- capture trade summary ----
+    $tradeOutput = python -X utf8 autotrade.py trades 2>&1 | Out-String
+    $perfOutput  = python -X utf8 autotrade.py perf 2>&1 | Out-String
 
-    if (-not $reportFile) {
-        $reportFile = Get-ChildItem -Path $OutputDir -Filter "ETF_多智能体投研报告_*.txt" -ErrorAction SilentlyContinue `
-        | Sort-Object LastWriteTime -Descending | Select-Object -First 1
-    }
+    # ---- extract key lines for compact push ----
+    $perfLines = $perfOutput -split "`r`n|`n" | Where-Object { $_ -match "初始资金|当前总值|总收益率|最大回撤" }
+    $tradeLines = $tradeOutput -split "`r`n|`n" | Where-Object { $_ -match "买入|卖出" } | Select-Object -First 8
 
-    if ($reportFile) {
-        $lines = Get-Content -Path $reportFile.FullName -Encoding utf8
-        $titleLine   = $lines | Select-Object -Index 1   # report title with date
-        $summaryLine = $lines | Select-Object -Index 5   # 【投研摘要看板】
+    $body = @"
+ETF分析完成
 
-        $etfLines = $lines | Where-Object { $_ -match "^\s{2}\d{6}" } | Select-Object -First 5
+【策略表现】
+$($perfLines -join "`n")
 
-        $body = @"
-$titleLine
-
-【操作建议摘要】
-$($etfLines -join "`n")
-
-详细报告: $($reportFile.Name)
+【调仓明细】
+$($tradeLines -join "`n")
 "@
 
-        $encoded = [Uri]::EscapeDataString($body)
-        $pushUrl = "${PushDeerUrl}?pushkey=${PushDeerKey}&text=${encoded}"
+    $encoded = [Uri]::EscapeDataString($body)
+    $pushUrl = "${PushDeerUrl}?pushkey=${PushDeerKey}&text=${encoded}"
+    try {
         $resp = Invoke-RestMethod -Uri $pushUrl -Method Get
         Write-Log "PushDeer notification sent (success)"
-        Write-Log "PushDeer response: $($resp | Out-String)"
-    } else {
-        Write-Log "No report txt file found"
+    } catch {
+        Write-Log "PushDeer notification failed: $_"
     }
 } catch {
     Write-Log "ERROR: $_"

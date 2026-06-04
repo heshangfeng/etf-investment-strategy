@@ -148,8 +148,8 @@ class ResearchReportGenerator:
         sell_ops = {"减持", "卖出", "强烈卖出"}
         buy_cnt = sum(op_counts.get(op, 0) for op in buy_ops)
         sell_cnt = sum(op_counts.get(op, 0) for op in sell_ops)
-        buy_ratio = buy_cnt / total * 100
-        sell_ratio = sell_cnt / total * 100
+        buy_ratio = buy_cnt / total * 100 if total > 0 else 0
+        sell_ratio = sell_cnt / total * 100 if total > 0 else 0
         print(f"  多头方向: {buy_cnt}只 ({buy_ratio:.0f}%) | 空头方向: {sell_cnt}只 ({sell_ratio:.0f}%)")
         if buy_ratio > 70:
             print(f"  ⚠️ 集中度预警: 超过{70}%标的集中在多头方向，注意一致性风险")
@@ -300,11 +300,14 @@ class ResearchReportGenerator:
             if fr.debates:
                 lines.append(f"\n  【辩论记录】")
                 for d in fr.debates:
-                    lines.append(f"  {d['topic']}")
-                    for rd in d['rounds']:
-                        for k, v in rd.items():
-                            if k != 'round':
-                                lines.append(f"  {v[:200]}")
+                    lines.append(f"  {d.get('topic', d.get('focus', '分歧'))}")
+                    if 'winner' in d:
+                        lines.append(f"  胜方: {d.get('winner', '折中')} | 裁决: {d.get('reasoning', '')[:200]}")
+                    elif 'rounds' in d:
+                        for rd in d['rounds']:
+                            for k, v in rd.items():
+                                if k != 'round':
+                                    lines.append(f"  {v[:200]}")
 
             lines.append(f"\n  【首席决策】")
             lines.append(f"  最终评级: {fr.final_rating}")
@@ -378,8 +381,8 @@ class ResearchReportGenerator:
         sell_ops = {"减持", "卖出", "强烈卖出"}
         buy_cnt = sum(op_counts.get(op, 0) for op in buy_ops)
         sell_cnt = sum(op_counts.get(op, 0) for op in sell_ops)
-        buy_ratio = buy_cnt / total * 100
-        sell_ratio = sell_cnt / total * 100
+        buy_ratio = buy_cnt / total * 100 if total > 0 else 0
+        sell_ratio = sell_cnt / total * 100 if total > 0 else 0
         lines.append(f"  多头方向: {buy_cnt}只 ({buy_ratio:.0f}%) | 空头方向: {sell_cnt}只 ({sell_ratio:.0f}%)")
         if buy_ratio > 70:
             lines.append(f"  ⚠️ 集中度预警: 超过{70}%标的集中在多头方向，注意一致性风险")
@@ -447,11 +450,19 @@ class ResearchReportGenerator:
         if fr.debates:
             print(f"\n  ⚔️ 【辩论记录】")
             for d in fr.debates:
-                print(f"    🎯 {d['topic']}")
-                for rd in d['rounds']:
-                    for k, v in rd.items():
-                        if k != 'round':
-                            print(f"    {v[:200]}")
+                print(f"    🎯 {d.get('topic', d.get('focus', '分歧'))}")
+                # 新版辩论结构（DebateEngine.hold_debate 输出）
+                if 'winner' in d:
+                    print(f"      胜方: {d.get('winner', '折中')}")
+                    print(f"      裁决: {d.get('reasoning', '')[:200]}")
+                    if d.get('score_adjustment'):
+                        print(f"      调整: {d['score_adjustment']:+.0f}分")
+                # 旧版辩论结构（rounds）
+                elif 'rounds' in d:
+                    for rd in d['rounds']:
+                        for k, v in rd.items():
+                            if k != 'round':
+                                print(f"    {v[:200]}")
 
         print(f"\n  📌 【首席决策】")
         print(f"  最终评级: {fr.final_rating}")

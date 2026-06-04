@@ -9,6 +9,7 @@ import re
 import json
 import os
 import glob
+import logging
 import jieba
 import requests
 from bs4 import BeautifulSoup
@@ -16,6 +17,8 @@ from sentiment_skill import FinBertSentiment
 from datetime import datetime, timedelta
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from openai import OpenAI
+
+logger = logging.getLogger(__name__)
 
 from config import (
     REQUEST_DELAY, HEADERS,
@@ -26,6 +29,7 @@ from config import (
     OPINION_WARN_THRESHOLD, TREND_DAY_COUNT,
     LLM_API_KEY, LLM_BASE_URL, LLM_MODEL, LLM_TEMPERATURE,
     AGENT_WORKERS, WEIGHT,
+    FIN_API_KEY, FIN_API_URL,
 )
 from cache import PersistentCache
 from keywords import BASE_POS_KEYWORDS, BASE_NEG_KEYWORDS, INDUSTRY_POS, INDUSTRY_NEG
@@ -58,22 +62,34 @@ class DataCollectAgent:
     @staticmethod
     def _etf_code_with_prefix(code: str) -> str:
         """ETF代码转新浪格式：510300 → sh510300, 159915 → sz159915"""
-        if code.startswith(("51", "58")):
+        # 沪市ETF: 51xxxx, 56xxxx, 58xxxx; 深市ETF: 159xxx
+        if code.startswith(("51", "56", "58")):
             return f"sh{code}"
         return f"sz{code}"
 
     @staticmethod
     def get_etf_price(etf_code: str) -> pd.DataFrame:
-        time.sleep(REQUEST_DELAY)
+        code = DataCollectAgent._etf_code_with_prefix(etf_code)
         if CACHE_ETF_PRICE.is_fresh(etf_code, 3600):
             return CACHE_ETF_PRICE[etf_code]
-        df = ak.fund_etf_hist_sina(symbol=DataCollectAgent._etf_code_with_prefix(etf_code))
-        df = df.sort_values("date").reset_index(drop=True)
-        df["ma5"] = df["close"].rolling(5).mean()
-        df["ma20"] = df["close"].rolling(20).mean()
-        df["volatility"] = df["close"].pct_change().abs()
-        CACHE_ETF_PRICE[etf_code] = df
-        return df
+        time.sleep(REQUEST_DELAY)
+        try:
+            df = ak.fund_etf_hist_sina(code)
+            if df is None or df.empty:
+                raise ValueError(f"Empty data for {code}")
+            df.columns = [str(c).strip() for c in df.columns]
+            df = df.sort_values("date").reset_index(drop=True)
+            df["ma5"] = df["close"].rolling(5).mean()
+            df["ma20"] = df["close"].rolling(20).mean()
+            df["volatility"] = df["close"].pct_change().abs()
+            df = df.bfill().ffill()
+            CACHE_ETF_PRICE[etf_code] = df
+            return df
+        except Exception as e:
+            logger.warning("get_etf_price(%s) failed: %s", etf_code, e)
+            if etf_code in CACHE_ETF_PRICE:
+                return CACHE_ETF_PRICE[etf_code]
+            raise
 
     @staticmethod
     def get_index_val(index_code: str) -> dict:
@@ -100,23 +116,29 @@ class DataCollectAgent:
             return CACHE_ETF_PREMIUM[etf_code]
         try:
             df = ak.fund_etf_premium()
-            premium = df[df["代码"] == etf_code]["折溢价率"].iloc[0] / 100
+            matched = df[df["代码"] == etf_code]
+            if not matched.empty:
+                premium = matched["折溢价率"].iloc[0] / 100
+            else:
+                logger.warning("get_etf_premium(%s): code not found in premium data", etf_code)
+                premium = 0.0
         except:
             if etf_code in CACHE_ETF_PREMIUM:
                 return CACHE_ETF_PREMIUM[etf_code]
-            premium = 0
+            premium = 0.0
         CACHE_ETF_PREMIUM[etf_code] = premium
         return premium
 
     @staticmethod
     def get_north_flow(index_code: str) -> float:
         time.sleep(REQUEST_DELAY)
-        if CACHE_NORTH_CAP.is_fresh(index_code, 3600):
+        if CACHE_NORTH_CAP.is_fresh(index_code, 7200):
             return CACHE_NORTH_CAP[index_code]
         try:
             df = ak.stock_hsgt_fund_flow(symbol=index_code)
             flow = df["北向净流入"].tail(5).sum()
-        except:
+        except Exception as e:
+            logger.warning("get_north_flow(%s) API failed: %s", index_code, e)
             if index_code in CACHE_NORTH_CAP:
                 return CACHE_NORTH_CAP[index_code]
             flow = 0
@@ -135,24 +157,32 @@ class DataCollectAgent:
                 "szse_margin": float(szse["融资余额"].iloc[-1] / 1e8) if "融资余额" in szse.columns else 0,
                 "sse_margin": float(sse["融资余额"].iloc[-1] / 1e8) if "融资余额" in sse.columns else 0,
                 "szse_short": float(szse["融券余额"].iloc[-1] / 1e8) if "融券余额" in szse.columns else 0,
+                "sse_short": float(sse["融券余额"].iloc[-1] / 1e8) if "融券余额" in sse.columns else 0,
             }
-        except:
-            return {"szse_margin": 0, "sse_margin": 0, "szse_short": 0}
+        except Exception as e:
+            logger.warning("get_margin_balance API failed: %s", e)
+            if "margin" in _CACHE:
+                return _CACHE["margin"]
+            return {"szse_margin": 0, "sse_margin": 0, "szse_short": 0, "sse_short": 0}
         _CACHE["margin"] = result
         return result
 
     @staticmethod
     def get_bond_yield() -> dict:
         """中美国债收益率"""
-        if _CACHE.is_fresh("bond", 7200):
+        if _CACHE.is_fresh("bond", 3600):
             return _CACHE["bond"]
         try:
             df = ak.bond_zh_us_rate()
             cn10y = float(df[df["指标名称"] == "中国国债收益率10年"]["收益率"].iloc[-1])
             us10y = float(df[df["指标名称"] == "美国国债收益率10年"]["收益率"].iloc[-1])
             result = {"cn_10y": cn10y, "us_10y": us10y, "spread": cn10y - us10y}
-        except:
-            result = {"cn_10y": 2.5, "us_10y": 4.0, "spread": -1.5}
+        except Exception as e:
+            logger.warning("get_bond_yield API failed: %s", e)
+            if "bond" in _CACHE:
+                result = _CACHE["bond"]
+            else:
+                result = {"cn_10y": 2.5, "us_10y": 4.0, "spread": -1.5}
         _CACHE["bond"] = result
         return result
 
@@ -170,15 +200,19 @@ class DataCollectAgent:
                     "流入排名": int(row.get("主力净流入-排名", 99))
                 }
             result = sector_map
-        except:
-            result = {}
+        except Exception as e:
+            logger.warning("get_sector_fund_flow API failed: %s", e)
+            if "sector_flow" in _CACHE:
+                result = _CACHE["sector_flow"]
+            else:
+                result = {"板块名称": {"流入": 0, "流入排名": 99}}
         _CACHE["sector_flow"] = result
         return result
 
     @staticmethod
     def get_ivix(etf_code: str) -> float:
-        """获取ETF对应指数的隐含波动率(VIX-like)。3600s TTL，失败返回25.0。"""
-        if CACHE_IVIX.is_fresh(etf_code, 3600):
+        """获取ETF对应指数的隐含波动率(VIX-like)。7200s TTL，失败返回25.0。"""
+        if CACHE_IVIX.is_fresh(etf_code, 7200):
             return CACHE_IVIX[etf_code]
         try:
             func_map = {
@@ -192,7 +226,8 @@ class DataCollectAgent:
             else:
                 df = func()
                 val = float(df["收盘价"].iloc[-1]) if "收盘价" in df.columns else float(df.iloc[:, 1].iloc[-1])
-        except Exception:
+        except Exception as e:
+            logger.warning("get_ivix(%s) API failed: %s", etf_code, e)
             if etf_code in CACHE_IVIX:
                 return CACHE_IVIX[etf_code]
             val = 25.0
@@ -201,8 +236,8 @@ class DataCollectAgent:
 
     @staticmethod
     def get_futures_basis() -> dict:
-        """获取股指期货基差。1800s TTL，失败返回{}。"""
-        if _CACHE.is_fresh("futures_basis", 1800):
+        """获取股指期货基差。7200s TTL，失败降级使用缓存。"""
+        if _CACHE.is_fresh("futures_basis", 3600):
             return _CACHE["futures_basis"]
         try:
             df = ak.futures_zh_realtime()
@@ -232,8 +267,12 @@ class DataCollectAgent:
                 idx_price = index_prices.get(idx_code, fut_price)
                 basis = (fut_price / idx_price - 1) * 100 if idx_price > 0 else 0
                 result[prefix] = round(basis, 2)
-        except Exception:
-            result = {}
+        except Exception as e:
+            logger.warning("get_futures_basis API failed: %s", e)
+            if "futures_basis" in _CACHE:
+                result = _CACHE["futures_basis"]
+            else:
+                result = {}
         _CACHE["futures_basis"] = result
         return result
 
@@ -317,15 +356,16 @@ class PublicOpinionAgent:
             pass
 
         # 2. 专业财经API
-        try:
-            params = {"key": FIN_API_KEY, "q": keyword, "limit": 3}
-            resp = requests.get(FIN_API_URL, params=params, timeout=8)
-            data = json.loads(resp.text)
-            news = "".join([item["title"] + "。" for item in data["news"]])
-            if news:
-                return news
-        except Exception:
-            pass
+        if FIN_API_KEY:
+            try:
+                params = {"key": FIN_API_KEY, "q": keyword, "limit": 3}
+                resp = requests.get(FIN_API_URL, params=params, timeout=8)
+                data = json.loads(resp.text)
+                news = "".join([item["title"] + "。" for item in data["news"]])
+                if news:
+                    return news
+            except Exception:
+                pass
 
         # 3. 降级：新浪爬虫
         news_content = ""
@@ -337,9 +377,23 @@ class PublicOpinionAgent:
             news_list = soup.find_all("div", class_="result")
             for item in news_list[:3]:
                 news_content += item.get_text(strip=True) + "。"
+            if news_content:
+                return news_content
         except Exception:
-            news_content = "暂无公开财经资讯"
-        return news_content
+            pass
+
+        # 4. 兜底：akshare 财新新闻
+        try:
+            import akshare as ak
+            df = ak.stock_news_main_cx()
+            if df is not None and len(df) > 0:
+                matched = df[df["summary"].str.contains(keyword, na=False)]
+                items = matched.head(5) if len(matched) > 0 else df.head(5)
+                return "".join(f"{row['summary']}。" for _, row in items.iterrows())
+        except Exception:
+            pass
+
+        return "暂无公开财经资讯"
 
     @staticmethod
     def extract_keywords(text: str, etf_name: str) -> str:

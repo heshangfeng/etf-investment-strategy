@@ -25,7 +25,7 @@ class WorkflowDirector:
     1. Agent 覆盖完整性：每只 ETF 是否凑齐 12 个 Agent 报告
     2. 分析质量：分析文本是否实质性（>50字）
     3. 数据新鲜度：分析中是否有"暂无、无数据"等信号
-    4. 评级分布偏斜：是否 80%+ 集中在同一评级
+    4. 数据管道健康：Rule Fallback占比、配置参数合理性（TREND_DAY_COUNT等）
     5. 历史准确率趋势：读取 ReviewManager 累积数据，跟踪准确率变化
     6. 评分校准：高分→买入、低分→卖出的映射是否合理
     7. Agent 冗余：是否有 Agent 对持续产出相近评分
@@ -133,6 +133,9 @@ class WorkflowDirector:
                             "detail": f"包含'{pattern}'，可能数据源不可用",
                         })
                         break
+
+        # ── 4. 数据管道健康检查（新增） ──
+        cls._check_data_pipeline(all_reports, findings)
 
         # ── 5. 历史准确率分析（基于 ReviewManager 累积数据） ──
         cls._check_historical_accuracy(findings)
@@ -312,9 +315,68 @@ class WorkflowDirector:
                 "reason": declining[0]["detail"],
             })
 
+        # ── 新维度：数据管道配置问题 ──
+        trend_issue = [i for i in findings.get("issues", []) if i["type"] == "config_trend_days_too_short"]
+        if trend_issue:
+            suggestions.append({
+                "target": "config.py",
+                "action": "增大 TREND_DAY_COUNT 至≥7，过滤短期噪音，提高趋势判断可信度",
+                "priority": "medium",
+                "reason": trend_issue[0]["detail"],
+            })
+        fb_issues = [i for i in findings.get("issues", []) if i["type"] in ("high_rule_fallback_rate", "elevated_rule_fallback")]
+        if fb_issues:
+            suggestions.append({
+                "target": "data.py + .env",
+                "action": "检查API Key配置和网络连接，添加备用数据源（如akshare新闻）减少Rule Fallback",
+                "priority": "high" if fb_issues[0]["type"] == "high_rule_fallback_rate" else "medium",
+                "reason": fb_issues[0]["detail"],
+            })
+
         findings["suggestions"] = suggestions
 
     # ── 新增深度审查维度 ──────────────────────────────────────
+
+    @classmethod
+    def _check_data_pipeline(cls, all_reports: list, findings: dict):
+        """数据管道健康检查：验证配置参数和数据源链路的合理性。"""
+        try:
+            from config import TREND_DAY_COUNT
+
+            # 1. 舆情趋势天数
+            if TREND_DAY_COUNT < 5:
+                findings["issues"].append({
+                    "type": "config_trend_days_too_short",
+                    "severity": "medium",
+                    "detail": f"TREND_DAY_COUNT={TREND_DAY_COUNT}<5，趋势判断易受噪音影响，建议≥7",
+                })
+
+            # 2. 检查 Rule Fallback 占比（反映数据源健康状况）
+            total_agents = 0
+            fallback_count = 0
+            for fr in all_reports:
+                for ar in getattr(fr, "agent_reports", []):
+                    total_agents += 1
+                    if ar.source == "rule_fallback":
+                        fallback_count += 1
+            if total_agents > 0:
+                fb_pct = fallback_count / total_agents * 100
+                if fb_pct > 30:
+                    findings["issues"].append({
+                        "type": "high_rule_fallback_rate",
+                        "severity": "high",
+                        "detail": f"Rule Fallback占比{fb_pct:.0f}%（{fallback_count}/{total_agents}），"
+                                   f"数据源大面积不可用，请检查API Key和网络连接",
+                    })
+                elif fb_pct > 15:
+                    findings["issues"].append({
+                        "type": "elevated_rule_fallback",
+                        "severity": "medium",
+                        "detail": f"Rule Fallback占比{fb_pct:.0f}%（{fallback_count}/{total_agents}），"
+                                   f"部分数据源异常，建议排查",
+                    })
+        except ImportError:
+            pass
 
     @classmethod
     def _check_historical_accuracy(cls, findings: dict):

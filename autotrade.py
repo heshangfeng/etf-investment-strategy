@@ -5,6 +5,7 @@ ETF 智能投资分析系统 - 自动化模拟交易引擎
 """
 import json
 import os
+import glob
 import numpy as np
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -15,6 +16,176 @@ from portfolio import Portfolio, Holding, Transaction, load, save, _price, PORTF
 
 TRADE_LOG = Path(__file__).parent / "data" / "trade_log.json"
 PERF_LOG = Path(__file__).parent / "data" / "performance.json"
+SNAPSHOT_DIR = Path(__file__).parent / "data" / "snapshots"
+
+
+# ====================== 【信号可信度过滤器】 ======================
+class SignalCaliberFilter:
+    """
+    信号可信度过滤器——用已有分析数据评估每个拟执行交易的质量。
+    低可信信号跳过，等待次日确认。
+    不引入硬性规则，全数据驱动。
+    
+    评估维度：
+    1. 评分极端程度：距中性50越远，信号越强
+    2. 评分变化幅度：对比昨日，变化越大越有意义
+    3. 共识度：Agent间一致程度
+    4. Agent方向一致性：多少Agent指向同一方向
+    5. 持有天数：刚买就卖的可信度天然低
+    6. 全市场情绪：所有ETF平均评分proxy市场状态
+    """
+
+    THRESHOLD_BASE = 45  # 基础执行阈值
+
+    @classmethod
+    def load_prev_scores(cls) -> dict[str, float]:
+        """从最近一次历史快照加载各ETF评分。"""
+        files = sorted(glob.glob(str(SNAPSHOT_DIR / "*.json")))
+        if len(files) < 2:
+            return {}
+        try:
+            with open(files[-2], "r", encoding="utf-8") as f:
+                data = json.load(f)
+            return {e["code"]: e["final_score"] for e in data.get("etfs", []) if "final_score" in e}
+        except Exception:
+            return {}
+
+    @classmethod
+    def _calc_agent_alignment(cls, agent_reports: list, operation: str) -> float:
+        """计算与操作方向一致的Agent比例。"""
+        if not agent_reports:
+            return 0.5
+        is_bullish_op = operation in ("强烈买入", "买入", "长期持有")
+        aligned, total = 0, 0
+        for ar in agent_reports:
+            if ar.rating in ("强烈看多", "看多"):
+                if is_bullish_op:
+                    aligned += 1
+                total += 1
+            elif ar.rating in ("强烈看空", "看空"):
+                if not is_bullish_op:
+                    aligned += 1
+                total += 1
+        return aligned / max(total, 1)
+
+    @classmethod
+    def _infer_market_sentiment(cls, all_reports: list) -> float:
+        """用所有ETF平均评分推断市场状态，值越低市场越弱。"""
+        scores = [getattr(fr, 'final_score', 50) for fr in all_reports]
+        return float(np.mean(scores)) if scores else 50.0
+
+    @classmethod
+    def evaluate(
+        cls,
+        code: str,
+        fr: 'FinalResearchReport',
+        all_reports: list,
+        days_held: int,
+        prev_score: float | None,
+    ) -> tuple[bool, str, float]:
+        """
+        评估调仓信号可信度。
+        
+        Returns:
+            should_execute: True=执行调仓, False=跳过待确认
+            reason: 原因描述
+            conviction: 可信度分数 0-100
+        """
+        operation = fr.operation
+        new_score = fr.final_score
+        is_sell = operation in ("卖出", "强烈卖出", "减持")
+
+        # ── 维度1: 评分极端程度 (0-25分) ──
+        extremity = abs(new_score - 50)
+        if extremity >= 25:
+            ex_score = 25
+        elif extremity >= 15:
+            ex_score = 15
+        elif extremity >= 8:
+            ex_score = 5
+        else:
+            ex_score = 0
+
+        # ── 维度2: 评分变化幅度 (0-25分) ──
+        delta_score = 0
+        if prev_score is not None:
+            delta = new_score - prev_score
+            if is_sell:
+                # 卖出操作：评分下降才是好信号
+                effective_delta = -delta
+            else:
+                effective_delta = delta
+            if effective_delta >= 15:
+                delta_score = 25
+            elif effective_delta >= 10:
+                delta_score = 18
+            elif effective_delta >= 5:
+                delta_score = 10
+            elif effective_delta >= 2:
+                delta_score = 5
+            # 变化<2: 噪音，不给分
+
+        # ── 维度3: 共识度 (0-15分) ──
+        cons_map = {"高度一致": 15, "基本一致": 8, "存在分歧": 0, "严重分歧": -10}
+        cons_score = cons_map.get(fr.consensus_level, 0)
+
+        # ── 维度4: Agent方向一致性 (0-20分) ──
+        alignment = cls._calc_agent_alignment(fr.agent_reports, operation)
+        if alignment >= 0.8:
+            align_score = 20
+        elif alignment >= 0.65:
+            align_score = 12
+        elif alignment >= 0.5:
+            align_score = 5
+        else:
+            align_score = -10
+
+        # ── 维度5: 持有天数惩罚 (仅卖出, -15-0分) ──
+        days_penalty = 0
+        if is_sell:
+            if days_held <= 1:
+                days_penalty = -15
+            elif days_held <= 3:
+                days_penalty = -8
+            elif days_held <= 10:
+                days_penalty = -3
+
+        # ── 维度6: 全市场情绪调节 (乘数) ──
+        mkt_sentiment = cls._infer_market_sentiment(all_reports)
+        # 市场弱时更保守：平均评分<45时降阈值效力
+        if mkt_sentiment < 42:
+            market_mult = 0.80
+        elif mkt_sentiment < 47:
+            market_mult = 0.90
+        elif mkt_sentiment > 58:
+            market_mult = 1.10
+        else:
+            market_mult = 1.0
+
+        # ── 合成可信度 ──
+        raw = ex_score + delta_score + cons_score + align_score + days_penalty
+        conviction = float(np.clip(raw * market_mult, 0, 100))
+
+        # ── 动态阈值 ──
+        threshold = cls.THRESHOLD_BASE
+        if mkt_sentiment < 42:
+            threshold = 55  # 弱市更严格
+        elif mkt_sentiment < 47:
+            threshold = 50
+        elif mkt_sentiment > 58:
+            threshold = 40   # 强市可略宽松
+
+        # 绝对否决：Agent严重分歧且评分变化极小
+        if fr.consensus_level == "严重分歧" and (prev_score is None or abs(new_score - prev_score) < 3):
+            return (False, f"严重分歧+评分不变, 可信度{conviction:.0f}", conviction)
+
+        should = conviction >= threshold
+        reason = (
+            f"可信度{conviction:.0f}≥阈值{threshold}, 执行"
+            if should else
+            f"可信度{conviction:.0f}<阈值{threshold}, 跳过待确认"
+        )
+        return (should, reason, conviction)
 
 
 def auto_trade(all_reports: list, date_str: str = "") -> dict:
@@ -37,6 +208,10 @@ def auto_trade(all_reports: list, date_str: str = "") -> dict:
     today = date_str or datetime.now().strftime("%Y-%m-%d")
     holding_codes = {h.code for h in pf.holdings}
 
+    # 加载昨日评分供可信度过滤
+    prev_scores = SignalCaliberFilter.load_prev_scores()
+    report_map = {fr.etf_info.get("code", ""): fr for fr in all_reports}
+
     # 解析建议
     recs = {}
     for fr in all_reports:
@@ -58,6 +233,19 @@ def auto_trade(all_reports: list, date_str: str = "") -> dict:
         r = recs.get(h.code)
         if not r:
             continue
+        # T+1 约束：当日买入的不可卖出
+        if h.added == today:
+            print(f"  ⏳ T+1限制: {h.name}({h.code}) 今日买入，跳过卖出")
+            continue
+        # 信号可信度过滤
+        fr = report_map.get(h.code)
+        if fr:
+            days_held = (datetime.now() - datetime.strptime(h.added, "%Y-%m-%d")).days if h.added else 999
+            should_trade, reason, conv = SignalCaliberFilter.evaluate(
+                h.code, fr, all_reports, days_held, prev_scores.get(h.code))
+            if not should_trade:
+                print(f"  🚫 跳过卖出 {h.name}({h.code}): {reason}")
+                continue
         if r["operation"] in ("卖出", "强烈卖出"):
             # 全仓卖出
             price = _price(h.code, h.avg_cost)
@@ -128,6 +316,9 @@ def auto_trade(all_reports: list, date_str: str = "") -> dict:
         r = recs.get(h.code)
         if not r or r["position"] <= 0:
             continue
+        # T+1 约束：当日买入的不可再平衡卖出
+        if h.added == today:
+            continue
         price = _price(h.code, h.avg_cost)
         current_value = h.shares * price
         current_pct = current_value / max(pf.cash + mkt_val, 1)
@@ -177,16 +368,26 @@ def auto_trade(all_reports: list, date_str: str = "") -> dict:
                             "reason": "再平衡",
                         })
 
-    # ── 2. 再买（分配现金） ──
+    # ── 2. 再买（分配现金）──
     buys = {c: r for c, r in recs.items()
             if r["position"] > 0 and c not in {h.code for h in pf.holdings}}
 
     if buys and pf.cash > 0:
-        remaining_cash = pf.cash
         total_rec_pos = sum(r["position"] for r in buys.values())
-        for code, r in sorted(buys.items(), key=lambda x: x[1]["position"], reverse=True):
+        # Step 1: 计算理论分配（基于 pf.cash，order-independent）
+        allocations = []  # (code, r, shares, cost, fee_val, total_cost, price)
+        for code, r in buys.items():
+            # 信号可信度过滤（买入）
+            fr = report_map.get(code)
+            if fr:
+                should_trade, reason, conv = SignalCaliberFilter.evaluate(
+                    code, fr, all_reports, 999, prev_scores.get(code))
+                if not should_trade:
+                    print(f"  🚫 跳过买入 {r['name']}({code}): {reason}")
+                    continue
+
             alloc_ratio = r["position"] / max(total_rec_pos, 0.01)
-            alloc_cash = remaining_cash * alloc_ratio
+            alloc_cash = pf.cash * alloc_ratio
 
             price = _price(code, 0)
             if price <= 0:
@@ -198,22 +399,30 @@ def auto_trade(all_reports: list, date_str: str = "") -> dict:
             cost = shares * price
             fee_val = cost * FEE_RATE
             total_cost = cost + fee_val
-            if total_cost > remaining_cash:
-                shares = int(remaining_cash / price / 100) * 100
-                if shares < 100:
-                    continue
-                cost = shares * price
-                fee_val = cost * FEE_RATE
-                total_cost = cost + fee_val
+            allocations.append((code, r, shares, cost, fee_val, total_cost, price))
 
-            # 买入
-            remaining_cash -= total_cost
+        # Step 2: 按比例缩放（若总需求超出现金）
+        total_needed = sum(a[5] for a in allocations)
+        if total_needed > pf.cash:
+            scale = pf.cash / total_needed
+            scaled = []
+            for code, r, shares, cost, fee_val, total_cost, price in allocations:
+                new_shares = int(int(shares * scale) / 100) * 100
+                if new_shares >= 100:
+                    new_cost = new_shares * price
+                    new_fee = new_cost * FEE_RATE
+                    new_total = new_cost + new_fee
+                    scaled.append((code, r, new_shares, new_cost, new_fee, new_total, price))
+            allocations = scaled
+
+        # Step 3: 执行买入
+        for code, r, shares, cost, fee_val, total_cost, price in allocations:
             pf.cash -= total_cost
             total_buy_cost += cost
             nm = r["name"]
             pf.holdings.append(Holding(
                 code=code, name=nm, shares=shares,
-                avg_cost=round(price, 4), added=today,
+                avg_cost=round(price + fee_val / max(shares, 1), 4), added=today,
             ))
             pf.transactions.append(Transaction(
                 date=today, code=code, name=nm,
@@ -272,7 +481,7 @@ def _log_performance(pf: Portfolio, date: str):
     market_value = sum(h.shares * _price(h.code, h.avg_cost) for h in pf.holdings)
     total = pf.cash + market_value
 
-    perf = {"initial_capital": 100000.0}
+    perf = {"initial_capital": 670000.0}
     if PERF_LOG.exists():
         try:
             with open(PERF_LOG, "r", encoding="utf-8") as f:
@@ -299,9 +508,9 @@ def _log_performance(pf: Portfolio, date: str):
     if TRADE_LOG.exists():
         try:
             with open(TRADE_LOG, "r", encoding="utf-8") as f:
-                snaps = json.load(f) or [{"total": 100000.0}]
+                snaps = json.load(f) or [{"total": 670000.0}]
             if len(snaps) > 1:
-                values = [s.get("total", 100000.0) for s in snaps]
+                values = [s.get("total", 670000.0) for s in snaps]
                 returns = [(values[i] / values[i - 1] - 1) for i in range(1, len(values))]
                 if returns:
                     avg_ret = np.mean(returns) * 252
@@ -344,7 +553,7 @@ def show_performance():
                 for s in snaps[-10:]:
                     d = s["date"]
                     v = s["total"]
-                    ret = (v / 100000 - 1) * 100
+                    ret = (v / perf.get("initial_capital", 670000) - 1) * 100
                     bar = "█" * max(1, int(abs(ret) / 2))
                     print(f"    {d}: {v:>8.2f}  ({ret:>+6.2f}%) {bar}")
         except Exception:
@@ -362,9 +571,9 @@ def show_trades():
     with open(TRADE_LOG, "r", encoding="utf-8") as f:
         snaps = json.load(f)
 
-    print(f"\n{'='*60}")
+    print(f"\n{'='*75}")
     print(f"  历史交易记录")
-    print(f"{'='*60}")
+    print(f"{'='*75}")
     for snap in snaps:
         trades = snap.get("trades", {})
         date = snap.get("date", "?")
@@ -373,9 +582,15 @@ def show_trades():
         if buys or sells:
             print(f"\n  [{date}]")
             for t in sells:
-                print(f"    卖出 {t['name']}({t['code']}) {t['shares']}份 @ {t['price']} = {t['proceeds']:.0f}")
+                fee = t.get("proceeds", 0) * FEE_RATE
+                net = t["proceeds"] - fee
+                print(f"    卖出 {t['name']}({t['code']}) {t['shares']}份 @ {t['price']}  "
+                      f"金额={t['proceeds']:.0f}  佣金={fee:.1f}  净到账={net:.0f}")
             for t in buys:
-                print(f"    买入 {t['name']}({t['code']}) {t['shares']}份 @ {t['price']} = {t['cost']:.0f}")
+                fee = t.get("cost", 0) * FEE_RATE
+                net = t["cost"] + fee
+                print(f"    买入 {t['name']}({t['code']}) {t['shares']}份 @ {t['price']}  "
+                      f"金额={t['cost']:.0f}  佣金={fee:.1f}  实付={net:.0f}")
 
     print(f"\n{'='*60}\n")
 

@@ -1,0 +1,86 @@
+{
+  "last_date": "20260603",
+  "total_runs": 2,
+  "total_verifications": 24,
+  "overall_accuracy_pct": 83.3,
+  "by_operation": {
+    "减持": {
+      "total": 62,
+      "correct": 6,
+      "wrong": 2
+    },
+    "长期持有": {
+      "total": 4,
+      "correct": 4,
+      "wrong": 0
+    },
+    "持有": {
+      "total": 12,
+      "correct": 10,
+      "wrong": 2
+    }
+  },
+  "by_agent": {
+    "价值估值智能体": {
+      "directional": 0,
+      "hits": 0
+    },
+    "技术趋势智能体": {
+      "directional": 12,
+      "hits": 4
+    },
+    "舆情情绪智能体": {
+      "directional": 8,
+      "hits": 4
+    },
+    "资金流向智能体": {
+      "directional": 4,
+      "hits": 0
+    },
+    "风险管理智能体": {
+      "directional": 16,
+      "hits": 8
+    },
+    "行业纵析智能体": {
+      "directional": 8,
+      "hits": 4
+    },
+    "零售情绪智能体": {
+      "directional": 16,
+      "hits": 2
+    },
+    "跨市场联动智能体": {
+      "directional": 10,
+      "hits": 4
+    },
+    "游资情绪智能体": {
+      "directional": 8,
+      "hits": 4
+    },
+    "解禁压力智能体": {
+      "directional": 10,
+      "hits": 2
+    },
+    "技术形态智能体": {
+      "directional": 6,
+      "hits": 2
+    }
+  },
+  "by_date": [
+    {
+      "d": "20260602",
+      "verified": 39,
+      "correct": 10,
+      "wrong": 2,
+      "pct": 83.3
+    },
+    {
+      "d": "20260602",
+      "verified": 39,
+      "correct": 10,
+      "wrong": 2,
+      "pct": 83.3
+    }
+  ],
+  "pending": []
+}

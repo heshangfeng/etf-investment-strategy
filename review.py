@@ -141,21 +141,22 @@ class ReviewManager:
         hold_ops = {"长期持有", "持有"}
 
         if operation in buy_ops:
-            if ret_pct > 0.5: return "正确"
-            if ret_pct < -0.5: return "错误"
+            if ret_pct > 1.0: return "正确"
+            if ret_pct < -1.0: return "错误"
             return "持平"
         elif operation in sell_ops:
-            if ret_pct < -0.5: return "正确"
-            if ret_pct > 0.5: return "错误"
+            if ret_pct < -1.0: return "正确"
+            if ret_pct > 1.0: return "错误"
             return "持平"
         elif operation == "减持":
-            if ret_pct < -0.3: return "正确"
-            if ret_pct > 0.5: return "错误"
+            if ret_pct < -1.0: return "正确"
+            if ret_pct > 1.0: return "错误"
             return "持平"
         else:  # 持有/长期持有
             if -1.0 <= ret_pct <= 1.0: return "正确"
+            if ret_pct > 1.0: return "错误"
             if ret_pct < -1.0: return "错误"
-            return "正确"  # 上涨也算对
+            return "正确"
 
     @classmethod
     def _update_cumulative_stats(cls, verifications: list[dict]):

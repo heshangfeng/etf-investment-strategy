@@ -68,14 +68,16 @@ class ChiefDecisionAgent(BaseLLMAgent):
         范围 0.3 ~ 1.0，确保即使分歧大也有基础置信度。
         """
         calibrated = []
-        for r, ns in zip(reports, normalized_scores):
-            # 方向一致性：多少个Agent在同一方向
+        for i, (r, ns) in enumerate(zip(reports, normalized_scores)):
+            # 方向一致性：多少个Agent在同一方向（排除自身）
             direction = "多" if ns > 55 else "空" if ns < 45 else "中"
-            same_dir = sum(
-                1 for s in normalized_scores
-                if ("多" if s > 55 else "空" if s < 45 else "中") == direction
-            )
-            agreement = same_dir / max(len(normalized_scores), 1)
+            same_dir = 0
+            for j, s in enumerate(normalized_scores):
+                if j == i:  # 跳过自身
+                    continue
+                if ("多" if s > 55 else "空" if s < 45 else "中") == direction:
+                    same_dir += 1
+            agreement = same_dir / max(len(normalized_scores) - 1, 1)
             extremity = abs(ns - 50) / 50.0
             confidence = 0.3 + 0.5 * agreement + 0.2 * extremity
             calibrated.append(float(np.clip(confidence, 0.3, 1.0)))
@@ -171,7 +173,7 @@ class ChiefDecisionAgent(BaseLLMAgent):
     def _compute_zscore(scores: list[float]) -> list[float]:
         """z-score标准化"""
         arr = np.array(scores)
-        mean, std = np.mean(arr), np.std(arr)
+        mean, std = np.mean(arr), np.std(arr, ddof=1)
         if std < 1e-6:
             return [0.0] * len(scores)
         return [float((s - mean) / std) for s in scores]
@@ -308,17 +310,17 @@ class ChiefDecisionAgent(BaseLLMAgent):
 
         # ── 2.5 时间序列动量因子调整 ──
         ts_momentum = self._time_series_momentum_score(etf_info['code'])
-        weighted_score += ts_momentum
+        weighted_score += ts_momentum * 0.35
 
         # ── 3. 分歧折扣（用共识度调整评分） ──
         if market_state == "强趋势牛":
             discount = 1.0
         elif market_state == "震荡偏强":
-            discount = max(1.0 - max(cv - 0.15, 0) * 0.5, 0.90)
+            discount = max(1.0 - max(raw_cv - 0.15, 0) * 0.5, 0.90)
         elif market_state == "震荡偏弱":
-            discount = max(1.0 - max(cv - 0.12, 0) * 0.6, 0.85)
+            discount = max(1.0 - max(raw_cv - 0.12, 0) * 0.6, 0.85)
         else:
-            discount = max(1.0 - max(cv - 0.10, 0) * 0.7, 0.80)
+            discount = max(1.0 - max(raw_cv - 0.10, 0) * 0.7, 0.80)
         weighted_score *= discount
 
         final_score = float(np.clip(weighted_score, 0, 100))
@@ -363,8 +365,8 @@ class ChiefDecisionAgent(BaseLLMAgent):
         # ── 5. LLM决策（优先于规则，结果决定最终评分）──
         ratings_list = [r.rating for r in reports]
         reports_text = "\n\n".join([
-            f"【{r.agent_name}】评级:{r.rating} 评分:{r.score} 置信度:{r.confidence}\n分析:{r.analysis[:300]}\n关键因子:{'; '.join(r.key_factors)}\n风险:{'; '.join(r.risk_warnings)}"
-            for r in reports
+            f"【{r.agent_name}】评级:{r.rating} 评分:{normalized_scores[i]:.0f} 置信度:{r.confidence}\n分析:{r.analysis[:300]}\n关键因子:{'; '.join(r.key_factors)}\n风险:{'; '.join(r.risk_warnings)}"
+            for i, r in enumerate(reports)
         ])
         debates_text = ""
         if debates:
@@ -378,16 +380,9 @@ class ChiefDecisionAgent(BaseLLMAgent):
                 else:
                     debates_text += f"  裁决不可用\n"
 
-        # Apply debate arbitration adjustments to normalized scores
-        for d in debates:
-            if ("score_adjustment" in d and d.get("winner")
-                    and d["winner"] in ("A", "B")):
-                winner_name = d["agent_a"] if d["winner"] == "A" else d["agent_b"]
-                for i, r in enumerate(reports):
-                    if r.agent_name == winner_name:
-                        normalized_scores[i] += d["score_adjustment"]
-                        normalized_scores[i] = float(np.clip(normalized_scores[i], 0, 100))
-                        break
+        # Note: score adjustments from debates are now applied in scheduler.py
+        # before ChiefDecisionAgent.run() — they directly modify AgentReport.score,
+        # so normalized_scores already reflect the debate results. No need to re-apply here.
 
         data_text = f"【ETF信息】{etf_info['name']}({etf_info['code']})\n\n【智能体报告】\n{reports_text}\n\n【仲裁记录】\n{debates_text}\n\n【全局仓位上限】{global_max_pos*100:.0f}%"
         llm_out = self._call_llm(self.SYSTEM_PROMPT,
@@ -419,10 +414,7 @@ class ChiefDecisionAgent(BaseLLMAgent):
         elif final_score >= 65:
             operation, holding = "买入", "中期(1-3月)"
         elif final_score >= 50:
-            if etf_type == "宽基":
-                operation, holding = "长期持有", "长期(6月+)"
-            else:
-                operation, holding = "持有", "中期(1-3月)"
+            operation, holding = "持有", "中期(1-3月)"
         elif final_score >= 35:
             operation, holding = "减持", "短期(1-4周)"
         elif final_score >= 20:

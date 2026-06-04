@@ -177,7 +177,15 @@ class MainSchedulerAgent:
             s["_comp"] = r_vol[i] * 0.4 + r_vola[i] * 0.3 + r_mom[i] * 0.3
         valid.sort(key=lambda x: x["_comp"], reverse=True)
         clean = [{"code": s["code"], "name": s["name"], "type": s["type"], "index_code": s["index_code"]} for s in valid]
-        return {1: ETF_POOL, 2: [], 3: []}
+        n = len(clean)
+        if n == 0:
+            return {1: list(wide), 2: [], 3: []}
+        t1_count = max(int(n * 0.3), 1)
+        t2_count = max(int(n * 0.4), 1)
+        tier1 = list(wide) + clean[:t1_count]
+        tier2 = clean[t1_count:t1_count + t2_count]
+        tier3 = clean[t1_count + t2_count:]
+        return {1: tier1, 2: tier2, 3: tier3}
 
     def _rule_based_research(self, code: str, name: str, typ: str, idx: str,
                               global_max_pos: float, macro_report: AgentReport,
@@ -410,6 +418,43 @@ class MainSchedulerAgent:
             if disagreements:
                 debates = DebateEngine.hold_debate(disagreements, reports, name, code)
 
+        # ── 辩论评分调整：将仲裁结果写回 Agent 分数 ──
+        for debate in debates:
+            winner = debate.get("winner")
+            adjustment = debate.get("score_adjustment", 0)
+            if winner not in ("A", "B") or adjustment == 0:
+                debate["applied"] = False
+                continue
+
+            agent_a_name = debate["agent_a"]
+            agent_b_name = debate["agent_b"]
+            winner_name = agent_a_name if winner == "A" else agent_b_name
+            loser_name = agent_b_name if winner == "A" else agent_a_name
+
+            # 应用加分/扣分到胜方
+            for r in reports:
+                if r.agent_name == winner_name:
+                    old_score = r.score
+                    new_score = max(0, min(100, old_score + adjustment))
+                    r.score = new_score
+                    r.rating = BaseLLMAgent._score_to_rating(new_score)
+                    print(f"  ⚖️ 仲裁调整: {agent_a_name}(vs {agent_b_name}) {old_score}→{new_score}")
+                    break
+
+            # 如果调整幅度>=5，败方承受 mild penalty（反方向的一半）
+            if abs(adjustment) >= 5:
+                penalty = -adjustment / 2
+                for r in reports:
+                    if r.agent_name == loser_name:
+                        old_score = r.score
+                        new_score = max(0, min(100, old_score + penalty))
+                        r.score = new_score
+                        r.rating = BaseLLMAgent._score_to_rating(new_score)
+                        print(f"  ⚖️ 仲裁调整: {agent_b_name}(vs {agent_a_name}) {old_score}→{new_score}")
+                        break
+
+            debate["applied"] = True
+
         etf_info = {"code": code, "name": name, "type": typ, "index_code": idx}
         final_report = self.chief_agent.run(reports, debates, global_max_pos, etf_info, market_state)
         final_report.macro_context = macro_report.analysis[:200]
@@ -611,7 +656,7 @@ def _portfolio_optimization_phase(final_reports: list) -> None:
         return
 
     codes = opt_result["codes"]
-    opt_weights = opt_result["weights"]
+    opt_weights = np.array(opt_result["weights"])
 
     # Build name lookup
     name_map = {fr.etf_info["code"]: fr.etf_info["name"] for fr in final_reports}
@@ -631,7 +676,7 @@ def _portfolio_optimization_phase(final_reports: list) -> None:
     print(f"  预期年化收益: {opt_result['expected_return']*100:.1f}%")
     print(f"  预期年化波动: {opt_result['expected_vol']*100:.1f}%")
     print(f"  夏普比率: {opt_result['sharpe_ratio']:.2f}")
-    print(f"  分散度: {opt_result['diversification_ratio']:.2f}")
+    print(f"  分散度: {opt_result.get('diversification_ratio', 0):.2f}")
 
     print(f"\n  调仓建议:")
     for code, w in zip(codes, scaled_weights):

@@ -21,14 +21,14 @@ ARBITRATION_PROMPT = """你作为投资委员会仲裁员，需要裁决两位�
 分析师A ({agent_a}) 的观点：
 评级：{a_rating}
 评分：{a_score}
-分析：{a_analysis[:300]}
+分析：{a_analysis}
 关键因子：{a_factors}
 风险提示：{a_risks}
 
 分析师B ({agent_b}) 的观点：
 评级：{b_rating}
 评分：{b_score}
-分析：{b_analysis[:300]}
+分析：{b_analysis}
 关键因子：{b_factors}
 风险提示：{b_risks}
 
@@ -101,6 +101,7 @@ class DebateEngine:
             return []
         arbitration_results = []
         reports_dict = {r.agent_name: r for r in reports}
+        disagreements.sort(key=lambda d: d["score_gap"], reverse=True)
         for d in disagreements[:3]:
             agent_a = reports_dict.get(d["agent_a"])
             agent_b = reports_dict.get(d["agent_b"])
@@ -113,13 +114,16 @@ class DebateEngine:
 
             topic = f"{d['agent_a']}({d['rating_a']}) vs {d['agent_b']}({d['rating_b']})" + \
                     f" 关于 {etf_name}({etf_code})"
+            # 预切片分析文本（str.format不支持切片语法）
+            a_analysis_300 = (agent_a.analysis or "无")[:300]
+            b_analysis_300 = (agent_b.analysis or "无")[:300]
             user_prompt = ARBITRATION_PROMPT.format(
                 topic=topic,
                 agent_a=d["agent_a"], agent_b=d["agent_b"],
                 a_rating=d["rating_a"], b_rating=d["rating_b"],
                 a_score=d["score_a"], b_score=d["score_b"],
-                a_analysis=agent_a.analysis or "无",
-                b_analysis=agent_b.analysis or "无",
+                a_analysis=a_analysis_300,
+                b_analysis=b_analysis_300,
                 a_factors="; ".join(agent_a.key_factors) if agent_a.key_factors else "无",
                 b_factors="; ".join(agent_b.key_factors) if agent_b.key_factors else "无",
                 a_risks="; ".join(agent_a.risk_warnings) if agent_a.risk_warnings else "无",

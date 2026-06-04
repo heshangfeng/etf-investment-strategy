@@ -53,6 +53,10 @@ class TechAnalystAgent(BaseLLMAgent):
 5. 布林带：价格触及上轨=超买，触及下轨=超卖，带宽收窄=变盘信号
 6. 成交量确认：上涨需放量确认，下跌放量=恐慌，缩量下跌=跌势将尽
 
+Warning: RSI > 70 with bearish divergence is a strong sell signal
+Warning: MACD柱状体缩头/缩脚是动能衰减的关键信号
+Warning: 多种指标共振时信号更可靠，单一指标不可过度依赖
+
 结合价格位置、均线形态、技术指标和成交量给出综合判断。注意不同指标信号矛盾时的处理。"""
 
     def run(self, etf_code: str, etf_name: str) -> AgentReport:
@@ -61,16 +65,51 @@ class TechAnalystAgent(BaseLLMAgent):
             return AgentReport(self.ROLE_NAME, etf_code, etf_name, "中性", 50,
                                "数据不足20个交易日", ["数据不足"], [], 0.3, {}, "rule_fallback")
         close, m5, m20 = df["close"].iloc[-1], df["ma5"].iloc[-1], df["ma20"].iloc[-1]
+
+        # === RSI(6) ===
+        delta = df["close"].diff()
+        gain = delta.clip(lower=0)
+        loss = (-delta).clip(lower=0)
+        avg_gain = gain.rolling(6).mean()
+        avg_loss = loss.rolling(6).mean()
+        rs = avg_gain / avg_loss
+        rsi_series = 100 - (100 / (1 + rs))
+        rsi_val = rsi_series.iloc[-1] if not pd.isna(rsi_series.iloc[-1]) else 50.0
+
+        # === MACD (12, 26, 9) ===
+        ema12 = df["close"].ewm(span=12).mean()
+        ema26 = df["close"].ewm(span=26).mean()
+        dif = ema12 - ema26
+        dea = dif.ewm(span=9).mean()
+        dif_val, dea_val = dif.iloc[-1], dea.iloc[-1]
+        macd_cross = "金叉" if dif_val > dea_val else "死叉" if dif_val < dea_val else "粘合"
+
+        # === Bollinger Bands (20, 2) ===
+        bb_mid = df["close"].rolling(20).mean()
+        bb_std = df["close"].rolling(20).std()
+        bb_width = ((bb_mid + 2 * bb_std) - (bb_mid - 2 * bb_std)) / bb_mid * 100
+        bb_w = bb_width.iloc[-1] if not pd.isna(bb_width.iloc[-1]) else 0.0
+
+        # === 规则评分（均线 + RSI + MACD 共振） ===
         ts = 50
         if close > m5 and close > m20: ts += 18
         if m5 > m20: ts += 12
-        if close < m5 and close < m20: ts -= 25
+        if close < m5 and close < m20: ts -= 30
+        if rsi_val < 30: ts += 10       # 超卖反弹
+        elif rsi_val > 70: ts -= 10     # 超买回调
+        if dif_val > dea_val: ts += 8   # MACD金叉
+        elif dif_val < dea_val: ts -= 8 # MACD死叉
         score = float(np.clip(ts, 0, 100))
+
         recent_5d = (close / df["close"].iloc[-5] - 1) * 100 if len(df) >= 5 else 0
+        rsi_signal = "超买区" if rsi_val > 70 else "超卖区" if rsi_val < 30 else "中性"
         data_text = (f"最新价: {close:.3f} | MA5: {m5:.3f} | MA20: {m20:.3f}\n"
                      f"均线关系: {'多头' if m5 > m20 else '空头'}排列\n"
                      f"近5日涨跌: {recent_5d:.2f}%\n"
-                     f"近5日平均波动率: {df['volatility'].tail(5).mean():.4f}")
+                     f"近5日平均波动率: {df['volatility'].tail(5).mean():.4f}\n"
+                     f"RSI(6): {rsi_val:.1f} ({rsi_signal})\n"
+                     f"MACD: DIF={dif_val:.4f} DEA={dea_val:.4f} 柱={ (dif - dea).iloc[-1] * 2 :.4f} | 信号: {macd_cross}\n"
+                     f"布林带宽: {bb_w:.1f}%")
         enriched_text = self._enrich_with_memory(etf_code, data_text)
         llm_out = self._call_llm(self.SYSTEM_PROMPT, self._build_user_prompt(etf_name, etf_code, enriched_text))
         rating = "强烈看多" if score >= 80 else "看多" if score >= 65 else "中性" if score >= 45 else "看空" if score >= 30 else "强烈看空"

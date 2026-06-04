@@ -17,7 +17,7 @@ import plotly.graph_objects as go
 # ── 页面配置 ──
 st.set_page_config(page_title="ETF 智能投研看板", layout="wide")
 
-from config import OUTPUT_DIR, SNAPSHOT_DIR, REVIEW_DIR
+from config import OUTPUT_DIR, SNAPSHOT_DIR, REVIEW_DIR, FEE_RATE
 SNAPSHOT_DIR = Path(__file__).parent / SNAPSHOT_DIR
 REVIEW_DIR = Path(__file__).parent / REVIEW_DIR
 OUTPUT_DIR = Path(__file__).parent / OUTPUT_DIR
@@ -174,7 +174,7 @@ def main():
         text=rating_counts.values,
     )
     fig_ratings.update_layout(showlegend=False, height=250)
-    st.plotly_chart(fig_ratings, use_container_width=True)
+    st.plotly_chart(fig_ratings, width='stretch')
 
     # ── 板块分布饼图 ──
     type_counts = df["类型"].value_counts()
@@ -184,7 +184,7 @@ def main():
         hole=0.4,
     )
     fig_types.update_layout(height=280)
-    st.plotly_chart(fig_types, use_container_width=True)
+    st.plotly_chart(fig_types, width='stretch')
 
     # ── 评分分布直方图 ──
     fig_scores = px.histogram(
@@ -194,7 +194,7 @@ def main():
         color_discrete_sequence=["#1f77b4"],
     )
     fig_scores.update_layout(height=250)
-    st.plotly_chart(fig_scores, use_container_width=True)
+    st.plotly_chart(fig_scores, width='stretch')
 
     # ── 单个 ETF 详情 ──
     st.subheader("ETF 详情")
@@ -247,7 +247,7 @@ def main():
                     title="Agent 评分雷达",
                     margin=dict(l=80, r=80, t=40, b=40),
                 )
-                st.plotly_chart(fig_radar, use_container_width=True)
+                st.plotly_chart(fig_radar, width='stretch')
 
     # ── 底部统计 ──
     st.divider()
@@ -290,7 +290,7 @@ def main():
                 lambda v: f"color: {'red' if v.startswith('-') else 'green'}; font-weight: bold;"
                 if isinstance(v, str) and v.endswith('%') else "",
                 subset=["盈亏"]
-            ), use_container_width=True, hide_index=True)
+            ), width='stretch', hide_index=True)
         else:
             st.info("暂无持仓。运行 `python etf-agent.py` 后自动交易。")
     except Exception as e:
@@ -333,15 +333,77 @@ def main():
                         height=350,
                         margin=dict(l=40, r=40, t=40, b=40),
                     )
-                    st.plotly_chart(fig_equity, use_container_width=True)
+                    st.plotly_chart(fig_equity, width='stretch')
     except Exception:
         pass
+
+    # ── 历史交易记录 ──
+    st.divider()
+    st.subheader("历史交易记录")
+    try:
+        from autotrade import TRADE_LOG
+        if TRADE_LOG.exists():
+            with open(TRADE_LOG, "r", encoding="utf-8") as f:
+                tl_snaps = json.load(f)
+            for snap in reversed(tl_snaps):
+                trades = snap.get("trades", {})
+                date = snap.get("date", "?")
+                buys = trades.get("buys", [])
+                sells = trades.get("sells", [])
+                if not buys and not sells:
+                    continue
+
+                with st.expander(f"📅 {date}  |  总资产 {snap.get('total', 0):.0f}", expanded=False):
+                    if sells:
+                        sell_rows = []
+                        for t in sells:
+                            fee = t.get("proceeds", 0) * FEE_RATE
+                            net = t["proceeds"] - fee
+                            sell_rows.append({
+                                "方向": "🔴 卖出",
+                                "代码": t["code"],
+                                "名称": t["name"],
+                                "份额": t["shares"],
+                                "价格": f"{t['price']:.4f}",
+                                "金额": f"{t['proceeds']:.0f}",
+                                "佣金": f"{fee:.1f}",
+                                "净到账": f"{net:.0f}",
+                            })
+                        df_sell = pd.DataFrame(sell_rows)
+                        st.dataframe(df_sell, width="stretch", hide_index=True)
+
+                    if buys:
+                        buy_rows = []
+                        for t in buys:
+                            fee = t.get("cost", 0) * FEE_RATE
+                            net = t["cost"] + fee
+                            buy_rows.append({
+                                "方向": "🟢 买入",
+                                "代码": t["code"],
+                                "名称": t["name"],
+                                "份额": t["shares"],
+                                "价格": f"{t['price']:.4f}",
+                                "金额": f"{t['cost']:.0f}",
+                                "佣金": f"{fee:.1f}",
+                                "实付": f"{net:.0f}",
+                            })
+                        df_buy = pd.DataFrame(buy_rows)
+                        st.dataframe(df_buy, width="stretch", hide_index=True)
+
+                    # Show balance change for this day
+                    cash_change = snap.get("cash", 0)
+                    st.caption(f"当日现金: {cash_change:.0f}  |  持仓市值: {snap.get('market_value', 0):.0f}")
+    except Exception as e:
+        st.caption(f"交易记录暂不可用: {e}")
 
     # ── 运行提示 ──
     st.sidebar.divider()
     st.sidebar.info(
-        "**启动命令**\n\n"
-        "```\nstreamlit run dashboard.py\n```\n\n"
+        "**运行命令**\n\n"
+        "前台（终端关即停）：\n"
+        "```powershell\npowershell -File start_dashboard.ps1\n```\n"
+        "后台（关终端不影响）：\n"
+        "```powershell\nStart-Process -WindowStyle Hidden -FilePath \"powershell\" -ArgumentList \"-File start_dashboard.ps1\"\n```\n\n"
         "数据来源: `data/snapshots/*.json`"
     )
 

@@ -16,6 +16,14 @@ from agents import MacroAnalystAgent
 from core.decision import ChiefDecisionAgent
 from core.scheduler import MainSchedulerAgent
 
+# 自动更新项目目录结构文档（静默，失败不影响分析）
+try:
+    from scripts.generate_structure import generate_markdown, update_run_command_md
+    _md = generate_markdown()
+    update_run_command_md(_md)
+except Exception:
+    pass
+
 
 SNAPSHOT_PATH = Path(__file__).parent / SNAPSHOT_DIR
 

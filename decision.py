@@ -492,6 +492,14 @@ class ChiefDecisionAgent(BaseLLMAgent):
             adjusted_scores.append(score)
             agent_names.append(name)
 
+        if not adjusted_scores:
+            return {
+                "final_score": 50.0, "final_rating": "中性",
+                "operation": "持有", "holding_period": "中期(1-3月)",
+                "position_pct": 0.0, "consensus": "基本一致",
+                "stop_loss_pct": -5.0, "take_profit_pct": 15.0,
+            }
+
         raw_std = float(np.std(adjusted_scores))
         raw_mean = float(np.mean(adjusted_scores)) if adjusted_scores else 1
         raw_cv = raw_std / max(raw_mean, 1)
@@ -589,7 +597,7 @@ class ChiefDecisionAgent(BaseLLMAgent):
                 overall_acc = stats.get("overall_accuracy_pct", 55) / 100
                 if total_verified > 10:
                     win_rate = overall_acc
-        except:
+        except Exception:
             pass
 
         if win_rate == 0.55 and total_verified <= 10:

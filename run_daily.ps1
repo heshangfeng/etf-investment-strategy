@@ -71,11 +71,39 @@ try {
     $perfLines = $perfOutput -split "`r`n|`n" | Where-Object { $_ -match "初始资金|当前总值|总收益率|最大回撤" }
     $tradeLines = $tradeOutput -split "`r`n|`n" | Where-Object { $_ -match "买入|卖出" } | Select-Object -First 8
 
+    # 读取 performance.json 获取当日盈亏
+    $PerfFile = Join-Path $ProjectDir "data" "performance.json"
+    $dailyPnlBlock = ""
+    if (Test-Path $PerfFile) {
+        try {
+            $perfContent = Get-Content $PerfFile -Raw -Encoding utf8 | ConvertFrom-Json
+            $pnl = $perfContent.daily_pnl
+            $pnlPct = $perfContent.daily_pnl_pct
+            $cumPnl = $perfContent.cumulative_pnl
+            $marketVal = $perfContent.market_value
+            $cashVal = $perfContent.cash
+            if ($pnl -ne $null) {
+                $pnlSign = if ($pnl -ge 0) { "+" } else { "" }
+                $dailyPnlBlock = @"
+
+【模拟盘当日盈亏】
+当日盈亏: ${pnlSign}${pnl} (${pnlSign}${pnlPct}%)
+累计盈亏: ${cumPnl}
+持仓市值: ${marketVal}
+现金余额: ${cashVal}
+"@
+            }
+        } catch {
+            Write-Log "Failed to read performance.json: $_"
+        }
+    }
+
     $body = @"
 ETF分析完成
 
 【策略表现】
 $($perfLines -join "`n")
+$dailyPnlBlock
 
 【调仓明细】
 $($tradeLines -join "`n")

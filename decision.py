@@ -472,3 +472,172 @@ class ChiefDecisionAgent(BaseLLMAgent):
             take_profit_pct=take_profit_pct,
             factor_contributions=factor_contributions
         )
+
+    @staticmethod
+    def compute_rule_score(
+        agent_scores: list[dict],
+        etf_code: str,
+        etf_name: str,
+        etf_type: str,
+        global_max_pos: float,
+        market_state: str = "震荡偏强",
+    ) -> dict:
+        adjusted_scores = []
+        agent_names = []
+        for a in agent_scores:
+            name = a["name"]
+            score = a["score"]
+            if name in ChiefDecisionAgent.REVERSE_AGENTS:
+                score = 100 - score
+            adjusted_scores.append(score)
+            agent_names.append(name)
+
+        raw_std = float(np.std(adjusted_scores))
+        raw_mean = float(np.mean(adjusted_scores)) if adjusted_scores else 1
+        raw_cv = raw_std / max(raw_mean, 1)
+        if raw_cv < 0.15:
+            consensus = "高度一致"
+        elif raw_cv < 0.25:
+            consensus = "基本一致"
+        elif raw_cv < 0.40:
+            consensus = "存在分歧"
+        else:
+            consensus = "严重分歧"
+
+        z_scores = ChiefDecisionAgent._compute_zscore(adjusted_scores)
+        normalized_scores = [float(np.clip(50 + z * 15, 0, 100)) for z in z_scores]
+
+        calibrated_confidences = []
+        for i, ns in enumerate(normalized_scores):
+            direction = "多" if ns > 55 else "空" if ns < 45 else "中"
+            same_dir = 0
+            for j, s in enumerate(normalized_scores):
+                if j == i:
+                    continue
+                if ("多" if s > 55 else "空" if s < 45 else "中") == direction:
+                    same_dir += 1
+            agreement = same_dir / max(len(normalized_scores) - 1, 1)
+            extremity = abs(ns - 50) / 50.0
+            confidence = 0.3 + 0.5 * agreement + 0.2 * extremity
+            calibrated_confidences.append(float(np.clip(confidence, 0.3, 1.0)))
+
+        weights = ChiefDecisionAgent.load_agent_weights()
+        has_real_weights = any(w != 1.0 for w in weights.values())
+        if not has_real_weights:
+            weights = ChiefDecisionAgent._load_proxy_weights()
+
+        weight_values = []
+        for name, cc in zip(agent_names, calibrated_confidences):
+            w = weights.get(name, 1.0)
+            w *= (0.5 + cc)
+            weight_values.append(w)
+
+        total_w = sum(weight_values)
+        if total_w > 0:
+            norm_weights = [w / total_w for w in weight_values]
+            weighted_score = sum(n * s for n, s in zip(norm_weights, normalized_scores))
+        else:
+            weighted_score = float(np.mean(normalized_scores))
+
+        ts_momentum = ChiefDecisionAgent._time_series_momentum_score(etf_code)
+        weighted_score += ts_momentum * 0.35
+
+        if market_state == "强趋势牛":
+            discount = 1.0
+        elif market_state == "震荡偏强":
+            discount = max(1.0 - max(raw_cv - 0.15, 0) * 0.5, 0.90)
+        elif market_state == "震荡偏弱":
+            discount = max(1.0 - max(raw_cv - 0.12, 0) * 0.6, 0.85)
+        else:
+            discount = max(1.0 - max(raw_cv - 0.10, 0) * 0.7, 0.80)
+        weighted_score *= discount
+
+        final_score = float(np.clip(weighted_score, 0, 100))
+        final_rating = ChiefDecisionAgent._score_to_rating(final_score)
+
+        if final_score >= 80:
+            if consensus in ("高度一致", "基本一致"):
+                operation, holding = "强烈买入", "短期(1-4周)"
+            else:
+                operation, holding = "买入", "中期(1-3月)"
+        elif final_score >= 65:
+            operation, holding = "买入", "中期(1-3月)"
+        elif final_score >= 50:
+            operation, holding = "持有", "中期(1-3月)"
+        elif final_score >= 35:
+            operation, holding = "减持", "短期(1-4周)"
+        elif final_score >= 20:
+            operation, holding = "卖出", "短期(1-4周)"
+        else:
+            operation, holding = "强烈卖出", "短期(1-4周)"
+
+        if consensus == "严重分歧":
+            if operation in ("强烈买入", "买入"):
+                operation, holding = "持有", "中期(1-3月)"
+            elif operation in ("长期持有",):
+                operation, holding = "减持", "短期(1-4周)"
+
+        win_rate = 0.55
+        avg_win_ratio = 1.5
+        total_verified = 0
+        try:
+            from review import ReviewManager
+            if os.path.exists(ReviewManager.REVIEW_FILE):
+                with open(ReviewManager.REVIEW_FILE, "r", encoding="utf-8") as f:
+                    stats = json.load(f)
+                total_verified = stats.get("total_verifications", 0)
+                overall_acc = stats.get("overall_accuracy_pct", 55) / 100
+                if total_verified > 10:
+                    win_rate = overall_acc
+        except:
+            pass
+
+        if win_rate == 0.55 and total_verified <= 10:
+            try:
+                from data import EnhancedBacktestAgent
+                bt_codes = ["159915", "510300", "588000"]
+                bt_wins = []
+                bt_pl = []
+                for c in bt_codes:
+                    bt = EnhancedBacktestAgent.run(c, days=120)
+                    if bt.get("胜率", 0) > 0:
+                        bt_wins.append(bt["胜率"] / 100)
+                    if bt.get("盈亏比", 0) > 0:
+                        bt_pl.append(bt["盈亏比"])
+                if bt_wins:
+                    win_rate = float(np.mean(bt_wins))
+                if bt_pl:
+                    avg_win_ratio = float(np.mean(bt_pl))
+            except Exception:
+                pass
+
+        market_pos_mult = {"强趋势牛": 1.2, "震荡偏强": 1.0, "震荡偏弱": 0.8, "强趋势熊": 0.5}
+        pos_mult = market_pos_mult.get(market_state, 1.0)
+        adjusted_max_pos = global_max_pos * pos_mult
+        kelly_pos = ChiefDecisionAgent._kelly_position(win_rate, avg_win_ratio, 1.0, adjusted_max_pos)
+        pos_map = {"强烈买入": 0.35, "买入": 0.25, "长期持有": 0.20,
+                    "持有": 0.0, "减持": 0.0, "卖出": 0.0, "强烈卖出": 0.0}
+        baseline_pos = adjusted_max_pos * pos_map.get(operation, 0.1)
+        pos_pct = min(kelly_pos, baseline_pos)
+
+        try:
+            from data import DataCollectAgent
+            df = DataCollectAgent.get_etf_price(etf_code)
+            hist_vol = float(df["volatility"].rolling(20).mean().iloc[-1])
+            vol_factor = max(hist_vol * 100, 1.0)
+            stop_loss_pct = round(-max(vol_factor * 2.0, 3.0), 1)
+            take_profit_pct = round(max(vol_factor * 4.0, 6.0), 1)
+        except:
+            stop_loss_pct = -5.0
+            take_profit_pct = 15.0
+
+        return {
+            "final_score": round(final_score, 1),
+            "final_rating": final_rating,
+            "operation": operation,
+            "holding_period": holding,
+            "position_pct": round(pos_pct, 2),
+            "consensus": consensus,
+            "stop_loss_pct": stop_loss_pct,
+            "take_profit_pct": take_profit_pct,
+        }

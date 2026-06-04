@@ -14,9 +14,9 @@ from typing import Optional
 from core.config import ETF_POOL, FEE_RATE
 from trading.portfolio import Portfolio, Holding, Transaction, load, save, _price, PORTFOLIO_FILE
 
-TRADE_LOG = Path(__file__).parent / "data" / "trade_log.json"
-PERF_LOG = Path(__file__).parent / "data" / "performance.json"
-SNAPSHOT_DIR = Path(__file__).parent / "data" / "snapshots"
+TRADE_LOG = Path(__file__).resolve().parent.parent / "data" / "trade_log.json"
+PERF_LOG = Path(__file__).resolve().parent.parent / "data" / "performance.json"
+SNAPSHOT_DIR = Path(__file__).resolve().parent.parent / "data" / "snapshots"
 
 
 # ====================== 【信号可信度过滤器】 ======================

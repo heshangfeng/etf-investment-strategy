@@ -60,7 +60,7 @@ class MemoryRetriever:
     每次检索返回最近N天的分析摘要+复盘结果。
     """
 
-    SNAPSHOT_DIR = Path(__file__).parent / "data" / "snapshots"
+    SNAPSHOT_DIR = Path(__file__).resolve().parent.parent / "data" / "snapshots"
 
     @classmethod
     def retrieve(cls, etf_code: str, days: int = 20, top_k: int = 5) -> str:

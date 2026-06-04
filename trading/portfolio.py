@@ -19,7 +19,7 @@ from pathlib import Path
 
 from core.config import ETF_POOL
 
-PORTFOLIO_FILE = Path(__file__).parent / "data" / "portfolio.json"
+PORTFOLIO_FILE = Path(__file__).resolve().parent.parent / "data" / "portfolio.json"
 
 
 @dataclass

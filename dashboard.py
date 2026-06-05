@@ -194,15 +194,15 @@ def _personalize_operations(etfs):
         elif op == "买入":
             rating = e.get("final_rating", "")
             if rating in ("看空", "强烈看空"):
-                e["_suggested_pos"] = 0.0  # 不看好的不买
+                e["_suggested_pos"] = 0.0
             else:
+                # 以评分为主，评级为辅
+                # 评分≥65 或 评级看多/强烈看多 → 7.5%
+                # 评分50-64 → 5%（即使评级看多也只给5%，如电力ETF）
                 score = e.get("final_score", 50)
-                # 评级看多/强烈看多时，即使评分不到 65 也按 7.5%
-                if rating in ("看多", "强烈看多"):
-                    e["_suggested_pos"] = 0.075 if score >= 50 else 0.05
-                elif score >= 80:
+                if score >= 80:
                     e["_suggested_pos"] = 0.10
-                elif score >= 65:
+                elif score >= 65 or (rating in ("看多", "强烈看多") and score >= 50):
                     e["_suggested_pos"] = 0.075
                 elif score >= 50:
                     e["_suggested_pos"] = 0.05

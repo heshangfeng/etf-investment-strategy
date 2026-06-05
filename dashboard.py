@@ -192,16 +192,15 @@ def _personalize_operations(etfs):
         elif op == "观察":
             e["_suggested_pos"] = e.get("position_pct", 0)  # 保持现有仓位
         elif op == "买入":
-            # 评级看空/强烈看空 → 不买
             rating = e.get("final_rating", "")
             if rating in ("看空", "强烈看空"):
-                e["_suggested_pos"] = 0.0
+                e["_suggested_pos"] = 0.0  # 不看好的不买
             else:
-                # 根据综合评分映射，范围 2%-10%
-                # 这些是"持有→买入"转换而非系统原生买入，故从低
-                # 用户当前总仓位约 15%，单只 ETF 建议不超过 10%
                 score = e.get("final_score", 50)
-                if score >= 80:
+                # 评级看多/强烈看多时，即使评分不到 65 也按 7.5%
+                if rating in ("看多", "强烈看多"):
+                    e["_suggested_pos"] = 0.075 if score >= 50 else 0.05
+                elif score >= 80:
                     e["_suggested_pos"] = 0.10
                 elif score >= 65:
                     e["_suggested_pos"] = 0.075
@@ -212,8 +211,13 @@ def _personalize_operations(etfs):
                 else:
                     e["_suggested_pos"] = 0.02
         elif op in ("持有", "长期持有"):
-            # 已持仓 → 建议仓位 = 仓位不动
-            e["_suggested_pos"] = e.get("position_pct", 0)
+            e["_suggested_pos"] = e.get("position_pct", 0)  # 仓位不动
+        elif op in ("减持",):
+            # 减持 = 减到当前仓位的一半（非清仓）
+            pos = e.get("position_pct", 0)
+            e["_suggested_pos"] = round(pos * 0.5, 4)
+        elif op in ("卖出", "强烈卖出"):
+            e["_suggested_pos"] = 0.0  # 强烈看空 → 清仓
 
 
 # ── 主界面 ──

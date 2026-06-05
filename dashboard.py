@@ -172,16 +172,26 @@ def _personalize_operations(etfs):
                 e["holding_period"] = "中期(1-3月)"
                 e["_personalized"] = True
 
-    # 最终清理: 未持仓且非买入操作 → 不操作
+    # 最终清理：统一 _suggested_pos
     for e in etfs:
-        if not e.get("_held") and e.get("operation") not in ("不操作", "买入"):
+        op = e.get("operation", "")
+        # 未持仓且非买入操作 → 不操作
+        if not e.get("_held") and op not in ("不操作", "买入"):
             e["operation"] = "不操作"
             e["_personalized"] = True
-        # 操作是不操作 → 建议仓位归零
-        if e.get("operation") == "不操作":
+            op = "不操作"
+
+        # 根据操作更新建议仓位
+        if op == "不操作":
             e["_suggested_pos"] = 0.0
-        elif e.get("operation") == "观察":
-            # 观察 = 保持当前仓位不动，建议仓位取实际仓位
+        elif op == "观察":
+            e["_suggested_pos"] = e.get("position_pct", 0)  # 保持现有仓位
+        elif op == "买入":
+            # 未持仓的系统建议买入 → 使用系统原始建议仓位（至少 15%）
+            orig = e.get("_suggested_pos", 0)
+            e["_suggested_pos"] = orig if orig > 0 else 0.15
+        elif op in ("持有", "长期持有"):
+            # 已持仓 → 建议仓位 = 仓位不动
             e["_suggested_pos"] = e.get("position_pct", 0)
 
 

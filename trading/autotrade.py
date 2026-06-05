@@ -284,6 +284,9 @@ def _execute_sells(pf, recs: dict, report_map: dict, prev_scores: dict, all_repo
             continue
         if h.added == today:
             continue
+        # 减持/卖出/强烈卖出 → 不参与再平衡（已在前面处理卖出）
+        if r.get("operation") in ("减持", "卖出", "强烈卖出"):
+            continue
         price = _price(h.code, h.avg_cost)
         current_value = h.shares * price
         current_pct = current_value / max(pf.cash + mkt_val, 1)
@@ -459,10 +462,14 @@ def auto_trade(all_reports: list, date_str: str = "") -> dict:
                 "action": "不操作", "operation": op,
             })
 
-    # 保存到 trade_plan.json 供看板使用
+    # 保存到 trade_plan.json（按 code 去重，每条 ETF 只保留最后一条）
     try:
+        decisions = trades.get("decisions", [])
+        deduped = {}
+        for d in decisions:
+            deduped[d["code"]] = d
         with open(PLAN_FILE, "w", encoding="utf-8") as f:
-            json.dump(trades.get("decisions", []), f, ensure_ascii=False, indent=2)
+            json.dump(list(deduped.values()), f, ensure_ascii=False, indent=2)
     except Exception:
         pass
 

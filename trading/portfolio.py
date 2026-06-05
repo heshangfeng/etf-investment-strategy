@@ -1,4 +1,4 @@
-﻿"""
+"""
 ETF 智能投资分析系统 - 实盘投资组合管理
 
 记录真实持仓、买入成本，结合分析报告给出个性化建议。
@@ -87,13 +87,55 @@ def _name(code: str) -> str:
     return code
 
 
+_spot_cache = {"price": {}, "prev_close": {}, "time": 0.0}
+
 def _price(code: str, fallback: float) -> float:
+    """获取ETF最新价。失败时返回 cache 中的最近一次成功值，避免用 avg_cost 做市价。"""
+    _refresh_spot_cache()
+    if _spot_cache["price"] and code in _spot_cache["price"]:
+        return float(_spot_cache["price"][code])
     try:
         from core.data import DataCollectAgent
         df = DataCollectAgent.get_etf_price(code)
-        return float(df["close"].iloc[-1])
+        px = float(df["close"].iloc[-1])
+        # 缓存本次结果供后续降级使用
+        _spot_cache["price"][code] = px
+        return px
     except Exception:
-        return fallback
+        # 尝试从 spot_cache 取旧值
+        if _spot_cache["price"] and code in _spot_cache["price"]:
+            return float(_spot_cache["price"][code])
+        return 0.0  # 返回 0 比返回 avg_cost 安全（会触发跳过交易）
+
+def _price_detail(code: str, fallback: float) -> tuple[float, float]:
+    """获取ETF最新价和昨收价，返回 (最新价, 昨收价)。"""
+    _refresh_spot_cache()
+    cur = _spot_cache["price"].get(code)
+    prev = _spot_cache["prev_close"].get(code)
+    if cur is not None and prev is not None:
+        return float(cur), float(prev)
+    # Fallback: 从历史数据取最近两天的收盘价
+    try:
+        from core.data import DataCollectAgent
+        df = DataCollectAgent.get_etf_price(code)
+        closes = df["close"].values
+        return float(closes[-1]), float(closes[-2]) if len(closes) >= 2 else float(closes[-1])
+    except Exception:
+        return fallback, fallback
+
+def _refresh_spot_cache():
+    import time
+    now = time.time()
+    if now - _spot_cache["time"] <= 300 and _spot_cache["price"]:
+        return
+    try:
+        import akshare as ak
+        df = ak.fund_etf_spot_em()
+        _spot_cache["price"] = dict(zip(df["代码"], df["最新价"]))
+        _spot_cache["prev_close"] = dict(zip(df["代码"], df["昨收"]))
+        _spot_cache["time"] = now
+    except Exception:
+        pass
 
 
 def buy(code: str, shares: int, price: float, fee: float = 0.0):

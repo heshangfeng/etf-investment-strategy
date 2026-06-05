@@ -1,97 +1,67 @@
 """早盘全量分析推送脚本。
-8:00 运行：全量分析 → 推送操盘建议到手机（不执行交易）。
-开盘后由 execute_open.py 用开盘价执行模拟交易。
+8:00 运行全量分析 -> 推送过滤后的操盘建议到手机。
+SignalCaliberFilter 已在 etf-agent.py 中提前执行。
 """
-import os
-import subprocess
-import sys
-import json
-import urllib.request
+import os, sys, json, urllib.request, subprocess
 from datetime import datetime
 
-PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
-LOG_DIR = os.path.join(PROJECT_DIR, "logs")
-ENV_FILE = os.path.join(PROJECT_DIR, ".env")
-PUSH_URL = "https://api2.pushdeer.com/message/push"
-
-
-def get_pushdeer_key() -> str:
-    if not os.path.isfile(ENV_FILE):
-        return ""
-    with open(ENV_FILE, "r", encoding="utf-8") as f:
-        for line in f:
-            line = line.strip()
-            if line.startswith("PUSHDEER_KEY="):
-                return line.split("=", 1)[1]
-    return ""
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
 def push(text: str):
-    key = get_pushdeer_key()
+    env_file = os.path.join(BASE_DIR, ".env")
+    if not os.path.isfile(env_file):
+        return
+    key = ""
+    for line in open(env_file, "r", encoding="utf-8"):
+        if line.startswith("PUSHDEER_KEY="):
+            key = line.split("=", 1)[1].strip()
+            break
     if not key:
-        print("无 PUSHDEER_KEY，跳过推送")
-        print(text)
         return
     body = json.dumps({"pushkey": key, "text": text}).encode("utf-8")
     req = urllib.request.Request(
-        PUSH_URL, data=body,
+        "https://api2.pushdeer.com/message/push", data=body,
         headers={"Content-Type": "application/json; charset=utf-8"},
         method="POST",
     )
     with urllib.request.urlopen(req, timeout=15) as resp:
-        resp_data = json.loads(resp.read().decode("utf-8"))
-        if resp_data.get("code") == 0:
-            print("推送成功")
-        else:
-            print(f"推送返回异常: {resp_data}")
+        return json.loads(resp.read().decode("utf-8")).get("code") == 0
 
 
 def main():
-    os.makedirs(LOG_DIR, exist_ok=True)
-    log_file = os.path.join(LOG_DIR, f"{datetime.now().strftime('%Y%m%d')}_morning.log")
+    log_file = os.path.join(BASE_DIR, "logs", f"{datetime.now().strftime('%Y%m%d')}_morning.log")
+    os.makedirs(os.path.dirname(log_file), exist_ok=True)
 
     def log(msg: str):
         ts = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        line = f"{ts} - {msg}\n"
-        print(line, end="")
+        print(f"{ts} - {msg}")
         with open(log_file, "a", encoding="utf-8") as f:
-            f.write(line)
+            f.write(f"{ts} - {msg}\n")
 
     log("=== 早盘全量分析 Start ===")
-
     env = os.environ.copy()
     env["PYTHONIOENCODING"] = "utf-8"
-    result = subprocess.run(
-        [sys.executable, "etf-agent.py"],
-        cwd=PROJECT_DIR,
-        capture_output=True,
-        text=True,
-        encoding="utf-8",
-        env=env,
-        timeout=600,
+    r = subprocess.run(
+        [sys.executable, "etf-agent.py"], cwd=BASE_DIR,
+        capture_output=True, text=True, encoding="utf-8", timeout=600, env=env,
     )
-
-    if result.returncode != 0:
-        log(f"etf-agent.py failed (code {result.returncode})")
-        push(f"ETF早盘分析失败\n{result.stderr[:500]}")
+    if r.returncode != 0:
+        log(f"失败 (code {r.returncode})")
+        push(f"ETF分析失败\n{r.stderr[:500]}")
         return
+    log("完成")
 
-    log("etf-agent.py completed successfully")
+    out = r.stdout + r.stderr
+    lines = []
+    for line in out.split("\n"):
+        if any(kw in line for kw in ["🚫", "✅ T", "建议持仓", "模拟调仓",
+                                       "集中度预警", "🎯", "尾部风险"]):
+            lines.append(line.strip())
 
-    # 提取操盘建议部分（从输出中截取关键内容）
-    output = result.stdout + result.stderr
-    # 只推送建议部分（去掉进度条等噪音）
-    lines = output.split("\n")
-    relevant = []
-    for line in lines:
-        if any(kw in line for kw in ["✅ T", "建议持仓", "操作建议", "建议买入",
-                                       "建议卖出", "继续持有", "集中度预警",
-                                       "止损止盈", "准确率", "🎯", "⚠️"]):
-            relevant.append(line.strip())
-
-    text = "\n".join(relevant[:30]) if relevant else output[:1500]
+    text = "\n".join(lines[:30]) if lines else out[:1500]
     push(f"🏆 ETF操盘建议 {datetime.now().strftime('%m/%d')}\n\n{text}")
-    log(f"推送完成 ({len(text)} chars)")
+    log("推送完成")
     log("=== 早盘全量分析 End ===")
 
 

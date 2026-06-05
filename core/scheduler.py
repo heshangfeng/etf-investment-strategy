@@ -360,12 +360,27 @@ class MainSchedulerAgent:
         except Exception as e:
             print(f"  ⚠️ 投资组合建议不可用: {e}")
 
+        # 保存分析报告供开盘后使用
         try:
-            # 保存分析报告供开盘后模拟交易使用
             import pickle as _pk
             _pk.dump(final_reports, open("data/_last_reports.pkl", "wb"))
         except Exception as e:
             print(f"  ⚠️ 保存分析报告失败: {e}")
+
+        # 提前跑 SignalCaliberFilter，推送时直接显示过滤后结果
+        try:
+            from trading.autotrade import auto_trade
+            trades = auto_trade(final_reports)
+            b, s = len(trades["buys"]), len(trades["sells"])
+            if b or s:
+                print(f"\n  🔄 模拟调仓: 买入{b}只, 卖出{s}只")
+            # 保存过滤后的决策供 execute_open.py 用开盘价执行
+            import json as _js
+            _js.dump(trades.get("decisions", []),
+                     open("data/_trade_decisions.json", "w", encoding="utf-8"),
+                     ensure_ascii=False, indent=2)
+        except Exception as e:
+            print(f"  ⚠️ 模拟交易评估失败: {e}")
         if actionable:
             print(f"【建议持仓】")
             for fr in sorted(actionable, key=lambda x: x.suggested_position_pct, reverse=True):

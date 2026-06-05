@@ -1,103 +1,127 @@
 """
 开盘模拟执行脚本。9:35 运行：
-1. 加载早上 etf-agent.py 保存的分析报告
-2. 用开盘价执行 auto_trade（模拟你开盘后的操作）
-3. 推送执行结果到手机
+读取 _trade_decisions.json（已过滤），用开盘价执行交易，推送结果。
 """
-import os
-import sys
-import pickle
-import json
-import urllib.request
+import os, sys, json, urllib.request
 from datetime import datetime
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent
-LOG_DIR = BASE_DIR / "logs"
-ENV_FILE = BASE_DIR / ".env"
-REPORT_PKL = BASE_DIR / "data" / "_last_reports.pkl"
+DECISIONS_FILE = BASE_DIR / "data" / "_trade_decisions.json"
+PORTFOLIO_FILE = BASE_DIR / "data" / "portfolio.json"
 PUSH_URL = "https://api2.pushdeer.com/message/push"
+FEE_RATE = 0.0003
 
 
 def log(msg: str):
-    os.makedirs(LOG_DIR, exist_ok=True)
+    os.makedirs(BASE_DIR / "logs", exist_ok=True)
     ts = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    line = f"{ts} - {msg}\n"
-    print(line, end="")
-    with open(LOG_DIR / f"{datetime.now().strftime('%Y%m%d')}_open_exec.log", "a", encoding="utf-8") as f:
-        f.write(line)
+    print(f"{ts} - {msg}")
+    with open(BASE_DIR / "logs" / f"{datetime.now().strftime('%Y%m%d')}_open_exec.log", "a", encoding="utf-8") as f:
+        f.write(f"{ts} - {msg}\n")
 
 
-def get_pushdeer_key() -> str:
-    if not ENV_FILE.exists():
-        return ""
-    with open(ENV_FILE, "r", encoding="utf-8") as f:
-        for line in f:
-            line = line.strip()
-            if line.startswith("PUSHDEER_KEY="):
-                return line.split("=", 1)[1]
-    return ""
-
-
-def push(title: str, body: str):
-    key = get_pushdeer_key()
-    if not key:
-        log("无 PUSHDEER_KEY，跳过推送")
+def push(text: str):
+    env_file = BASE_DIR / ".env"
+    if not env_file.exists():
         return
-    text = f"{title}\n\n{body}"
+    key = ""
+    for line in open(env_file, "r", encoding="utf-8"):
+        if line.startswith("PUSHDEER_KEY="):
+            key = line.split("=", 1)[1].strip()
+            break
+    if not key:
+        return
+    data = json.dumps({"pushkey": key, "text": text}).encode("utf-8")
+    req = urllib.request.Request(
+        PUSH_URL, data=data,
+        headers={"Content-Type": "application/json; charset=utf-8"},
+        method="POST",
+    )
+    with urllib.request.urlopen(req, timeout=15) as resp:
+        r = json.loads(resp.read().decode("utf-8"))
+        return r.get("code") == 0
+
+
+def get_open_price(code: str) -> float:
     try:
-        data = json.dumps({"pushkey": key, "text": text}).encode("utf-8")
-        req = urllib.request.Request(
-            PUSH_URL, data=data,
-            headers={"Content-Type": "application/json; charset=utf-8"},
-            method="POST",
-        )
-        with urllib.request.urlopen(req, timeout=15) as resp:
-            r = json.loads(resp.read().decode("utf-8"))
-            if r.get("code") == 0:
-                log("推送成功")
-            else:
-                log(f"推送返回: {r}")
-    except Exception as e:
-        log(f"推送失败: {e}")
+        sys.path.insert(0, str(BASE_DIR))
+        from core.data import DataCollectAgent
+        df = DataCollectAgent.get_etf_price(code)
+        if df is not None and len(df) > 0:
+            return float(df["open"].iloc[-1])
+    except Exception:
+        pass
+    return 0.0
 
 
 def main():
     log("=== 开盘模拟执行 Start ===")
-
-    # 加载分析报告
-    if not REPORT_PKL.exists():
-        log("未找到分析报告，请先运行 etf-agent.py")
+    if not DECISIONS_FILE.exists():
+        log(f"决策文件不存在，请先运行 etf-agent.py")
         return
-    with open(REPORT_PKL, "rb") as f:
-        final_reports = pickle.load(f)
-    log(f"加载报告: {len(final_reports)} 只 ETF")
+    decisions = json.load(open(DECISIONS_FILE, "r", encoding="utf-8"))
+    log(f"加载 {len(decisions)} 条决策")
 
-    # 执行模拟交易（auto_trade 会调用 _price 获取实时价，此时有开盘价）
-    try:
-        from trading.autotrade import auto_trade
-        trades = auto_trade(final_reports)
-        b, s = len(trades["buys"]), len(trades["sells"])
-        log(f"模拟交易完成: 买入{b}只, 卖出{s}只")
-    except Exception as e:
-        log(f"模拟交易失败: {e}")
-        push("ETF开盘执行失败", f"自动交易异常: {e}")
-        return
+    pf = {"cash": 670000.0, "holdings": [], "transactions": []}
+    if PORTFOLIO_FILE.exists():
+        pf = json.load(open(PORTFOLIO_FILE, "r", encoding="utf-8"))
 
-    # 推送执行结果
-    lines = [f"🏆 开盘模拟执行 {datetime.now().strftime('%m/%d %H:%M')}\n"]
-    for t in trades.get("buys", []):
-        lines.append(f"📗 买入 {t['name']}: {t['shares']}份 @ {t['price']:.4f}")
-    for t in trades.get("sells", []):
-        lines.append(f"📕 卖出 {t['name']}: {t['shares']}份 @ {t['price']:.4f}")
-    for t in trades.get("decisions", []):
-        if t["action"] in ("跳过卖出", "跳过买入"):
-            conv = t.get("conviction", 0)
-            lines.append(f"⏭️ {t['action']} {t['name']} (可信度{conv:.0f})")
-    if not any(trades.values()):
-        lines.append("无交易操作")
-    push("开盘执行结果", "\n".join(lines))
+    lines = [f"🏆 开盘执行 {datetime.now().strftime('%m/%d %H:%M')}\n"]
 
+    for d in decisions:
+        code = d["code"]
+        name = d.get("name", code)
+        action = d["action"]
+
+        if action == "买入":
+            price = get_open_price(code)
+            if price <= 0:
+                log(f"  ⚠️ {name} 无开盘价，跳过")
+                continue
+            alloc = pf["cash"] * d.get("position", 0.05)
+            shares = int(alloc / price / 100) * 100
+            if shares < 100 or shares * price > pf["cash"]:
+                continue
+            cost = shares * price
+            fee = cost * FEE_RATE
+            pf["cash"] -= (cost + fee)
+            pf["holdings"].append({
+                "code": code, "name": name, "shares": shares,
+                "avg_cost": round(price, 4), "added": datetime.now().strftime("%Y-%m-%d"),
+            })
+            lines.append(f"📗 买入 {name} {shares}份 @ {price:.4f}")
+            log(f"  买入 {name} {shares}份 @ {price:.4f}")
+
+        elif action in ("卖出", "减持"):
+            price = get_open_price(code)
+            if price <= 0:
+                continue
+            for h in list(pf["holdings"]):
+                if h["code"] == code:
+                    sell = h["shares"] if action == "卖出" else max(int(h["shares"] * 0.5 / 100) * 100, 0)
+                    if sell >= 100:
+                        proceeds = sell * price
+                        fee = proceeds * FEE_RATE
+                        pf["cash"] += (proceeds - fee)
+                        h["shares"] -= sell
+                        lines.append(f"📕 {action} {name} {sell}份 @ {price:.4f}")
+                        log(f"  {action} {name} {sell}份 @ {price:.4f}")
+                    if h["shares"] <= 0:
+                        pf["holdings"].remove(h)
+                    break
+
+        elif action in ("跳过卖出", "跳过买入"):
+            conv = d.get("conviction", 0)
+            lines.append(f"⏭️ 跳过 {name} (可信度{conv:.0f})")
+            log(f"  跳过 {name} (可信度{conv:.0f})")
+
+        elif action == "持有":
+            log(f"  持有 {name}")
+
+    json.dump(pf, open(PORTFOLIO_FILE, "w", encoding="utf-8"), ensure_ascii=False, indent=2)
+    push("\n".join(lines))
+    log("推送成功")
     log("=== 开盘模拟执行 End ===")
 
 

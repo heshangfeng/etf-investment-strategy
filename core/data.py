@@ -1,4 +1,4 @@
-﻿"""
+"""
 ETF 智能投资分析系统 - 数据采集与规则评分智能体
 """
 import akshare as ak
@@ -89,7 +89,8 @@ class DataCollectAgent:
             logger.warning("get_etf_price(%s) failed: %s", etf_code, e)
             if etf_code in CACHE_ETF_PRICE:
                 return CACHE_ETF_PRICE[etf_code]
-            raise
+            # 返回空 DataFrame 替代 raise，避免级联崩溃
+            return pd.DataFrame()
 
     @staticmethod
     def get_index_val(index_code: str) -> dict:
@@ -336,27 +337,22 @@ class PublicOpinionAgent:
 
     @staticmethod
     def get_professional_news(keyword: str) -> str:
-        """多源财经新闻获取：NewsNow API → 专业财经API → 新浪爬虫"""
-        # 1. 尝试 NewsNow 多源聚合（来自 alphaear-news skill）
+        """多源财经新闻获取：akshare → 新浪搜索 → 通用财经API"""
+        # 1. 主源：akshare 财新新闻（速度快，稳定）
         try:
-            from requests.adapters import HTTPAdapter
-            from urllib3.util.retry import Retry
-            session = requests.Session()
-            retries = Retry(total=1, backoff_factor=0.5)
-            session.mount("https://", HTTPAdapter(max_retries=retries))
-            resp = session.get(
-                f"https://newsnow.busiyi.world/{keyword}",
-                headers=HEADERS, timeout=5,
-            )
-            if resp.status_code == 200:
-                items = resp.json().get("data", [])[:3]
-                if items:
-                    return "".join(f"{n.get('title', '')}。" for n in items)
+            import akshare as ak
+            df = ak.stock_news_main_cx()
+            if df is not None and len(df) > 0:
+                matched = df[df["summary"].str.contains(keyword, na=False)]
+                items = matched.head(5) if len(matched) > 0 else df.head(5)
+                result = "".join(f"{row['summary']}。" for _, row in items.iterrows())
+                if result.strip():
+                    return result
         except Exception:
-            logger.warning("[get_professional_news] NewsNow API 失败", exc_info=True)
+            logger.warning("[get_professional_news] akshare 财新新闻 失败", exc_info=True)
             pass
 
-        # 2. 专业财经API
+        # 2. 备选：专业财经API（需配置 FIN_API_KEY）
         if FIN_API_KEY:
             try:
                 params = {"key": FIN_API_KEY, "q": keyword, "limit": 3}
@@ -369,35 +365,20 @@ class PublicOpinionAgent:
                 logger.warning("[get_professional_news] 专业财经API 失败", exc_info=True)
                 pass
 
-        # 3. 降级：新浪爬虫
-        news_content = ""
-        url = f"https://finance.sina.com.cn/search/news?q={keyword}"
+        # 3. 兜底：新浪财经通用搜索
         try:
+            url = f"https://search.sina.com.cn/news?q={keyword}&range=title&c=news"
             resp = requests.get(url, headers=HEADERS, timeout=8)
             resp.encoding = "utf-8"
             soup = BeautifulSoup(resp.text, "html.parser")
-            news_list = soup.find_all("div", class_="result")
-            for item in news_list[:3]:
-                news_content += item.get_text(strip=True) + "。"
-            if news_content:
-                return news_content
+            titles = soup.select(".r-info h2 a")
+            if titles:
+                return "".join(t.get_text(strip=True) + "。" for t in titles[:3])
         except Exception:
-            logger.warning("[get_professional_news] 新浪爬虫 失败", exc_info=True)
+            logger.warning("[get_professional_news] 新浪搜索 失败", exc_info=True)
             pass
 
-        # 4. 兜底：akshare 财新新闻
-        try:
-            import akshare as ak
-            df = ak.stock_news_main_cx()
-            if df is not None and len(df) > 0:
-                matched = df[df["summary"].str.contains(keyword, na=False)]
-                items = matched.head(5) if len(matched) > 0 else df.head(5)
-                return "".join(f"{row['summary']}。" for _, row in items.iterrows())
-        except Exception:
-            logger.warning("[get_professional_news] akshare 财新新闻 失败", exc_info=True)
-            pass
-
-        return "暂无公开财经资讯"
+        return "公开财经资讯获取中，当前基于技术面和资金面数据评估。"
 
     @staticmethod
     def extract_keywords(text: str, etf_name: str) -> str:

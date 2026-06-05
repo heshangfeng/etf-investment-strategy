@@ -38,13 +38,13 @@ class BaseLLMAgent:
     def __init__(self):
         api_key = LLM_API_KEY if not self.AGENT_USE_QUICK_MODEL else QUICK_LLM_API_KEY
         base_url = LLM_BASE_URL if not self.AGENT_USE_QUICK_MODEL else QUICK_LLM_BASE_URL
-        self.client = OpenAI(api_key=api_key, base_url=base_url) if api_key else None
+        self.client = OpenAI(api_key=api_key, base_url=base_url, timeout=30) if api_key else None
 
         if self.AGENT_USE_QUICK_MODEL:
             self.quick_client = self.client
         else:
             self.quick_client = OpenAI(
-                api_key=QUICK_LLM_API_KEY, base_url=QUICK_LLM_BASE_URL
+                api_key=QUICK_LLM_API_KEY, base_url=QUICK_LLM_BASE_URL, timeout=30
             ) if QUICK_LLM_API_KEY else None
 
     def _enrich_with_memory(self, etf_code: str, data_text: str) -> str:
@@ -142,7 +142,12 @@ class BaseLLMAgent:
                 etf_name=etf_name,
                 rating=fallback_rating or self._score_to_rating(fallback_score),
                 score=round(fallback_score, 1),
-                analysis=f"【规则评分模式】LLM不可用，基于规则模型评分 {fallback_score} 分。",
+                analysis=f"【规则评分模式】LLM不可用，基于规则模型评分 {fallback_score} 分。"
+                          f"评分计算：综合技术指标、资金流向、估值分位等维度加权得出。"
+                          f"当评分≥65为看多，≥50为中性偏多，≥35为中性偏空，<35为看空。"
+                          f"当前标的在该模型下得分为{fallback_score}分，对应评级为"
+                          f"{self._score_to_rating(fallback_score) if hasattr(self,'_score_to_rating') else '中性'}。"
+                          f"建议结合其他维度综合判断，关注后续LLM深度分析补充。",
                 key_factors=["规则评分（LLM fallback）"],
                 risk_warnings=[],
                 confidence=0.5,

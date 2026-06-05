@@ -1,4 +1,4 @@
-﻿"""
+"""
 ETF 智能投资分析系统 - 顶层主控调度
 """
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -315,7 +315,7 @@ class MainSchedulerAgent:
                                 self.market_state, tn): item
                     for item in pool
                 }
-                for future in as_completed(fmap):
+                for future in as_completed(fmap, timeout=180):
                     item = fmap[future]
                     try:
                         fr = future.result()
@@ -408,7 +408,14 @@ class MainSchedulerAgent:
 
         with ThreadPoolExecutor(max_workers=len(fns)) as agent_exec:
             futures = [agent_exec.submit(fn, *fa) for fn, fa in zip(fns, fargs)]
-            reports = [f.result() for f in futures]
+            reports = []
+            for f in futures:
+                try:
+                    reports.append(f.result(timeout=30))
+                except Exception as e:
+                    logger.warning("[%s] Agent故障: %s", code, str(e)[:80])
+        if not reports:
+            raise RuntimeError(f"All agents failed for {code} ({name})")
 
         for r in reports:
             r.data_summary["macro_context"] = macro_report.analysis[:200]
@@ -461,6 +468,7 @@ class MainSchedulerAgent:
         etf_info = {"code": code, "name": name, "type": typ, "index_code": idx}
         final_report = self.chief_agent.run(reports, debates, global_max_pos, etf_info, market_state)
         final_report.macro_context = macro_report.analysis[:200]
+        final_report.tier = tier
         return final_report
 
 

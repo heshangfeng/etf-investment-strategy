@@ -187,9 +187,18 @@ def _personalize_operations(etfs):
         elif op == "观察":
             e["_suggested_pos"] = e.get("position_pct", 0)  # 保持现有仓位
         elif op == "买入":
-            # 未持仓的系统建议买入 → 使用系统原始建议仓位（至少 15%）
-            orig = e.get("_suggested_pos", 0)
-            e["_suggested_pos"] = orig if orig > 0 else 0.15
+            # 根据系统综合评分映射建议仓位，而非硬编码
+            score = e.get("final_score", 50)
+            if score >= 80:
+                e["_suggested_pos"] = 0.25
+            elif score >= 65:
+                e["_suggested_pos"] = 0.20
+            elif score >= 50:
+                e["_suggested_pos"] = 0.15
+            elif score >= 35:
+                e["_suggested_pos"] = 0.08
+            else:
+                e["_suggested_pos"] = 0.05
         elif op in ("持有", "长期持有"):
             # 已持仓 → 建议仓位 = 仓位不动
             e["_suggested_pos"] = e.get("position_pct", 0)

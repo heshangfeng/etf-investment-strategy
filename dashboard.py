@@ -142,39 +142,31 @@ def _personalize_operations(etfs):
             pnl_pct = (cp - h.avg_cost) / h.avg_cost * 100
             e["_held"] = True
             e["_pnl_pct"] = round(pnl_pct, 2)
-            # 实际仓位 = 当前市值 / 总资产
             actual_pos = (h.shares * cp) / pf_total if pf_total > 0 else 0
             e["position_pct"] = round(actual_pos, 4)
-        else:
-            e["_held"] = False
-            e["position_pct"] = 0.0  # 未持仓 ETF 实际仓位为 0
 
-            # 规则2: 系统说减持,持有且亏损 → 投研分析决策
+            # 规则2: 系统说减持且亏损 → 投研分析决定是否观察
             if op == "减持" and pnl_pct < 0:
                 score = e.get("final_score", 50)
                 consensus = e.get("consensus", "")
                 n_agents = len(e.get("agents", []))
                 rating = e.get("final_rating", "")
-
-                # 信号偏弱或数据不足 → 观察（不急于割肉）
                 weak_signal = (
                     (consensus in ("存在分歧", "严重分歧") and score >= 45) or
                     (n_agents < 6 and 35 <= score < 50)
                 )
-                # 强烈看空 → 无论盈亏都要减
                 if rating == "强烈看空":
                     pass
                 elif weak_signal:
                     e["operation"] = "观察"
                     e["holding_period"] = "短期观察"
                     e["_personalized"] = True
-                # else: 信号明确 → 保持减持
         else:
-            # 规则1: 减持/卖出类,没持仓 → 不存在减的对象
+            e["_held"] = False
+            e["position_pct"] = 0.0
             if op in ("减持", "卖出", "强烈卖出"):
                 e["operation"] = "不操作"
                 e["_personalized"] = True
-            # 规则3: 持有/长期持有,没持仓 → 改为买入开仓
             elif op in ("持有", "长期持有"):
                 e["operation"] = "买入"
                 e["holding_period"] = "中期(1-3月)"

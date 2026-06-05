@@ -168,8 +168,13 @@ def _personalize_operations(etfs):
                 e["operation"] = "不操作"
                 e["_personalized"] = True
             elif op in ("持有", "长期持有"):
-                e["operation"] = "买入"
-                e["holding_period"] = "中期(1-3月)"
+                # 系统评级看空/强烈看空时，即使操作是持有也不建议买入
+                rating = e.get("final_rating", "")
+                if rating in ("看空", "强烈看空"):
+                    e["operation"] = "不操作"
+                else:
+                    e["operation"] = "买入"
+                    e["holding_period"] = "中期(1-3月)"
                 e["_personalized"] = True
 
     # 最终清理：统一 _suggested_pos
@@ -187,18 +192,22 @@ def _personalize_operations(etfs):
         elif op == "观察":
             e["_suggested_pos"] = e.get("position_pct", 0)  # 保持现有仓位
         elif op == "买入":
-            # 根据系统综合评分映射建议仓位，而非硬编码
-            score = e.get("final_score", 50)
-            if score >= 80:
-                e["_suggested_pos"] = 0.25
-            elif score >= 65:
-                e["_suggested_pos"] = 0.20
-            elif score >= 50:
-                e["_suggested_pos"] = 0.15
-            elif score >= 35:
-                e["_suggested_pos"] = 0.08
+            # 评级看空/强烈看空 → 不买
+            rating = e.get("final_rating", "")
+            if rating in ("看空", "强烈看空"):
+                e["_suggested_pos"] = 0.0
             else:
-                e["_suggested_pos"] = 0.05
+                score = e.get("final_score", 50)
+                if score >= 80:
+                    e["_suggested_pos"] = 0.25
+                elif score >= 65:
+                    e["_suggested_pos"] = 0.20
+                elif score >= 50:
+                    e["_suggested_pos"] = 0.15
+                elif score >= 35:
+                    e["_suggested_pos"] = 0.08
+                else:
+                    e["_suggested_pos"] = 0.05
         elif op in ("持有", "长期持有"):
             # 已持仓 → 建议仓位 = 仓位不动
             e["_suggested_pos"] = e.get("position_pct", 0)

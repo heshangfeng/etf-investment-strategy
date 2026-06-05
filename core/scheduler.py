@@ -361,13 +361,11 @@ class MainSchedulerAgent:
             print(f"  ⚠️ 投资组合建议不可用: {e}")
 
         try:
-            from trading.autotrade import auto_trade
-            trades = auto_trade(final_reports)
-            b, s = len(trades["buys"]), len(trades["sells"])
-            if b or s:
-                print(f"\n  🔄 自动调仓: 买入{b}只, 卖出{s}只")
+            # 保存分析报告供开盘后模拟交易使用
+            import pickle as _pk
+            _pk.dump(final_reports, open("data/_last_reports.pkl", "wb"))
         except Exception as e:
-            print(f"  ⚠️ 自动交易不可用: {e}")
+            print(f"  ⚠️ 保存分析报告失败: {e}")
         if actionable:
             print(f"【建议持仓】")
             for fr in sorted(actionable, key=lambda x: x.suggested_position_pct, reverse=True):
@@ -855,9 +853,6 @@ def main():
     if LLM_ENABLED:
         c = LLM_CALL_COUNT
         print(f"\nLLM调用统计: 深度={c['deep']}次 | 快速={c['quick']}次 | 总计={c['total']}次")
-
-    # 推送通知
-    _push_daily()
 
 
 if __name__ == "__main__":

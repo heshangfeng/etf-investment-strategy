@@ -13,9 +13,10 @@
 
 ---
 
-## 二、架构总览
+## 二、架构总览（2026-06-05 为三段式工作流重新编排）
 
 ```
+                 早盘 8:00 — 全量分析
 ┌─────────────────────────────────────────────────────────────┐
 │                   Phase 0: 宏观分析                         │
 │  MacroAnalystAgent → 市场状态检测 → 全局仓位上限            │
@@ -47,15 +48,29 @@
 └──────────────────────┬──────────────────────────────────────┘
                        │ (FinalResearchReport)
 ┌──────────────────────▼──────────────────────────────────────┐
-│           Phase 4: 投后处理                                  │
-│  组合约束(归一化) → 相关性约束 → 增强回测                   │
-│  → 组合优化(风险平价/均值-方差) → 报告输出                  │
-│  → 复盘(T+1验证) → 个性化建议 → 自动调仓                    │
+│        Phase 4: 投后处理 + 信号过滤                          │
+│  组合约束 → 相关性约束 → 增强回测 → 报告输出                │
+│  → SignalCaliberFilter 6维评估 → 保存过滤后决策             │
+│  → 推送操盘建议到手机                                        │
 └──────────────────────┬──────────────────────────────────────┘
                        │
 ┌──────────────────────▼──────────────────────────────────────┐
-│           Phase 5: 工作流总监审查                            │
+│        Phase 5: 工作流总监审查                               │
 │  WorkflowDirector → 10维度质量审查 + 累积优化建议           │
+└─────────────────────────────────────────────────────────────┘
+                                
+                 开盘 9:35 — 模拟执行
+┌─────────────────────────────────────────────────────────────┐
+│              execute_open.py                                 │
+│  读取过滤后决策 → 用开盘价执行买入/卖出/减持                │
+│  → 更新持仓 → 推送执行结果到手机                            │
+└─────────────────────────────────────────────────────────────┘
+
+              收盘后 15:30 — 当日复盘
+┌─────────────────────────────────────────────────────────────┐
+│  ReviewManager                                               │
+│  当日验证：今早预测 vs 今日收盘走势（同天，非T+1）          │
+│  更新 Agent 准确率 + 校准曲线                               │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -216,15 +231,16 @@ Phase 3:   报告输出
   ResearchReportGenerator.generate_full_report()
   → 控制台报告 + .xlsx 摘要 + .txt 完整报告
 ─────────────────────────────────────────────
-Phase 4:   复盘
-  ReviewManager.process()          → 快照 + T+1验证 + 准确率统计
+Phase 4:   信号过滤 + 保存决策
+  auto_trade(final_reports)          → SignalCaliberFilter 6维评估
+  → 保存 _trade_decisions.json       → 过滤后决策供开盘执行
 ─────────────────────────────────────────────
-Phase 5:   个性化建议 + 自动调仓
-  portfolio.advise()               → 基于实盘持仓的个性化建议
-  autotrade.auto_trade()           → 模拟调仓指令
+Phase 5:   工作流总监审查
+  WorkflowDirector.review()          → 10维度审查报告
 ─────────────────────────────────────────────
-Phase 6:   工作流总监审查
-  WorkflowDirector.review()        → 10维度审查报告
+收盘后 当日复盘
+  ReviewManager.process(final_reports) → 当天验证（今早预测 vs 今日收盘）
+  → 更新 Agent 准确率 + 校准曲线
 ```
 
 ---
@@ -258,7 +274,7 @@ akshare (实时API)
 |------|------|------|
 | `ETF_多智能体投研报告_{yyyymmdd}.txt` | 文本 | 每 Agent 分析原文 + 辩论记录 + 首席决策 |
 | `ETF_多智能体投研报告_{yyyymmdd}.xlsx` | Excel | 摘要看板（操作/仓位/共识度） |
-| `data/snapshots/{yyyymmdd}.json` | JSON | 每日快照（供 T+1 复盘） |
+| `data/snapshots/{yyyymmdd}.json` | JSON | 每日快照（供当日复盘） |
 | `data/review/cumulative_stats.json` | JSON | 累计准确率统计 + Agent 权重 |
 | `data/review/optimization.json` | JSON | WorkflowDirector 审查历史 |
 | `data/portfolio.json` | JSON | 实盘持仓记录（手动更新） |
@@ -353,28 +369,33 @@ MEMORY_DAYS = 20        # 检索近20天
 
 ## 八、运行方式
 
-### 午后全量分析（15:00 后）
+### 早盘全量分析 + 推送（推荐日常使用）
 ```bash
-python etf-agent.py
+python run_morning_push.py
 ```
-全量分析 40 只 ETF，12 Agent + 辩论 + 首席决策 + 组合优化 + 自动调仓。
+跑 etf-agent.py（40 ETF × 12 Agent + LLM）→ SignalCaliberFilter 过滤 → 推送操盘建议到手机。一步到位。
 
-### 晨盘增量分析（8:15 开盘前）
+### 开盘模拟执行（9:35）
 ```bash
-python morning_update.py
+python execute_open.py
 ```
-轻量增量更新：加载昨日快照 → 宏观Agent更新 → 规则重评分 → 操盘指导。
-**不调 LLM，纯规则评分**，适合开盘前快速获取操作要点。
+加载过滤后决策，用开盘价执行模拟交易，推送结果。
 
-### 流程对比
+### 备用命令
 
-| | 晨盘 8:15 | 午后 15:30 |
-|---|---|---|
-| **入口** | `morning_update.py` / `run_morning.ps1` | `etf-agent.py` / `run_daily.ps1` |
-| **分析范围** | 顶层Agent（宏观）增量 + 规则重评分 | 全量 12 Agent + 辩论 + 首席决策 |
-| **LLM调用** | 仅宏观Agent | 全部 Agent + 辩论 |
-| **输出** | 操盘指导文本（推送手机） | 完整投研报告 + 复盘 + 自动调仓 |
-| **耗时** | ~2-5 分钟 | ~15-30 分钟 |
+```bash
+python etf-agent.py      # 仅跑分析，不推送
+python morning_update.py # 轻量晨盘（无LLM，仅备）
+```
+
+### 流程对比（2026-06-05 更新）
+
+| | 早盘 8:00 | 开盘 9:35 | 收盘 15:30 |
+|---|---|---|---|
+| **入口** | `etf-agent.py` → `run_morning_push.py` | `execute_open.py` | 可选复盘 |
+| **阶段** | 全量 12 Agent → 信号过滤 → 推送建议 | 开盘价执行交易 → 推送结果 | 同天验证（非T+1）|
+| **LLM调用** | 全部 Agent + 辩论 | 无 | 无 |
+| **耗时** | ~8-15 分钟 | ~1-2 分钟 | ~1 分钟 |
 
 ### 看板
 ```bash
@@ -382,8 +403,8 @@ streamlit run dashboard.py
 ```
 
 ### 自动调度
-- **8:15** — `run_morning.ps1`（Windows Task Scheduler）
-- **15:30** — `run_daily.ps1`（Windows Task Scheduler）+ GitHub Actions
+- **8:00** — `python run_morning_push.py`（Windows Task Scheduler）
+- **9:35** — `python execute_open.py`（Windows Task Scheduler）
 
 ---
 
@@ -391,6 +412,8 @@ streamlit run dashboard.py
 
 | 日期 | 变更 | 涉及文件 |
 |------|------|----------|
+| 2026-06-05 | 重构为三段式工作流：早盘全量→开盘执行→当日复盘 | `run_morning_push.py`, `execute_open.py`, `core/scheduler.py`, `trading/autotrade.py` |
+| 2026-06-05 | Agent 超时保护 + 线程池防死锁 | `core/scheduler.py`, `agents/base.py`, `core/data.py` |
 | 2026-06-04 | 项目结构整理：文件归入 core/trading/infra 目录 | `core/`, `trading/`, `infra/` |
 | 2026-06-04 | 定时分析推送（晨盘8:15 + 午盘增强） | `morning_update.py`, `run_morning.ps1`, `core/decision.py`, `trading/autotrade.py`, `run_daily.ps1` |
 | 2026-06-03 | WorkflowDirector 深度审查 10 维度 | `director.py` |

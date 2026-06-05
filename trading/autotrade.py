@@ -418,7 +418,7 @@ def auto_trade(all_reports: list, date_str: str = "") -> dict:
 
 
 def _log_snapshot(pf: Portfolio, date: str, trades: dict):
-    """记录每日资产快照。"""
+    """记录每日资产快照（按日期去重，同一天只保留最后一条）。"""
     snapshots = []
     if TRADE_LOG.exists():
         try:
@@ -436,7 +436,14 @@ def _log_snapshot(pf: Portfolio, date: str, trades: dict):
         "total": round(pf.cash + market_value, 2),
         "trades": trades,
     }
-    snapshots.append(entry)
+
+    # 去重：同一天已存在则替换，否则追加
+    for i, s in enumerate(snapshots):
+        if s.get("date") == date:
+            snapshots[i] = entry
+            break
+    else:
+        snapshots.append(entry)
 
     with open(TRADE_LOG, "w", encoding="utf-8") as f:
         json.dump(snapshots, f, ensure_ascii=False, indent=2)

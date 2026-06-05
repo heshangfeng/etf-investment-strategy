@@ -449,90 +449,62 @@ def _portfolio_advice(results: list[dict]) -> list[dict]:
 
 def format_morning_guidance(overnight: dict, news: list[dict], results: list[dict],
                              advices: list[dict], top: dict, snap_date: str) -> str:
-    """组装完整的晨盘操盘指导推送文本"""
-    lines = [f"🏆 ETF晨盘操盘指导 · {datetime.now().strftime('%m月%d日')}\n"]
+    """组装晨盘操盘指导推送文本（手机优化版）"""
+    lines = [f"🏆 ETF晨盘操盘指导 {datetime.now().strftime('%m/%d')}\n"]
 
-    # 🌙 隔夜外盘
+    # 🌙 隔夜外盘 — 一行搞定
     us = overnight.get("us_market", {})
-    has_overnight = any(
-        isinstance(us.get(k), dict) and us[k].get("price")
-        for k in ("djia", "nasdaq", "sp500")
-    ) or (
-        isinstance(overnight.get("a50"), dict) and overnight["a50"].get("price")
-    ) or any(
-        isinstance(overnight.get("commodities", {}).get(k), dict) and overnight["commodities"][k].get("price")
-        for k in ("gold", "oil")
-    )
-    if has_overnight:
-        lines.append("🌙 隔夜外盘")
-        parts = []
-        label_map = {"djia": "道指", "nasdaq": "纳指", "sp500": "标普"}
-        for k, label in label_map.items():
-            if us.get(k):
-                parts.append(f"{label} {us[k].get('price', 0):.0f}")
-        if parts:
-            lines.append("  " + " | ".join(parts))
-        if overnight.get("a50"):
-            lines.append(f"  A50期指 {overnight['a50'].get('price', 0):.0f}")
-        gold = overnight.get("commodities", {}).get("gold")
-        oil = overnight.get("commodities", {}).get("oil")
-        if gold and isinstance(gold, dict) and gold.get("price"):
-            lines.append(f"  黄金 {gold.get('price', 0):.0f}")
-        if oil and isinstance(oil, dict) and oil.get("price"):
-            lines.append(f"  原油 {oil.get('price', 0):.0f}")
-        lines.append("")
+    has_overnight = any(isinstance(us.get(k), dict) for k in ("djia", "nasdaq", "sp500"))
+    parts = []
+    label_map = {"djia": "道指", "nasdaq": "纳指", "sp500": "标普"}
+    for k, label in label_map.items():
+        v = us.get(k)
+        if isinstance(v, dict) and v.get("price"):
+            chg = v.get("change_pct", 0)
+            sign = "+" if chg >= 0 else ""
+            parts.append(f"{label}{v['price']:.0f}({sign}{chg:.1f}%)")
+    if parts:
+        lines.append("🌙 " + " ".join(parts))
 
-    # 📰 早间要闻
+    # 📰 早间要闻 — 精简到 4 条
     if news:
-        lines.append("📰 早间要闻")
         shown = set()
-        src_label = {"cls": "财联社", "wallstreetcn": "华尔街见闻",
-                     "weibo": "微博", "caixin": "财新"}
-        for n in news[:6]:
-            key = n["title"][:15]
-            if key in shown:
-                continue
-            shown.add(key)
-            label = src_label.get(n["source"], n["source"])
-            title = n["title"][:60]
-            lines.append(f"  [{label}] {title}")
-        lines.append("")
+        items = []
+        for n in news:
+            key = n.get("title", "")[:15]
+            if key and key not in shown:
+                shown.add(key)
+                items.append(n.get("title", "")[:50])
+        if items:
+            for item in items[:4]:
+                lines.append(f"📰 {item}")
 
-    # 🔄 受影响的ETF（含 delta 方向）
+    # 🔄 受影响的ETF — 紧凑显示
     impacted = [r for r in results if r.get("impact") and r.get("impact", {}).get("reason")]
     if impacted:
-        lines.append("🔄 受影响的ETF")
-        for r in impacted[:8]:
+        for r in impacted[:6]:
             imp = r.get("impact", {})
             d = imp.get("delta", 0)
-            direction = "📈" if d > 0 else ("📉" if d < 0 else "➡️")
-            lines.append(f"  {r['name']}: {imp.get('reason', '')} {direction} ({d:+.1f})")
-        lines.append("")
+            arrow = "↑" if d > 0 else ("↓" if d < 0 else "→")
+            lines.append(f"🔄 {r['name']}{arrow}{d:+.1f}")
 
-    # 📊 操作信号变化
+    # 📊 操作信号变化 — 只显示变化的
     changed = [r for r in results if r["changed"]]
     if changed:
-        lines.append("📊 操作信号变化")
         for r in changed[:5]:
-            lines.append(f"  {r['name']}: {r['old_operation']}→{r['new_operation']} "
-                         f"(评分{r['old_score']:.0f}→{r['new_score']:.0f})")
-        lines.append("")
+            lines.append(f"📊 {r['name']}: {r['old_operation']}→{r['new_operation']}")
 
-    # 👤 持仓操作建议
+    # 👤 持仓建议 — 每只一行
     if advices:
-        lines.append("👤 你的持仓操作建议")
         for a in advices:
-            mkt_val = a["shares"] * a["price"]
-            flag = " ⚠️" if a["changed"] else ""
-            lines.append(f"  {a['name']} {a['shares']}份 {mkt_val:.0f}元")
-            lines.append(f"    信号: {a['old_operation']}→{a['new_operation']}{flag}")
-            lines.append(f"    盈亏: {a['pnl_pct']:+.2f}% | 成本{a['avg_cost']:.4f}→现价{a['price']:.4f}")
-            lines.append(f"    建议: {a['suggestion']}")
+            flag = "⚠️" if a["changed"] else ""
+            lines.append(f"👤 {a['name']}")
+            lines.append(f"   信号 {a['old_operation']}→{a['new_operation']}{flag}")
+            lines.append(f"   盈亏 {a['pnl_pct']:+.1f}% | {a['price']:.4f}")
+            lines.append(f"   建议 {a['suggestion']}")
         lines.append("")
 
-    total_pos = sum(r["position_pct"] for r in results)
-    lines.append(f"【建议总仓位】{total_pos*100:.1f}%")
-    lines.append(f"数据基于{snap_date}快照+今晨舆情增量更新")
+    lines.append(f"📊 {snap_date}快照+今晨舆情")
     return "\n".join(lines)
 
 

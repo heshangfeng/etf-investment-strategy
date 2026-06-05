@@ -250,16 +250,15 @@ def main():
     df.index = df["代码"]  # 用代码做索引方便选中
 
     # 操作列颜色映射
-    op_colors = {
-        "强烈买入": "color: #e74c3c; font-weight: bold;",
+    _action_colors = {
         "买入": "color: #e67e22; font-weight: bold;",
-        "增持": "color: #e67e22; font-weight: bold;",
+        "卖出": "color: #e74c3c; font-weight: bold;",
+        "减持": "color: #e74c3c;",
         "持有": "color: #3498db;",
-        "长期持有": "color: #2980b9;",
-        "观察": "color: #f39c12; font-weight: bold;",
-        "减持": "color: #27ae60;",
-        "卖出": "color: #2ecc71; font-weight: bold;",
-        "强烈卖出": "color: #1abc9c; font-weight: bold;",
+        "跳过买入": "color: #95a5a6;",
+        "跳过卖出": "color: #95a5a6;",
+        "不操作": "color: #95a5a6;",
+        "T+1限制": "color: #f39c12;",
     }
     cell_hover = {"selector": "td:hover", "props": "background-color: #ffffcc;"}
     styled = df.style.map(
@@ -269,8 +268,8 @@ def main():
         lambda v: f"color: {score_color(float(v.rstrip('%')))};" if isinstance(v, str) and v.endswith('%') else "",
         subset=["实际仓位"]
     ).map(
-        lambda v: op_colors.get(v, ""),
-        subset=["操作"]
+        lambda v: next((c for k, c in _action_colors.items() if v.startswith(k)), ""),
+        subset=["实际决策"]
     )
     st.dataframe(styled, width="stretch", height=min(60 + len(df) * 35, 600))
 
@@ -320,11 +319,12 @@ def main():
             col_a, col_b = st.columns([2, 1])
             with col_a:
                 st.markdown(f"**{etf['name']} ({etf['code']})** — {etf.get('type', '')}")
+                trade_reason = etf.get('_trade_reason', '')
+                trade_info = f"  |  {trade_reason}" if trade_reason else ""
                 st.markdown(f"最终评级: {render_rating_badge(etf.get('final_rating', ''))}  |  "
                             f"得分: **{etf['final_score']}**  |  "
-                            f"建议仓位: {etf.get('position_pct', 0)*100:.1f}%")
-                st.markdown(f"操作: {etf.get('operation', '')}  |  "
-                            f"持有周期: {etf.get('holding_period', '')}  |  "
+                            f"实际仓位: {etf.get('position_pct', 0)*100:.1f}%")
+                st.markdown(f"模拟交易: **{etf.get('operation', '')}**{trade_info}  |  "
                             f"共识度: {etf.get('consensus', '')}")
             with col_b:
                 st.metric("最新价", etf.get("close_price", "N/A"))

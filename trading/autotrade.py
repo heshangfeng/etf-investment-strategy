@@ -1,4 +1,4 @@
-﻿"""
+"""
 ETF 智能投资分析系统 - 自动化模拟交易引擎
 
 每次分析完成后自动执行：读取建议 → 调仓 → 记录 → 复盘。
@@ -18,6 +18,7 @@ from infra.logger import get_logger; logger = get_logger(__name__)
 
 TRADE_LOG = Path(__file__).resolve().parent.parent / "data" / "trade_log.json"
 PERF_LOG = Path(__file__).resolve().parent.parent / "data" / "performance.json"
+PLAN_FILE = Path(__file__).resolve().parent.parent / "data" / "trade_plan.json"
 SNAPSHOT_DIR = Path(__file__).resolve().parent.parent / "data" / "snapshots"
 
 # ====================== 【信号可信度过滤器】 ======================
@@ -204,6 +205,10 @@ def _execute_sells(pf, recs: dict, report_map: dict, prev_scores: dict, all_repo
             continue
         if h.added == today:
             print(f"  ⏳ T+1限制: {h.name}({h.code}) 今日买入，跳过卖出")
+            trades.setdefault("decisions", []).append({
+                "code": h.code, "name": h.name,
+                "action": "T+1限制", "operation": r.get("operation", ""),
+            })
             continue
         fr = report_map.get(h.code)
         if fr:
@@ -212,6 +217,11 @@ def _execute_sells(pf, recs: dict, report_map: dict, prev_scores: dict, all_repo
                 h.code, fr, all_reports, days_held, prev_scores.get(h.code))
             if not should_trade:
                 print(f"  🚫 跳过卖出 {h.name}({h.code}): {reason}")
+                trades.setdefault("decisions", []).append({
+                    "code": h.code, "name": h.name,
+                    "action": "跳过卖出", "reason": reason, "conviction": conv,
+                    "operation": r.get("operation", ""),
+                })
                 continue
         if r["operation"] in ("卖出", "强烈卖出"):
             price = _price(h.code, h.avg_cost)
@@ -413,6 +423,48 @@ def auto_trade(all_reports: list, date_str: str = "") -> dict:
     save(pf)
     _log_snapshot(pf, today, trades)
     _log_performance(pf, today)
+
+    # 生成完整决策记录（含未操作ETF）
+    executed = set()
+    for t in trades.get("buys", []):
+        executed.add(t["code"])
+        trades.setdefault("decisions", []).append({
+            "code": t["code"], "name": t["name"],
+            "action": "买入", "shares": t["shares"],
+            "operation": t.get("reason", ""),
+        })
+    for t in trades.get("sells", []):
+        executed.add(t["code"])
+        trades.setdefault("decisions", []).append({
+            "code": t["code"], "name": t["name"],
+            "action": t.get("reason", "卖出"), "shares": t.get("shares", 0),
+            "operation": t.get("reason", ""),
+        })
+    # 已跳过的从 decisions 中已标记，这里补剩余 ETF
+    decided = {d["code"] for d in trades.get("decisions", [])}
+    for fr in all_reports:
+        code = fr.etf_info["code"]
+        if code in decided:
+            continue
+        name = fr.etf_info["name"]
+        op = fr.operation
+        if code in {h.code for h in pf.holdings}:
+            trades.setdefault("decisions", []).append({
+                "code": code, "name": name,
+                "action": "持有", "operation": op,
+            })
+        else:
+            trades.setdefault("decisions", []).append({
+                "code": code, "name": name,
+                "action": "不操作", "operation": op,
+            })
+
+    # 保存到 trade_plan.json 供看板使用
+    try:
+        with open(PLAN_FILE, "w", encoding="utf-8") as f:
+            json.dump(trades.get("decisions", []), f, ensure_ascii=False, indent=2)
+    except Exception:
+        pass
 
     return trades
 

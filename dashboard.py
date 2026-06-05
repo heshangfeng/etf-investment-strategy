@@ -25,6 +25,7 @@ SNAPSHOT_DIR = Path(SNAPSHOT_DIR)
 OUTPUT_DIR = Path(OUTPUT_DIR)
 REVIEW_DIR = Path(REVIEW_DIR)
 REPORT_PREFIX = "ETF_多智能体投研报告_"
+TRADE_PLAN_FILE = Path(__file__).resolve().parent / "data" / "trade_plan.json"
 
 
 # ── 辅助函数 ──
@@ -105,37 +106,40 @@ def load_data():
     }
 
 
-# ── 个性化建议（根据实际持仓调整） ──
+# ── 加载模拟交易实际决策 ──
 
-def _personalize_operations(etfs):
-    """
-    根据实际持仓调整每只ETF的操作/仓位建议。
-    规则:
-      1. 系统建议减持,用户不持有 → 保持原样（通用建议）
-      2. 系统建议减持,用户持有且亏损 → 用投研分析判断割肉还是观察:
-         - 共识"存在分歧"/"严重分歧"且评分靠近中性区(≥45) → 观察（信号不统一，不急于割）
-         - Agent数<6（LLM覆盖不足）且评分在35-50之间 → 观察（数据不足，信号弱）
-         - 其他情况 → 保持减持（信号明确，割肉合理）
-      3. 系统建议持有/长期持有,用户不持有 → 改为买入开仓
-    """
+def load_trade_plan() -> dict[str, dict]:
+    """加载 trade_plan.json，返回 code → decision 的映射。"""
+    if not TRADE_PLAN_FILE.exists():
+        return {}
+    try:
+        with open(TRADE_PLAN_FILE, "r", encoding="utf-8") as f:
+            plans = json.load(f)
+        return {p["code"]: p for p in plans if "code" in p}
+    except Exception:
+        return {}
+
+
+def _apply_trade_plan(etfs):
+    """用模拟交易的实际决策覆盖看板操作显示。"""
+    plan = load_trade_plan()
+    if not plan:
+        return
+
     try:
         from trading.portfolio import load, _price
         pf = load()
         holdings = {h.code: h for h in pf.holdings}
-    except Exception:
-        holdings = {}
-
-    # 计算组合总资产用于实际仓位比例
-    try:
         pf_total = pf.cash + sum(h.shares * _price(h.code, h.avg_cost) for h in pf.holdings)
     except Exception:
+        holdings = {}
         pf_total = 0
 
     for e in etfs:
         code = e["code"]
-        op = e.get("operation", "")
-        e["_suggested_pos"] = e.get("position_pct", 0)  # 保留系统建议仓位
+        d = plan.get(code)
 
+        # 实际仓位
         if code in holdings:
             h = holdings[code]
             cp = _price(code, h.avg_cost)
@@ -144,78 +148,42 @@ def _personalize_operations(etfs):
             e["_pnl_pct"] = round(pnl_pct, 2)
             actual_pos = (h.shares * cp) / pf_total if pf_total > 0 else 0
             e["position_pct"] = round(actual_pos, 4)
-
-            # 规则2: 系统说减持且亏损 → 投研分析决定是否观察
-            if op == "减持" and pnl_pct < 0:
-                score = e.get("final_score", 50)
-                consensus = e.get("consensus", "")
-                n_agents = len(e.get("agents", []))
-                rating = e.get("final_rating", "")
-                weak_signal = (
-                    (consensus in ("存在分歧", "严重分歧") and score >= 45) or
-                    (n_agents < 6 and 35 <= score < 50)
-                )
-                if rating == "强烈看空":
-                    pass
-                elif weak_signal:
-                    e["operation"] = "观察"
-                    e["holding_period"] = "短期观察"
-                    e["_personalized"] = True
         else:
             e["_held"] = False
             e["position_pct"] = 0.0
-            if op in ("减持", "卖出", "强烈卖出"):
-                e["operation"] = "不操作"
-                e["_personalized"] = True
-            elif op in ("持有", "长期持有"):
-                # 系统评级看空/强烈看空时，即使操作是持有也不建议买入
-                rating = e.get("final_rating", "")
-                if rating in ("看空", "强烈看空"):
-                    e["operation"] = "不操作"
-                else:
-                    e["operation"] = "买入"
-                    e["holding_period"] = "中期(1-3月)"
-                e["_personalized"] = True
 
-    # 最终清理：统一 _suggested_pos
-    for e in etfs:
-        op = e.get("operation", "")
-        # 未持仓且非买入操作 → 不操作
-        if not e.get("_held") and op not in ("不操作", "买入"):
-            e["operation"] = "不操作"
-            e["_personalized"] = True
-            op = "不操作"
+        # 从 trade_plan 获取实际决策
+        if d:
+            action = d.get("action", "")
+            reason = d.get("reason", "")
+            conviction = d.get("conviction")
+            shares = d.get("shares", 0)
 
-        # 根据操作更新建议仓位
-        if op == "不操作":
-            e["_suggested_pos"] = 0.0
-        elif op == "观察":
-            e["_suggested_pos"] = e.get("position_pct", 0)  # 保持现有仓位
-        elif op == "买入":
-            # 纯按评分，评级仅用于过滤看空/强烈看空
-            rating = e.get("final_rating", "")
-            if rating in ("看空", "强烈看空"):
-                e["_suggested_pos"] = 0.0
+            if action == "买入":
+                e["operation"] = f"买入{shares}份"
+            elif action == "卖出":
+                e["operation"] = f"卖出{shares}份"
+            elif action == "减持":
+                e["operation"] = f"减持{shares}份"
+            elif action == "持有":
+                e["operation"] = "持有"
+            elif action == "跳过卖出":
+                e["operation"] = f"跳过卖出"
+            elif action == "跳过买入":
+                e["operation"] = f"跳过买入"
+            elif action == "T+1限制":
+                e["operation"] = "T+1限制"
             else:
-                score = e.get("final_score", 50)
-                if score >= 80:
-                    e["_suggested_pos"] = 0.10
-                elif score >= 65:
-                    e["_suggested_pos"] = 0.075
-                elif score >= 50:
-                    e["_suggested_pos"] = 0.05
-                elif score >= 35:
-                    e["_suggested_pos"] = 0.03
-                else:
-                    e["_suggested_pos"] = 0.02
-        elif op in ("持有", "长期持有"):
-            e["_suggested_pos"] = e.get("position_pct", 0)  # 仓位不动
-        elif op in ("减持",):
-            # 减持 = 减到当前仓位的一半（非清仓）
-            pos = e.get("position_pct", 0)
-            e["_suggested_pos"] = round(pos * 0.5, 4)
-        elif op in ("卖出", "强烈卖出"):
-            e["_suggested_pos"] = 0.0  # 强烈看空 → 清仓
+                e["operation"] = action
+
+            e["_trade_action"] = action
+            if conviction is not None:
+                e["_conviction"] = conviction
+            if reason:
+                e["_trade_reason"] = reason
+        else:
+            # 没有决策记录的交易（旧数据）
+            e["operation"] = "不操作"
 
 
 # ── 主界面 ──
@@ -229,26 +197,24 @@ def main():
         return
 
     etfs = data["etfs"]
-    _personalize_operations(etfs)
+    _apply_trade_plan(etfs)
     date_str = data["date"]
     st.title(f"📊 ETF 智能投研看板 · {date_str}")
 
     # ── 顶部指标行 ──
     avg_score = sum(e["final_score"] for e in etfs) / len(etfs) if etfs else 0
     actual_total = sum(e.get("position_pct", 0) for e in etfs)
-    sugg_total = sum(e.get("_suggested_pos", 0) for e in etfs)
-    # 个性化后的操作计数
-    buy_ops = sum(1 for e in etfs if e.get("operation") in ("买入", "强烈买入", "增持"))
-    hold_ops = sum(1 for e in etfs if e.get("operation") in ("持有", "长期持有", "观察"))
-    reduce_ops = sum(1 for e in etfs if e.get("operation") in ("减持", "卖出", "强烈卖出"))
+    # 实际交易决策计数
+    buy_ops = sum(1 for e in etfs if e.get("_trade_action") in ("买入",))
+    sell_ops = sum(1 for e in etfs if e.get("_trade_action") in ("卖出", "减持"))
+    skip_ops = sum(1 for e in etfs if e.get("_trade_action") in ("跳过卖出", "跳过买入"))
     col1, col2, col3, col4, col5, col6, col7 = st.columns(7)
     col1.metric("ETF 总数", len(etfs))
     col2.metric("平均得分", f"{avg_score:.1f}")
     col3.metric("实际总仓位", f"{actual_total*100:.1f}%")
-    col4.metric("建议总仓位", f"{sugg_total*100:.1f}%")
-    col5.metric("建议买入", buy_ops)
-    col6.metric("建议持有/观察", hold_ops)
-    col7.metric("建议减持/卖出", reduce_ops)
+    col4.metric("实际买入", buy_ops)
+    col5.metric("实际卖出/减持", sell_ops)
+    col6.metric("跳过(待确认)", skip_ops)
 
     # ── 筛选 ──
     types = list(set(e.get("type", "未知") for e in etfs))
@@ -265,6 +231,10 @@ def main():
             op_display = op
         else:
             op_display = op
+        action = e.get("operation", "")
+        reason = e.get("_trade_reason", "")
+        conv = e.get("_conviction")
+        conv_str = f" | 可信度{conv:.0f}" if conv is not None else ""
         rows.append({
             "代码": e["code"],
             "名称": e["name"],
@@ -272,9 +242,7 @@ def main():
             "评级": e.get("final_rating", ""),
             "得分": e["final_score"],
             "实际仓位": f"{e.get('position_pct', 0)*100:.1f}%",
-            "建议仓位": f"{e.get('_suggested_pos', 0)*100:.1f}%",
-            "操作": op_display,
-            "持有周期": e.get("holding_period", ""),
+            "实际决策": action + conv_str,
             "共识度": e.get("consensus", ""),
             "现价": e.get("close_price", ""),
         })

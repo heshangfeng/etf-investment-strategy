@@ -1,4 +1,4 @@
-﻿"""
+"""
 ETF 智能投研看板 - Streamlit Dashboard
 
 启动: streamlit run dashboard.py
@@ -20,6 +20,10 @@ from infra.logger import get_logger; logger = get_logger(__name__)
 st.set_page_config(page_title="ETF 智能投研看板", layout="wide")
 
 from core.config import OUTPUT_DIR, SNAPSHOT_DIR, REVIEW_DIR, FEE_RATE
+from pathlib import Path
+SNAPSHOT_DIR = Path(SNAPSHOT_DIR)
+OUTPUT_DIR = Path(OUTPUT_DIR)
+REVIEW_DIR = Path(REVIEW_DIR)
 REPORT_PREFIX = "ETF_多智能体投研报告_"
 
 
@@ -101,9 +105,98 @@ def load_data():
     }
 
 
+# ── 个性化建议（根据实际持仓调整） ──
+
+def _personalize_operations(etfs):
+    """
+    根据实际持仓调整每只ETF的操作/仓位建议。
+    规则:
+      1. 系统建议减持,用户不持有 → 保持原样（通用建议）
+      2. 系统建议减持,用户持有且亏损 → 用投研分析判断割肉还是观察:
+         - 共识"存在分歧"/"严重分歧"且评分靠近中性区(≥45) → 观察（信号不统一，不急于割）
+         - Agent数<6（LLM覆盖不足）且评分在35-50之间 → 观察（数据不足，信号弱）
+         - 其他情况 → 保持减持（信号明确，割肉合理）
+      3. 系统建议持有/长期持有,用户不持有 → 改为买入开仓
+    """
+    try:
+        from trading.portfolio import load, _price
+        pf = load()
+        holdings = {h.code: h for h in pf.holdings}
+    except Exception:
+        holdings = {}
+
+    # 计算组合总资产用于实际仓位比例
+    try:
+        pf_total = pf.cash + sum(h.shares * _price(h.code, h.avg_cost) for h in pf.holdings)
+    except Exception:
+        pf_total = 0
+
+    for e in etfs:
+        code = e["code"]
+        op = e.get("operation", "")
+        e["_suggested_pos"] = e.get("position_pct", 0)  # 保留系统建议仓位
+
+        if code in holdings:
+            h = holdings[code]
+            cp = _price(code, h.avg_cost)
+            pnl_pct = (cp - h.avg_cost) / h.avg_cost * 100
+            e["_held"] = True
+            e["_pnl_pct"] = round(pnl_pct, 2)
+            # 实际仓位 = 当前市值 / 总资产
+            actual_pos = (h.shares * cp) / pf_total if pf_total > 0 else 0
+            e["position_pct"] = round(actual_pos, 4)
+        else:
+            e["_held"] = False
+            e["position_pct"] = 0.0  # 未持仓 ETF 实际仓位为 0
+
+            # 规则2: 系统说减持,持有且亏损 → 投研分析决策
+            if op == "减持" and pnl_pct < 0:
+                score = e.get("final_score", 50)
+                consensus = e.get("consensus", "")
+                n_agents = len(e.get("agents", []))
+                rating = e.get("final_rating", "")
+
+                # 信号偏弱或数据不足 → 观察（不急于割肉）
+                weak_signal = (
+                    (consensus in ("存在分歧", "严重分歧") and score >= 45) or
+                    (n_agents < 6 and 35 <= score < 50)
+                )
+                # 强烈看空 → 无论盈亏都要减
+                if rating == "强烈看空":
+                    pass
+                elif weak_signal:
+                    e["operation"] = "观察"
+                    e["holding_period"] = "短期观察"
+                    e["_personalized"] = True
+                # else: 信号明确 → 保持减持
+        else:
+            # 规则1: 减持/卖出类,没持仓 → 不存在减的对象
+            if op in ("减持", "卖出", "强烈卖出"):
+                e["operation"] = "不操作"
+                e["_personalized"] = True
+            # 规则3: 持有/长期持有,没持仓 → 改为买入开仓
+            elif op in ("持有", "长期持有"):
+                e["operation"] = "买入"
+                e["holding_period"] = "中期(1-3月)"
+                e["_personalized"] = True
+
+    # 最终清理: 未持仓且非买入操作 → 不操作
+    for e in etfs:
+        if not e.get("_held") and e.get("operation") not in ("不操作", "买入"):
+            e["operation"] = "不操作"
+            e["_personalized"] = True
+        # 操作是不操作 → 建议仓位归零
+        if e.get("operation") == "不操作":
+            e["_suggested_pos"] = 0.0
+        elif e.get("operation") == "观察":
+            # 观察 = 保持当前仓位不动，建议仓位取实际仓位
+            e["_suggested_pos"] = e.get("position_pct", 0)
+
+
 # ── 主界面 ──
 
 def main():
+    import json
     data = load_data()
     if data is None:
         st.warning("暂无数据。请先运行 etf-agent.py 生成报告。")
@@ -111,19 +204,26 @@ def main():
         return
 
     etfs = data["etfs"]
+    _personalize_operations(etfs)
     date_str = data["date"]
     st.title(f"📊 ETF 智能投研看板 · {date_str}")
 
     # ── 顶部指标行 ──
     avg_score = sum(e["final_score"] for e in etfs) / len(etfs) if etfs else 0
-    total_pos = sum(e.get("position_pct", 0) for e in etfs)
-    long_count = sum(1 for e in etfs if e.get("position_pct", 0) > 0)
-    col1, col2, col3, col4, col5 = st.columns(5)
+    actual_total = sum(e.get("position_pct", 0) for e in etfs)
+    sugg_total = sum(e.get("_suggested_pos", 0) for e in etfs)
+    # 个性化后的操作计数
+    buy_ops = sum(1 for e in etfs if e.get("operation") in ("买入", "强烈买入", "增持"))
+    hold_ops = sum(1 for e in etfs if e.get("operation") in ("持有", "长期持有", "观察"))
+    reduce_ops = sum(1 for e in etfs if e.get("operation") in ("减持", "卖出", "强烈卖出"))
+    col1, col2, col3, col4, col5, col6, col7 = st.columns(7)
     col1.metric("ETF 总数", len(etfs))
     col2.metric("平均得分", f"{avg_score:.1f}")
-    col3.metric("建议持仓", long_count)
-    col4.metric("建议总仓位", f"{total_pos*100:.1f}%")
-    col5.metric("全市场成交额", f"{data['market_volume']:.0f}亿")
+    col3.metric("实际总仓位", f"{actual_total*100:.1f}%")
+    col4.metric("建议总仓位", f"{sugg_total*100:.1f}%")
+    col5.metric("建议买入", buy_ops)
+    col6.metric("建议持有/观察", hold_ops)
+    col7.metric("建议减持/卖出", reduce_ops)
 
     # ── 筛选 ──
     types = list(set(e.get("type", "未知") for e in etfs))
@@ -134,14 +234,21 @@ def main():
     st.subheader("ETF 持仓表")
     rows = []
     for e in filtered:
+        op = e.get("operation", "")
+        personalized = e.get("_personalized", False)
+        if personalized:
+            op_display = op
+        else:
+            op_display = op
         rows.append({
             "代码": e["code"],
             "名称": e["name"],
             "类型": e.get("type", ""),
             "评级": e.get("final_rating", ""),
             "得分": e["final_score"],
-            "仓位": f"{e.get('position_pct', 0)*100:.1f}%",
-            "操作": e.get("operation", ""),
+            "实际仓位": f"{e.get('position_pct', 0)*100:.1f}%",
+            "建议仓位": f"{e.get('_suggested_pos', 0)*100:.1f}%",
+            "操作": op_display,
             "持有周期": e.get("holding_period", ""),
             "共识度": e.get("consensus", ""),
             "现价": e.get("close_price", ""),
@@ -149,13 +256,31 @@ def main():
     df = pd.DataFrame(rows)
     df.index = df["代码"]  # 用代码做索引方便选中
 
+    # 操作列颜色映射
+    op_colors = {
+        "强烈买入": "color: #e74c3c; font-weight: bold;",
+        "买入": "color: #e67e22; font-weight: bold;",
+        "增持": "color: #e67e22; font-weight: bold;",
+        "持有": "color: #3498db;",
+        "长期持有": "color: #2980b9;",
+        "观察": "color: #f39c12; font-weight: bold;",
+        "减持": "color: #27ae60;",
+        "卖出": "color: #2ecc71; font-weight: bold;",
+        "强烈卖出": "color: #1abc9c; font-weight: bold;",
+    }
     cell_hover = {"selector": "td:hover", "props": "background-color: #ffffcc;"}
     styled = df.style.map(
         lambda v: f"color: {rating_color(v)}; font-weight: bold;" if v in ("强烈看多", "看多", "中性", "看空", "强烈看空") else "",
         subset=["评级"]
     ).map(
         lambda v: f"color: {score_color(float(v.rstrip('%')))};" if isinstance(v, str) and v.endswith('%') else "",
-        subset=["仓位"]
+        subset=["实际仓位"]
+    ).map(
+        lambda v: f"color: #95a5a6;" if isinstance(v, str) and v.endswith('%') else "",
+        subset=["建议仓位"]
+    ).map(
+        lambda v: op_colors.get(v, ""),
+        subset=["操作"]
     )
     st.dataframe(styled, width="stretch", height=min(60 + len(df) * 35, 600))
 
@@ -256,42 +381,115 @@ def main():
     with col_y:
         cum = data.get("cum_stats", {})
         if cum:
-            st.caption(f"累计复盘: {cum.get('total_reviews', 0)} 次 | "
-                       f"准确率: {cum.get('overall_accuracy', 0):.1f}%")
+            st.caption(f"累计复盘: {cum.get('total_runs', 0)} 次 | "
+                       f"准确率: {cum.get('overall_accuracy_pct', 0):.1f}%")
 
     # ── 投资组合面板（实际持仓） ──
     st.divider()
     st.subheader("我的投资组合（实际持仓）")
     st.caption("顶部[建议总仓位]=系统推荐 ｜ 此处[实际仓位]=你的真实持仓比例, 自动交易后两者应基本一致")
     try:
-        from trading.portfolio import load, _price
+        import json
+        from trading.portfolio import load, _price, _price_detail
+        from trading.autotrade import PERF_LOG
         pf = load()
-        col_a, col_b, col_c = st.columns(3)
         cash = pf.cash
+        holdings_cost = sum(h.shares * h.avg_cost for h in pf.holdings) if pf.holdings else 0
         market_value = sum(h.shares * _price(h.code, h.avg_cost) for h in pf.holdings)
         total = cash + market_value
+        pnl_amount = market_value - holdings_cost
+
+        # 从performance.json读取累计/日收益
+        _perf_data = {}
+        if PERF_LOG.exists():
+            with open(PERF_LOG, "r", encoding="utf-8") as _pf:
+                _perf_data = json.load(_pf)
+        daily_pnl = _perf_data.get("daily_pnl", 0)
+        cum_pnl = _perf_data.get("cumulative_pnl", total - 670000)
+
+        col_a, col_b, col_c, col_d, col_e, col_f = st.columns(6)
         col_a.metric("总资产", f"{total:.0f}")
         col_b.metric("持仓市值", f"{market_value:.0f}")
         col_c.metric("实际仓位", f"{(1-cash/max(total,1))*100:.0f}%")
+        col_d.metric("今日收益", f"{daily_pnl:+.0f}", delta_color="off" if daily_pnl >= 0 else "inverse")
+        col_e.metric("持仓收益", f"{pnl_amount:+.0f}", delta_color="off" if pnl_amount >= 0 else "inverse")
+        col_f.metric("累计收益", f"{cum_pnl:+.0f}", delta_color="off" if cum_pnl >= 0 else "inverse")
 
         if pf.holdings:
             rows_pf = []
             for h in pf.holdings:
-                cp = _price(h.code, h.avg_cost)
-                pnl = (cp - h.avg_cost) / h.avg_cost * 100
+                cp, prev_close = _price_detail(h.code, h.avg_cost)
+                pnl_pct = (cp - h.avg_cost) / h.avg_cost * 100
+                pnl_amt = (cp - h.avg_cost) * h.shares
+                today_chg = (cp - prev_close) * h.shares
+                mkt_val = h.shares * cp
                 rows_pf.append({
-                    "代码": h.code, "名称": h.name, "份额": h.shares,
+                    "代码": h.code, "名称": h.name,
                     "成本价": f"{h.avg_cost:.4f}", "现价": f"{cp:.4f}",
-                    "盈亏": f"{pnl:+.1f}%",
+                    "持仓市值": f"{mkt_val:.0f}",
+                    "今日收益": f"{today_chg:+.0f}",
+                    "持仓收益率": f"{pnl_pct:+.2f}%",
+                    "持仓收益": f"{pnl_amt:+.0f}",
                 })
             df_pf = pd.DataFrame(rows_pf)
             st.dataframe(df_pf.style.map(
                 lambda v: f"color: {'red' if v.startswith('-') else 'green'}; font-weight: bold;"
-                if isinstance(v, str) and v.endswith('%') else "",
-                subset=["盈亏"]
+                if isinstance(v, str) and (v.endswith('%') or v.startswith('+') or v.startswith('-')) and v[0] in '+-' else "",
+                subset=["今日收益", "持仓收益率", "持仓收益"]
             ), width='stretch', hide_index=True)
         else:
             st.info("暂无持仓。运行 `python etf-agent.py` 后自动交易。")
+
+        # ── 月度汇总 ──
+        try:
+            from trading.autotrade import TRADE_LOG, PERF_LOG
+            if TRADE_LOG.exists():
+                with open(TRADE_LOG, "r", encoding="utf-8") as _f:
+                    _snaps = json.load(_f)
+                with open(PERF_LOG, "r", encoding="utf-8") as _f:
+                    _perf = json.load(_f)
+                if _snaps:
+                    _monthly = {}
+                    for _s in _snaps:
+                        _m = _s["date"][:7]
+                        if _m not in _monthly:
+                            _monthly[_m] = {"first": _s, "last": _s}
+                        else:
+                            if _s["date"] < _monthly[_m]["first"]["date"]:
+                                _monthly[_m]["first"] = _s
+                            if _s["date"] > _monthly[_m]["last"]["date"]:
+                                _monthly[_m]["last"] = _s
+                    # 加上当月最新值（即使今日无交易）
+                    _today_m = __import__("datetime").datetime.now().strftime("%Y-%m")
+                    if _today_m in _monthly:
+                        _monthly[_today_m]["last"] = {
+                            "date": __import__("datetime").datetime.now().strftime("%Y-%m-%d"),
+                            "total": _perf.get("current_value", _monthly[_today_m]["last"]["total"]),
+                        }
+                    _month_rows = []
+                    for _m in sorted(_monthly.keys(), reverse=True):
+                        _first = _monthly[_m]["first"]
+                        _last = _monthly[_m]["last"]
+                        _start = _first["total"]
+                        _end = _last["total"]
+                        _pnl = _end - _start
+                        _ret = (_end / _start - 1) * 100
+                        _month_rows.append({
+                            "月份": _m, "月初总值": f"{_start:.0f}",
+                            "月末总值": f"{_end:.0f}",
+                            "月度盈亏": f"{_pnl:+.0f}",
+                            "月度收益率": f"{_ret:+.2f}%",
+                        })
+                    if _month_rows:
+                        st.subheader("月度收益汇总")
+                        _df_m = pd.DataFrame(_month_rows)
+                        st.dataframe(_df_m.style.map(
+                            lambda v: f"color: {'red' if v.startswith('-') else 'green'}; font-weight: bold;"
+                            if isinstance(v, str) and (v.endswith('%') or (v.startswith('+') or v.startswith('-'))) and not v.startswith('2') else "",
+                            subset=["月度盈亏", "月度收益率"]
+                        ), width="stretch", hide_index=True)
+        except Exception:
+            pass
     except Exception as e:
         st.info(f"持仓数据暂不可用: {e}")
 

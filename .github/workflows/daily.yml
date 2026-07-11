@@ -63,7 +63,6 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           branch: master
-          force: true
 
       - name: Send PushDeer notification
         env:
@@ -72,6 +71,8 @@ jobs:
         run: |
           REPORT=$(ls -t output/ETF_*.txt 2>/dev/null | head -1)
           if [ -n "$REPORT" ]; then
-            BODY=$(head -10 "$REPORT" | tr '\n' '|' | sed 's/|/\\n/g')
-            curl -s "https://api2.pushdeer.com/message/push?pushkey=${PUSHDEER_KEY}&text=$(python3 -c "import urllib.parse; print(urllib.parse.quote('''ETF分析完成: $BODY'''))")"
+            BODY=$(head -10 "$REPORT" | tr '\n' '|')
+            curl -s -X POST "https://api2.pushdeer.com/message/push" \
+              --data-urlencode "pushkey=${PUSHDEER_KEY}" \
+              --data-urlencode "text=ETF分析完成: $BODY"
           fi
